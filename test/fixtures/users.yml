@@ -1,0 +1,20 @@
+
+one:
+  email: buyer1@test.com
+  password_digest: <%= BCrypt::Password.create("password123") %>
+  username: buyer_one
+  first_name: Buyer
+  last_name: One
+  phone_number: "08000000001"
+  bio: Test buyer
+  verified: true
+
+two:
+  email: seller2@test.com
+  password_digest: <%= BCrypt::Password.create("password123") %>
+  username: seller_two
+  first_name: Seller
+  last_name: Two
+  phone_number: "08000000002"
+  bio: Test seller
+  verified: true

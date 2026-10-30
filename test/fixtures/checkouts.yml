@@ -1,0 +1,17 @@
+one:
+  buyer: one
+  subtotal: 9.99
+  service_fee: 9.99
+  payment_fee: 9.99
+  total_amount: 9.99
+  status: pending
+  payment_reference: TEST-CHECKOUT-001
+
+two:
+  buyer: two
+  subtotal: 9.99
+  service_fee: 9.99
+  payment_fee: 9.99
+  total_amount: 9.99
+  status: pending
+  payment_reference: TEST-CHECKOUT-002

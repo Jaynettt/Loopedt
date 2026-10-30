@@ -1,0 +1,861 @@
+
+<% content_for :title, "Discover | Loopedt" %>
+
+<%
+  @nav_user = User.find_by(id: session[:user_id]) if session[:user_id].present?
+  @seller_application = @nav_user&.seller_application
+  @cart_count = @nav_user&.cart_items&.sum(:quantity).to_i
+
+  @sell_item_path =
+    if @nav_user.nil?
+      login_path
+    elsif @seller_application&.status == "approved"
+      new_listing_path
+    elsif @seller_application.present?
+      seller_application_path
+    else
+      seller_onboarding_path
+    end
+%>
+
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    background: #f8f8f6;
+    color: #20231f;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+
+  .looped {
+    min-height: 100vh;
+  }
+
+  .navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 22px 6%;
+    background: #fff;
+    border-bottom: 1px solid #e9e9e5;
+  }
+
+  .logo {
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: -1.8px;
+    color: #244e3b;
+    text-decoration: none;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 26px;
+  }
+
+  .nav-links a {
+    color: #444a44;
+    font-size: 14px;
+    text-decoration: none;
+  }
+
+  .nav-links a:hover {
+    color: #244e3b;
+  }
+
+  .sell-button {
+    background: #244e3b;
+    color: white !important;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 700;
+  }
+
+  .cart-nav-link,
+  .messages-nav-link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 16px;
+    border: 1px solid #d8ded6;
+    border-radius: 8px;
+    color: #244e3b !important;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .cart-nav-link:hover,
+  .messages-nav-link:hover {
+    background: #f3f6f2;
+  }
+
+  .cart-nav-badge,
+  .messages-nav-badge {
+    position: absolute;
+    top: -9px;
+    right: -9px;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #e5484d;
+    color: white;
+    border: 2px solid white;
+    font-size: 11px;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .hero {
+    padding: 65px 6% 45px;
+    background: #e8eee7;
+  }
+
+  .hero-content {
+    max-width: 720px;
+  }
+
+  .eyebrow {
+    color: #42684e;
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  .hero h1 {
+    margin: 16px 0;
+    font-size: clamp(36px, 5vw, 58px);
+    line-height: 1.08;
+    letter-spacing: -2px;
+  }
+
+  .hero p {
+    max-width: 510px;
+    color: #5e685f;
+    line-height: 1.7;
+    font-size: 16px;
+  }
+
+  .search-form {
+    display: flex;
+    gap: 10px;
+    max-width: 650px;
+    margin-top: 28px;
+  }
+
+  .search-form input {
+    flex: 1;
+    min-width: 0;
+    padding: 16px 18px;
+    border: 1px solid #d8ded6;
+    border-radius: 9px;
+    background: white;
+    font-size: 14px;
+    outline-color: #42684e;
+  }
+
+  .search-form button {
+    padding: 0 24px;
+    border: none;
+    border-radius: 9px;
+    background: #244e3b;
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .main-content {
+    padding: 45px 6% 70px;
+  }
+
+  .section-heading {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 25px;
+  }
+
+  .section-heading h2 {
+    margin: 0 0 8px;
+    font-size: 28px;
+    letter-spacing: -0.8px;
+  }
+
+  .section-heading p {
+    margin: 0;
+    color: #777d76;
+    font-size: 14px;
+  }
+
+  .category-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 32px;
+  }
+
+  .category-chip {
+    display: inline-block;
+    padding: 11px 17px;
+    border: 1px solid #e0e3dd;
+    border-radius: 30px;
+    color: #4e554e;
+    background: white;
+    font-size: 13px;
+    text-decoration: none;
+  }
+
+  .category-chip:hover,
+  .category-chip.active {
+    background: #244e3b;
+    border-color: #244e3b;
+    color: white;
+  }
+
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 25px 18px;
+  }
+
+  .product-card {
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid #ecece7;
+    border-radius: 12px;
+    background: white;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(30, 50, 35, 0.08);
+  }
+
+  .product-image {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 260px;
+    overflow: hidden;
+    background: #f0f0eb;
+  }
+
+  .product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+  }
+
+  .product-card:hover .product-image img {
+    transform: scale(1.04);
+  }
+
+  .no-image {
+    color: #a2a69e;
+    font-size: 13px;
+  }
+
+  .condition-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    padding: 7px 10px;
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.95);
+    color: #344b39;
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: capitalize;
+  }
+
+  .product-info {
+    padding: 17px;
+  }
+
+  .product-brand {
+    margin: 0 0 8px;
+    color: #858a82;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .product-title {
+    display: block;
+    overflow: hidden;
+    margin-bottom: 10px;
+    color: #252923;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.5;
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .product-title:hover {
+    color: #42684e;
+  }
+
+  .product-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-bottom: 15px;
+    color: #777d76;
+    font-size: 11px;
+  }
+
+  .product-details span {
+    padding: 5px 8px;
+    border-radius: 4px;
+    background: #f5f5f1;
+  }
+
+  .product-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding-top: 13px;
+    border-top: 1px solid #f0f0eb;
+  }
+
+  .product-price {
+    color: #244e3b;
+    font-size: 19px;
+    font-weight: 800;
+  }
+
+  .view-link {
+    color: #42684e;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .product-actions {
+    display: flex;
+    gap: 8px;
+    padding: 0 17px 17px;
+  }
+
+  .product-actions form {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .product-action-button {
+    width: 100%;
+    min-height: 40px;
+    padding: 10px 8px;
+    border: none;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .product-action-button:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
+
+  .add-to-cart-button {
+    background: #244e3b;
+    color: white;
+  }
+
+  .message-seller-button {
+    background: #e8eee7;
+    color: #244e3b;
+  }
+
+  .empty-state {
+    grid-column: 1 / -1;
+    padding: 65px 20px;
+    border: 1px dashed #d9ded6;
+    border-radius: 12px;
+    background: white;
+    text-align: center;
+  }
+
+  .empty-state h3 {
+    margin-bottom: 10px;
+    font-size: 22px;
+  }
+
+  .empty-state p {
+    color: #777d76;
+    line-height: 1.6;
+  }
+
+  .reset-link {
+    display: inline-block;
+    margin-top: 12px;
+    color: #244e3b;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .footer {
+    padding: 30px 6%;
+    background: #203f30;
+    color: #e8eee7;
+    text-align: center;
+    font-size: 13px;
+  }
+
+  /* Flying product image animation */
+
+  .cart-flying-image {
+    position: fixed;
+    z-index: 99999;
+    pointer-events: none;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+    will-change: transform, opacity;
+  }
+
+  @keyframes cartBadgePop {
+    0% {
+      transform: scale(1);
+    }
+    45% {
+      transform: scale(1.45);
+    }
+    75% {
+      transform: scale(0.9);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  .cart-badge-pop {
+    animation: cartBadgePop 450ms ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cart-badge-pop {
+      animation: none;
+    }
+  }
+
+  @media (max-width: 1000px) {
+    .product-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .product-image {
+      height: 230px;
+    }
+  }
+
+  @media (max-width: 700px) {
+    .navbar {
+      padding: 18px 5%;
+    }
+
+    .nav-links {
+      gap: 14px;
+    }
+
+    .nav-links a:not(.sell-button) {
+      display: none;
+    }
+
+    .hero {
+      padding: 45px 5%;
+    }
+
+    .main-content {
+      padding: 35px 5% 50px;
+    }
+
+    .product-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 15px 12px;
+    }
+
+    .product-image {
+      height: 210px;
+    }
+
+    .product-info {
+      padding: 12px;
+    }
+
+    .product-price {
+      font-size: 16px;
+    }
+
+    .section-heading h2 {
+      font-size: 24px;
+    }
+  }
+
+  @media (max-width: 400px) {
+    .product-image {
+      height: 165px;
+    }
+
+    .search-form button {
+      padding: 0 15px;
+    }
+
+    .sell-button {
+      padding: 10px 12px;
+    }
+  }
+</style>
+
+<div class="looped">
+  <header class="navbar">
+    <%= link_to "loopedt.", listings_path, class: "logo" %>
+
+    <nav class="nav-links">
+      <%= link_to "Discover", listings_path %>
+      <%= link_to "Categories", categories_path %>
+
+      <% if @nav_user %>
+        <%= link_to cart_items_path,
+            class: "cart-nav-link",
+            id: "cart-nav-link" do %>
+          My cart
+
+          <% if @cart_count > 0 %>
+            <span class="cart-nav-badge" id="cart-count-badge">
+              <%= @cart_count > 99 ? "99+" : @cart_count %>
+            </span>
+          <% end %>
+        <% end %>
+
+        <%= link_to inbox_path, class: "messages-nav-link" do %>
+          Messages
+
+          <% unread_count = unread_message_count(@nav_user) %>
+          <% if unread_count > 0 %>
+            <span class="messages-nav-badge">
+              <%= unread_count > 99 ? "99+" : unread_count %>
+            </span>
+          <% end %>
+        <% end %>
+      <% end %>
+
+      <% if @seller_application&.status == "approved" %>
+        <%= link_to "Seller Dashboard",
+            seller_dashboard_path,
+            class: "cart-nav-link" %>
+      <% elsif @seller_application.present? %>
+        <%= link_to "My Application",
+            seller_application_path,
+            class: "cart-nav-link" %>
+      <% end %>
+
+      <%= link_to "Sell an item",
+          @sell_item_path,
+          class: "sell-button" %>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="hero-content">
+      <span class="eyebrow">A more thoughtful way to shop</span>
+
+      <h1>Good finds.<br>Better second lives.</h1>
+
+      <p>
+        Discover pre-loved fashion, unique pieces and everyday essentials.
+        Give great items another chapter with Loopedt.
+      </p>
+
+      <%= form_with url: listings_path, method: :get,
+          local: true, class: "search-form" do |f| %>
+        <%= f.search_field :search,
+            value: params[:search],
+            placeholder: "Search clothes, brands, shoes..." %>
+        <%= f.submit "Search" %>
+      <% end %>
+    </div>
+  </section>
+
+  <main class="main-content">
+    <div class="section-heading">
+      <div>
+        <h2>Discover your next favourite</h2>
+        <p>Unique finds, waiting for a new home.</p>
+      </div>
+    </div>
+
+    <div class="category-list">
+      <%= link_to "All items", listings_path,
+          class: "category-chip #{params[:category_id].blank? ? 'active' : ''}" %>
+
+      <% Category.order(:name).each do |category| %>
+        <%= link_to category.name,
+            listings_path(request.query_parameters.merge(category_id: category.id)),
+            class: "category-chip #{params[:category_id].to_s == category.id.to_s ? 'active' : ''}" %>
+      <% end %>
+    </div>
+
+    <div class="product-grid">
+      <% if @listings.present? %>
+        <% @listings.each do |listing| %>
+          <article class="product-card">
+            <%= link_to listing_path(listing),
+                style: "display:block;text-decoration:none;color:inherit;" do %>
+
+              <div class="product-image">
+                <% if listing.images.attached? %>
+                  <%= image_tag listing.images.first,
+                      alt: listing.title,
+                      loading: "lazy" %>
+                <% else %>
+                  <span class="no-image">No image available</span>
+                <% end %>
+
+                <% if listing.condition.present? %>
+                  <span class="condition-badge">
+                    <%= listing.condition.to_s.humanize %>
+                  </span>
+                <% end %>
+              </div>
+
+              <div class="product-info">
+                <% if listing.brand.present? %>
+                  <p class="product-brand"><%= listing.brand %></p>
+                <% end %>
+
+                <span class="product-title">
+                  <%= listing.title %>
+                </span>
+
+                <div class="product-details">
+                  <% if listing.size.present? %>
+                    <span>Size <%= listing.size %></span>
+                  <% end %>
+
+                  <% if listing.colour.present? %>
+                    <span><%= listing.colour %></span>
+                  <% end %>
+                </div>
+
+                <div class="product-bottom">
+                  <span class="product-price">
+                    <%= number_to_currency(listing.price, unit: "₦", precision: 2) %>
+                  </span>
+                  <span class="view-link">View item →</span>
+                </div>
+              </div>
+            <% end %>
+
+            <% if @nav_user && listing.user_id != @nav_user.id %>
+              <div class="product-actions">
+
+                <%= form_with url: cart_items_path,
+                  method: :post,
+                  local: true,
+                  authenticity_token: true,
+                  data: { cart_form: true } do |form| %>
+
+                  <%= hidden_field_tag :listing_id, listing.id %>
+
+                  <%= form.submit "Add to cart",
+                      class: "product-action-button add-to-cart-button" %>
+                <% end %>
+
+                <%= button_to "Message seller",
+                    message_listing_seller_path(listing_id: listing.id),
+                    method: :post,
+                    form: { style: "flex: 1; min-width: 0;" },
+                    class: "product-action-button message-seller-button" %>
+              </div>
+            <% end %>
+          </article>
+        <% end %>
+      <% else %>
+        <div class="empty-state">
+          <h3>No items found just yet</h3>
+          <p>
+            Try a different search or browse all listings to discover
+            something you love.
+          </p>
+          <%= link_to "Explore all items", listings_path,
+              class: "reset-link" %>
+        </div>
+      <% end %>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>Looped. Great finds deserve another life.</p>
+  </footer>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const cartForms = document.querySelectorAll("[data-cart-form]");
+
+    function animateProductToCart(form) {
+      return new Promise((resolve) => {
+        const productCard = form.closest(".product-card");
+        const productImage = productCard?.querySelector(".product-image img");
+        const cartLink = document.getElementById("cart-nav-link");
+
+        if (
+          !productImage ||
+          !productImage.complete ||
+          !productImage.naturalWidth ||
+          !cartLink ||
+          window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        ) {
+          resolve();
+          return;
+        }
+
+        const imageRect = productImage.getBoundingClientRect();
+        const cartRect = cartLink.getBoundingClientRect();
+
+        const flyingImage = document.createElement("img");
+
+        flyingImage.src = productImage.currentSrc || productImage.src;
+        flyingImage.className = "cart-flying-image";
+
+        flyingImage.style.left = `${imageRect.left}px`;
+        flyingImage.style.top = `${imageRect.top}px`;
+        flyingImage.style.width = `${imageRect.width}px`;
+        flyingImage.style.height = `${imageRect.height}px`;
+
+        document.body.appendChild(flyingImage);
+
+        const moveX =
+          cartRect.left + cartRect.width / 2 -
+          (imageRect.left + imageRect.width / 2);
+
+        const moveY =
+          cartRect.top + cartRect.height / 2 -
+          (imageRect.top + imageRect.height / 2);
+
+        const animation = flyingImage.animate(
+          [
+            {
+              transform: "translate(0, 0) scale(1)",
+              opacity: 1
+            },
+            {
+              transform: `translate(${moveX}px, ${moveY}px) scale(0.12)`,
+              opacity: 0.2
+            }
+          ],
+          {
+            duration: 700,
+            easing: "cubic-bezier(0.45, 0, 0.2, 1)",
+            fill: "forwards"
+          }
+        );
+
+        animation.onfinish = () => {
+          flyingImage.remove();
+          resolve();
+        };
+
+        animation.oncancel = () => {
+          flyingImage.remove();
+          resolve();
+        };
+      });
+    }
+
+    cartForms.forEach((form) => {
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const button = form.querySelector("input[type='submit']");
+        const originalText = button.value;
+
+        button.disabled = true;
+        button.value = "Adding...";
+
+        try {
+          const csrfToken = document.querySelector(
+            "meta[name='csrf-token']"
+          )?.content;
+
+          if (!csrfToken) {
+            throw new Error("Security token missing. Please refresh the page.");
+          }
+
+          const response = await fetch(form.action, {
+            method: "POST",
+            headers: {
+              "Accept": "application/json",
+              "X-CSRF-Token": csrfToken
+            },
+            body: new FormData(form),
+            credentials: "same-origin"
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.error || "Could not add item.");
+          }
+
+          await animateProductToCart(form);
+
+          const cartLink = document.getElementById("cart-nav-link");
+
+          if (!cartLink) {
+            throw new Error("Cart navigation link could not be found.");
+          }
+
+          let badge = document.getElementById("cart-count-badge");
+
+          if (!badge) {
+            badge = document.createElement("span");
+            badge.id = "cart-count-badge";
+            badge.className = "cart-nav-badge";
+            cartLink.appendChild(badge);
+          }
+
+          badge.textContent = data.cart_count > 99
+            ? "99+"
+            : data.cart_count;
+
+          badge.classList.remove("cart-badge-pop");
+          void badge.offsetWidth;
+          badge.classList.add("cart-badge-pop");
+
+          button.value = "Added!";
+
+          setTimeout(() => {
+            button.value = originalText;
+            button.disabled = false;
+          }, 1200);
+
+        } catch (error) {
+          alert(error.message);
+          button.value = originalText;
+          button.disabled = false;
+        }
+      });
+    });
+  });
+</script>

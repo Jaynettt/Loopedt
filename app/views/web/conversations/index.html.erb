@@ -1,0 +1,231 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Inbox | Loopedt</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f8f8f6;
+      color: #20231f;
+    }
+
+    header {
+      background: white;
+      border-bottom: 1px solid #e5e8e2;
+      padding: 20px 7%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      color: #244e3b;
+      font-size: 26px;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    header a:last-child {
+      color: #244e3b;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    main {
+      max-width: 900px;
+      margin: 45px auto;
+      padding: 0 20px;
+    }
+
+    h1 {
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: #70756f;
+      margin-bottom: 28px;
+    }
+
+    .conversation {
+      display: block;
+      background: white;
+      border: 1px solid #e5e8e2;
+      border-radius: 12px;
+      padding: 22px;
+      margin-bottom: 12px;
+      color: inherit;
+      text-decoration: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .conversation:hover {
+      border-color: #244e3b;
+      background: #fcfdfb;
+    }
+
+    .conversation.has-unread {
+      border-color: #e5484d;
+      background: #fffdfd;
+    }
+
+    .conversation-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .conversation h3 {
+      margin: 0;
+      color: #244e3b;
+    }
+
+    .unread-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: #e5484d;
+      color: white;
+      padding: 6px 11px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    .unread-dot {
+      width: 7px;
+      height: 7px;
+      background: white;
+      border-radius: 50%;
+    }
+
+    .conversation p {
+      margin: 0 0 12px;
+    }
+
+    .details {
+      color: #70756f;
+      font-size: 14px;
+    }
+
+    .empty {
+      background: #e8eee7;
+      border-radius: 12px;
+      padding: 35px;
+      text-align: center;
+    }
+
+    .empty p {
+      color: #60685f;
+    }
+
+    .browse-link {
+      display: inline-block;
+      margin-top: 10px;
+      color: #244e3b;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    @media (max-width: 600px) {
+      header {
+        padding: 18px 5%;
+      }
+
+      main {
+        margin: 30px auto;
+      }
+
+      .conversation {
+        padding: 17px;
+      }
+
+      .conversation-top {
+        align-items: flex-start;
+      }
+
+      .conversation h3 {
+        font-size: 16px;
+      }
+
+      .unread-badge {
+        font-size: 11px;
+        padding: 5px 8px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <%= link_to "loopedt.", listings_path, class: "logo" %>
+    <%= link_to "Discover items", listings_path %>
+  </header>
+
+  <main>
+    <h1>Your messages</h1>
+    <p class="subtitle">Chat with buyers and sellers, all in one place.</p>
+
+    <% if @conversations.any? %>
+
+      <% @conversations.each do |conversation| %>
+
+        <% other_person =
+          conversation.buyer_id == @current_user.id ?
+          conversation.seller : conversation.buyer %>
+
+        <% unread_count = @unread_counts[conversation.id].to_i %>
+
+        <%= link_to inbox_conversation_path(conversation),
+            class: "conversation #{'has-unread' if unread_count > 0}" do %>
+
+          <div class="conversation-top">
+            <h3><%= conversation.listing.title %></h3>
+
+            <% if unread_count > 0 %>
+              <span class="unread-badge">
+                <span class="unread-dot"></span>
+                New message<%= unread_count > 1 ? "s" : "" %>
+                (<%= unread_count %>)
+              </span>
+            <% end %>
+          </div>
+
+          <p>
+            Conversation with
+            <strong><%= other_person.username %></strong>
+          </p>
+
+          <div class="details">
+            Status: <%= conversation.status.titleize %>
+            · Started <%= conversation.created_at.strftime("%d %b %Y") %>
+          </div>
+
+        <% end %>
+
+      <% end %>
+
+    <% else %>
+
+      <div class="empty">
+        <h3>No conversations yet</h3>
+        <p>When you contact a buyer or seller, your messages will appear here.</p>
+        <%= link_to "Browse items", listings_path, class: "browse-link" %>
+      </div>
+
+    <% end %>
+  </main>
+</body>
+</html>

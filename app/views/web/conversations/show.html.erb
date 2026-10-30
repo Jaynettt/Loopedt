@@ -1,0 +1,234 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chat | Loopedt</title>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: #f8f8f6;
+      color: #20231f;
+      font-family: Arial, sans-serif;
+    }
+
+    header {
+      background: white;
+      border-bottom: 1px solid #e5e8e2;
+      padding: 18px 7%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      color: #244e3b;
+      font-size: 26px;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    header a:last-child {
+      color: #244e3b;
+      text-decoration: none;
+    }
+
+    main {
+      max-width: 800px;
+      margin: 35px auto;
+      padding: 0 16px;
+    }
+
+    .back {
+      color: #244e3b;
+      text-decoration: none;
+    }
+
+    .chat-card {
+      margin-top: 20px;
+      background: white;
+      border: 1px solid #e5e8e2;
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .chat-header {
+      padding: 22px;
+      background: #e8eee7;
+      border-bottom: 1px solid #dce4db;
+    }
+
+    .chat-header h1 {
+      margin: 0 0 8px;
+      font-size: 22px;
+    }
+
+    .chat-header p {
+      margin: 0;
+      color: #60685f;
+    }
+
+    .messages {
+      min-height: 300px;
+      max-height: 480px;
+      overflow-y: auto;
+      padding: 24px;
+    }
+
+    .message {
+      max-width: 80%;
+      margin-bottom: 18px;
+      padding: 13px 16px;
+      border-radius: 12px;
+      background: #f0f1ed;
+      overflow-wrap: anywhere;
+    }
+
+    .message.mine {
+      margin-left: auto;
+      background: #244e3b;
+      color: white;
+    }
+
+    .sender {
+      display: block;
+      font-size: 12px;
+      font-weight: bold;
+      margin-bottom: 7px;
+      opacity: 0.8;
+    }
+
+    .message p {
+      margin: 0;
+      white-space: pre-wrap;
+    }
+
+    .timestamp {
+      display: block;
+      margin-top: 8px;
+      font-size: 11px;
+      opacity: 0.75;
+    }
+
+    .empty {
+      text-align: center;
+      color: #70756f;
+      padding: 70px 10px;
+    }
+
+    .message-form {
+      padding: 20px;
+      border-top: 1px solid #e5e8e2;
+    }
+
+    .message-form label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 90px;
+      resize: vertical;
+      border: 1px solid #d7ddd5;
+      border-radius: 8px;
+      padding: 13px;
+      font: inherit;
+    }
+
+    button {
+      margin-top: 12px;
+      background: #244e3b;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 13px 20px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .notice {
+      padding: 12px;
+      background: #e8eee7;
+      color: #244e3b;
+      border-radius: 8px;
+    }
+
+    .alert { color: #b42318; }
+  </style>
+</head>
+
+<body>
+  <header>
+    <a class="logo" href="/">loopedt.</a>
+    <a href="/logout" data-turbo-method="delete">Log out</a>
+  </header>
+
+  <main>
+    <%= link_to "← Back to inbox", inbox_path, class: "back" %>
+
+    <section class="chat-card">
+      <div class="chat-header">
+        <h1><%= @conversation.listing.title %></h1>
+        <p>
+          Chat about this item ·
+          <%= number_to_currency(@conversation.listing.price, unit: "₦") %>
+        </p>
+      </div>
+
+      <% if flash[:notice] %>
+        <p class="notice"><%= flash[:notice] %></p>
+      <% end %>
+
+      <% if flash[:alert] %>
+        <p class="alert"><%= flash[:alert] %></p>
+      <% end %>
+
+      <div class="messages">
+        <% if @messages.any? %>
+          <% @messages.each do |message| %>
+            <div class="message <%= 'mine' if message.sender_id == @current_user.id %>">
+              <span class="sender">
+                <%= message.sender.username %>
+              </span>
+
+              <p><%= message.body %></p>
+
+              <span class="timestamp">
+                <%= message.created_at.strftime("%d %b, %H:%M") %>
+              </span>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="empty">
+            <h3>Start the conversation</h3>
+            <p>Ask a question about the item or discuss the purchase.</p>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="message-form">
+        <%= form_with url: send_inbox_message_path(@conversation), method: :post do |form| %>
+          <%= form.label :body, "Your message" %>
+
+          <%= form.text_area :body,
+              required: true,
+              maxlength: 2000,
+              placeholder: "Write a message about this item..." %>
+
+          <p class="timestamp">
+            Keep communication on Loopedt. Messages containing contact details may be blocked.
+          </p>
+
+          <%= form.submit "Send message" %>
+        <% end %>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,9 @@
+one:
+  user: one
+  listing: two
+  quantity: 1
+
+two:
+  user: two
+  listing: one
+  quantity: 1

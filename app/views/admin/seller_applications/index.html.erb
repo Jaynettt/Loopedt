@@ -1,0 +1,468 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Seller Applications | Loopedt Admin</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #f5f6f2;
+      color: #263d32;
+      font-family: Arial, sans-serif;
+    }
+
+    .admin-layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* SIDEBAR */
+
+    .sidebar {
+      width: 245px;
+      background: #244e3b;
+      color: white;
+      padding: 30px 20px;
+      flex-shrink: 0;
+    }
+
+    .brand {
+      font-size: 28px;
+      font-weight: bold;
+      letter-spacing: -1px;
+      margin-bottom: 10px;
+    }
+
+    .admin-label {
+      font-size: 11px;
+      color: #c3d5c9;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 45px;
+    }
+
+    .nav-heading {
+      color: #a9c2b2;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin: 25px 0 12px;
+    }
+
+    .sidebar a {
+      display: block;
+      color: #e8f0eb;
+      text-decoration: none;
+      padding: 13px 14px;
+      border-radius: 8px;
+      font-size: 14px;
+      margin-bottom: 7px;
+    }
+
+    .sidebar a:hover,
+    .sidebar a.active {
+      background: #37634d;
+      color: white;
+    }
+
+    .sidebar-footer {
+      margin-top: 60px;
+      padding-top: 20px;
+      border-top: 1px solid #496c58;
+    }
+
+    /* MAIN CONTENT */
+
+    .main-content {
+      flex: 1;
+      min-width: 0;
+      padding: 35px 4%;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .topbar h1 {
+      margin: 0 0 8px;
+      font-size: 27px;
+      color: #244e3b;
+    }
+
+    .topbar p {
+      margin: 0;
+      color: #849087;
+      font-size: 14px;
+    }
+
+    .back-link {
+      display: inline-block;
+      padding: 11px 16px;
+      background: white;
+      border: 1px solid #e5eae4;
+      color: #244e3b;
+      border-radius: 7px;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    /* SUMMARY */
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+
+    .summary-card {
+      background: white;
+      border: 1px solid #e9ece7;
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .summary-card p {
+      margin: 0 0 12px;
+      color: #849087;
+      font-size: 13px;
+    }
+
+    .summary-card h2 {
+      margin: 0;
+      color: #244e3b;
+      font-size: 29px;
+    }
+
+    /* APPLICATION TABLE */
+
+    .applications-panel {
+      background: white;
+      border: 1px solid #e9ece7;
+      border-radius: 13px;
+      padding: 25px;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 22px;
+    }
+
+    .panel-header h2 {
+      font-size: 18px;
+      margin: 0;
+      color: #244e3b;
+    }
+
+    .application-count {
+      font-size: 12px;
+      color: #849087;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 680px;
+    }
+
+    th {
+      text-align: left;
+      padding: 14px 12px;
+      font-size: 11px;
+      color: #929b94;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      border-bottom: 1px solid #edf0ec;
+    }
+
+    td {
+      padding: 18px 12px;
+      font-size: 13px;
+      color: #56645b;
+      border-bottom: 1px solid #f0f2ef;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .applicant-name {
+      color: #244e3b;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .applicant-email {
+      font-size: 12px;
+      color: #929b94;
+    }
+
+    .shop-name {
+      color: #244e3b;
+      font-weight: 600;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 6px 11px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: bold;
+      text-transform: capitalize;
+    }
+
+    .status-pending {
+      background: #fff2d9;
+      color: #a46b10;
+    }
+
+    .status-approved {
+      background: #e1f2e8;
+      color: #277044;
+    }
+
+    .status-rejected {
+      background: #fbe8e6;
+      color: #b34a40;
+    }
+
+    .review-button {
+      display: inline-block;
+      padding: 8px 13px;
+      background: #244e3b;
+      color: white;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .review-button:hover {
+      background: #37634d;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 55px 15px;
+      color: #929b94;
+    }
+
+    .empty-state h3 {
+      color: #244e3b;
+      margin-bottom: 8px;
+    }
+
+    .empty-state p {
+      font-size: 13px;
+    }
+
+    @media (max-width: 1000px) {
+      .summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 650px) {
+      .admin-layout {
+        display: block;
+      }
+
+      .sidebar {
+        width: 100%;
+        padding: 20px;
+      }
+
+      .admin-label {
+        margin-bottom: 20px;
+      }
+
+      .sidebar-footer {
+        margin-top: 20px;
+      }
+
+      .main-content {
+        padding: 25px 18px;
+      }
+
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .applications-panel {
+        padding: 18px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="admin-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand">loopedt.</div>
+    <div class="admin-label">Administration</div>
+
+    <div class="nav-heading">Workspace</div>
+
+    <a href="<%= admin_root_path %>">▦ &nbsp; Dashboard</a>
+
+    <a href="<%= admin_seller_applications_path %>" class="active">
+      ♙ &nbsp; Seller Applications
+    </a>
+
+    <div class="nav-heading">Storefront</div>
+
+    <a href="<%= listings_path %>">⌂ &nbsp; View Marketplace</a>
+
+    <div class="sidebar-footer">
+      <a href="/">← &nbsp; Back to Loopedt</a>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+
+    <div class="topbar">
+      <div>
+        <h1>Seller Applications</h1>
+        <p>Review and manage people who want to sell on Loopedt.</p>
+      </div>
+
+      <%= link_to "← Dashboard", admin_root_path, class: "back-link" %>
+    </div>
+
+    <!-- APPLICATION SUMMARY -->
+    <section class="summary-grid">
+
+      <div class="summary-card">
+        <p>Total Applications</p>
+        <h2><%= @applications.count %></h2>
+      </div>
+
+      <div class="summary-card">
+        <p>Pending Review</p>
+        <h2><%= @applications.count { |application| application.status == "pending" } %></h2>
+      </div>
+
+      <div class="summary-card">
+        <p>Approved Applications</p>
+        <h2><%= @applications.count { |application| application.status == "approved" } %></h2>
+      </div>
+
+    </section>
+
+    <!-- APPLICATIONS TABLE -->
+    <section class="applications-panel">
+
+      <div class="panel-header">
+        <h2>All Applications</h2>
+
+        <span class="application-count">
+          <%= @applications.count %> applications
+        </span>
+      </div>
+
+      <% if @applications.any? %>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Applicant</th>
+                <th>Shop Name</th>
+                <th>Location</th>
+                <th>Date Submitted</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% @applications.each do |application| %>
+                <tr>
+
+                  <td>
+                    <div class="applicant-name">
+                      <%= application.user.username %>
+                    </div>
+
+                    <div class="applicant-email">
+                      <%= application.user.email %>
+                    </div>
+                  </td>
+
+                  <td>
+                    <span class="shop-name">
+                      <%= application.shop_name %>
+                    </span>
+                  </td>
+
+                  <td>
+                    <%= application.location.presence || "Not provided" %>
+                  </td>
+
+                  <td>
+                    <%= application.created_at.strftime("%d %b %Y") %>
+                  </td>
+
+                  <td>
+                    <span class="status status-<%= application.status %>">
+                      <%= application.status %>
+                    </span>
+                  </td>
+
+                  <td>
+                    <%= link_to "Review →",
+                        admin_seller_application_path(application),
+                        class: "review-button" %>
+                  </td>
+
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+
+      <% else %>
+
+        <div class="empty-state">
+          <h3>No applications yet</h3>
+          <p>Seller applications will appear here when users apply to become sellers.</p>
+        </div>
+
+      <% end %>
+
+    </section>
+
+  </main>
+
+</div>
+
+</body>
+</html>

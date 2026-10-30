@@ -1,0 +1,169 @@
+
+<% content_for :title, "My Orders | Loopedt" %>
+
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  .orders-page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 24px;
+    color: #26372e;
+    font-family: Arial, sans-serif;
+  }
+
+  .orders-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+  }
+
+  .orders-header h1 {
+    margin: 0;
+    font-size: 30px;
+  }
+
+  .back-link {
+    color: #315d45;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .order-card {
+    display: grid;
+    grid-template-columns: 100px 1fr auto;
+    gap: 20px;
+    align-items: center;
+    padding: 20px;
+    margin-bottom: 16px;
+    background: #fff;
+    border: 1px solid #e7ebe7;
+    border-radius: 14px;
+  }
+
+  .order-image {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 10px;
+    background: #f1f3f0;
+  }
+
+  .order-details h3 {
+    margin: 0 0 8px;
+    font-size: 17px;
+  }
+
+  .order-details p {
+    margin: 5px 0;
+    color: #69756d;
+    font-size: 14px;
+  }
+
+  .order-price {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  .order-status {
+    display: inline-block;
+    padding: 6px 11px;
+    border-radius: 20px;
+    background: #f0f2ed;
+    color: #526253;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: capitalize;
+  }
+
+  .order-link {
+    display: inline-block;
+    margin-top: 12px;
+    color: #315d45;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 14px;
+  }
+
+  .empty-orders {
+    padding: 55px 20px;
+    text-align: center;
+    background: #f7f8f5;
+    border-radius: 14px;
+  }
+
+  .empty-orders p {
+    color: #69756d;
+  }
+
+  @media (max-width: 600px) {
+    .order-card {
+      grid-template-columns: 75px 1fr;
+      gap: 14px;
+    }
+
+    .order-image {
+      width: 75px;
+      height: 75px;
+    }
+
+    .order-summary {
+      grid-column: 2;
+    }
+  }
+</style>
+
+<div class="orders-page">
+  <div class="orders-header">
+    <h1>Orders</h1>
+    <%= link_to "← Back to Discover", listings_path, class: "back-link" %>
+  </div>
+
+  <% if @orders.any? %>
+    <% @orders.each do |order| %>
+      <div class="order-card">
+        <% if order.listing&.images&.attached? %>
+          <%= image_tag order.listing.images.first,
+              class: "order-image",
+              alt: order.listing.brand.presence || "Listing" %>
+        <% else %>
+          <div class="order-image"></div>
+        <% end %>
+
+        <div class="order-details">
+          <h3>
+            <%= order.listing&.brand.presence || "Listing ##{order.listing_id}" %>
+          </h3>
+
+          <p>Buyer: <%= order.buyer&.email || "Unavailable" %></p>
+          <p>Seller: <%= order.seller&.email || "Unavailable" %></p>
+          <p>Placed: <%= order.created_at.strftime("%d %b %Y") %></p>
+
+          <%= link_to "View order", order_path(order), class: "order-link" %>
+        </div>
+
+        <div class="order-summary">
+          <div class="order-price">
+            <%= number_to_currency(order.amount, unit: "₦", precision: 2) %>
+          </div>
+
+          <span class="order-status">
+            <%= order.status %>
+          </span>
+        </div>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="empty-orders">
+      <h2>No orders yet</h2>
+      <p>Your orders will appear here when you make or receive a purchase.</p>
+      <%= link_to "Explore listings", listings_path, class: "back-link" %>
+    </div>
+  <% end %>
+</div>

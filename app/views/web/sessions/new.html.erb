@@ -1,0 +1,165 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Log in | Loopedt</title>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #f8f8f6;
+      color: #20231f;
+      font-family: Arial, sans-serif;
+      padding: 40px 20px;
+    }
+
+    .page {
+      max-width: 460px;
+      margin: 0 auto;
+    }
+
+    .logo {
+      display: inline-block;
+      margin-bottom: 25px;
+      color: #244e3b;
+      font-size: 30px;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    .login-card, .seller-card {
+      border-radius: 16px;
+      padding: 30px;
+    }
+
+    .login-card {
+      background: white;
+      border: 1px solid #e5e8e2;
+    }
+
+    h1 { margin: 0 0 10px; font-size: 27px; }
+
+    .muted {
+      color: #70756f;
+      line-height: 1.6;
+    }
+
+    label {
+      display: block;
+      margin: 20px 0 8px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    input {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid #d7ddd5;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+
+    button, .seller-link {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      margin-top: 22px;
+      border: 0;
+      border-radius: 8px;
+      background: #244e3b;
+      color: white;
+      font-size: 15px;
+      font-weight: bold;
+      text-align: center;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .signup {
+      margin-top: 22px;
+      text-align: center;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    a { color: #244e3b; }
+
+    .seller-card {
+      margin-top: 22px;
+      background: #e8eee7;
+    }
+
+    .seller-card h2 {
+      margin: 0 0 10px;
+      color: #244e3b;
+      font-size: 21px;
+    }
+
+    .seller-link {
+      background: transparent;
+      color: #244e3b;
+      border: 1px solid #244e3b;
+    }
+
+    .alert { color: #b42318; }
+    .notice { color: #244e3b; }
+
+    @media (max-width: 480px) {
+      .login-card, .seller-card { padding: 23px; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <a class="logo" href="/">loopedt.</a>
+
+    <section class="login-card">
+      <h1>Welcome back</h1>
+      <p class="muted">
+        Sign in to discover unique finds and connect with the Loopedt community.
+      </p>
+
+      <% if flash[:alert] %>
+        <p class="alert"><%= flash[:alert] %></p>
+      <% end %>
+
+      <% if flash[:notice] %>
+        <p class="notice"><%= flash[:notice] %></p>
+      <% end %>
+
+      <%= form_with url: "/login", method: :post do |form| %>
+        <%= form.label :email, "Email address" %>
+        <%= form.email_field :email, required: true, autocomplete: "email" %>
+
+        <%= form.label :password, "Password" %>
+        <%= form.password_field :password, required: true, autocomplete: "current-password" %>
+
+        <%= form.submit "Log in" %>
+      <% end %>
+
+      <div class="signup">
+        New to Loopedt?<br>
+        <%= link_to "Create an account", "/signup" %>
+      </div>
+    </section>
+
+    <section class="seller-card">
+      <h2>Ready to sell on Loopedt?</h2>
+
+      <p class="muted">
+        Give your pre-loved items a new home. Create your seller account,
+        submit your shop details and start your journey with our marketplace.
+      </p>
+
+      <%= link_to "Become a seller →", "/signup?intent=seller",
+          class: "seller-link" %>
+    </section>
+  </main>
+</body>
+</html>

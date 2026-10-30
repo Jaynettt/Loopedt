@@ -1,0 +1,316 @@
+
+<% content_for :title, "Seller Dashboard | Loopedt" %>
+
+<style>
+  * { box-sizing: border-box; }
+
+  .dashboard {
+    max-width: 1200px;
+    margin: auto;
+    padding: 35px 25px;
+    font-family: Arial, sans-serif;
+    color: #26372e;
+  }
+
+  .dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 35px;
+  }
+
+  .dashboard-header h1 {
+    margin: 0 0 8px;
+    font-size: 30px;
+  }
+
+  .dashboard-header p {
+    margin: 0;
+    color: #78827a;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .dashboard-btn {
+    display: inline-block;
+    padding: 12px 18px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  .primary-btn {
+    background: #244e3b;
+    color: white;
+  }
+
+  .secondary-btn {
+    border: 1px solid #244e3b;
+    color: #244e3b;
+  }
+
+  /* Messages button and unread notification */
+  .messages-nav-link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .messages-nav-badge {
+    position: absolute;
+    top: -9px;
+    right: -9px;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #e5484d;
+    color: white;
+    border: 2px solid white;
+    font-size: 11px;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-bottom: 40px;
+  }
+
+  .stat-card {
+    padding: 24px;
+    background: #f6f8f5;
+    border: 1px solid #e8ede8;
+    border-radius: 14px;
+  }
+
+  .stat-card p {
+    margin: 0 0 12px;
+    color: #748077;
+    font-size: 14px;
+  }
+
+  .stat-card h2 {
+    margin: 0;
+    font-size: 30px;
+  }
+
+  .section { margin-bottom: 40px; }
+
+  .section-header { margin-bottom: 18px; }
+
+  .section-header h2 {
+    margin: 0;
+    font-size: 21px;
+  }
+
+  .listing-card,
+  .order-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 18px;
+    padding: 18px;
+    margin-bottom: 12px;
+    border: 1px solid #e8ede8;
+    border-radius: 12px;
+  }
+
+  .listing-info h3,
+  .order-info h3 {
+    margin: 0 0 7px;
+    font-size: 16px;
+  }
+
+  .listing-info p,
+  .order-info p {
+    margin: 4px 0;
+    color: #78827a;
+    font-size: 13px;
+  }
+
+  .listing-status {
+    padding: 6px 10px;
+    border-radius: 20px;
+    background: #edf4ed;
+    color: #315d45;
+    font-size: 12px;
+    text-transform: capitalize;
+  }
+
+  .listing-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .listing-actions a {
+    color: #315d45;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .empty-state {
+    padding: 35px;
+    text-align: center;
+    background: #f7f8f5;
+    border-radius: 12px;
+    color: #78827a;
+  }
+
+  .dashboard-footer {
+    margin-top: 45px;
+    padding-top: 20px;
+    border-top: 1px solid #e8ede8;
+  }
+
+  .dashboard-footer a {
+    color: #315d45;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  @media (max-width: 700px) {
+    .stats-grid { grid-template-columns: 1fr; }
+
+    .listing-card,
+    .order-card {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .dashboard-header h1 { font-size: 25px; }
+  }
+</style>
+
+<div class="dashboard">
+
+  <div class="dashboard-header">
+    <div>
+      <h1>Seller Dashboard</h1>
+      <p>
+        Welcome back,
+        <%= @seller.first_name.presence || @seller.username %>.
+      </p>
+    </div>
+
+    <div class="header-actions">
+      <%= link_to "Discover", listings_path,
+          class: "dashboard-btn secondary-btn" %>
+
+      <%= link_to inbox_path,
+          class: "dashboard-btn secondary-btn messages-nav-link" do %>
+        Messages
+
+        <% unread_count = unread_message_count(@seller) %>
+        <% if unread_count > 0 %>
+          <span class="messages-nav-badge">
+            <%= unread_count > 99 ? "99+" : unread_count %>
+          </span>
+        <% end %>
+      <% end %>
+
+      <%= link_to "+ Add a listing", new_listing_path,
+          class: "dashboard-btn primary-btn" %>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <p>Total listings</p>
+      <h2><%= @total_listings %></h2>
+    </div>
+
+    <div class="stat-card">
+      <p>Available listings</p>
+      <h2><%= @active_listings %></h2>
+    </div>
+
+    <div class="stat-card">
+      <p>Sold listings</p>
+      <h2><%= @sold_listings %></h2>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="section-header">
+      <h2>Your Listings</h2>
+    </div>
+
+    <% if @listings.any? %>
+      <% @listings.each do |listing| %>
+        <div class="listing-card">
+          <div class="listing-info">
+            <h3><%= listing.title %></h3>
+            <p><%= listing.brand %> · <%= listing.condition %></p>
+            <p><%= number_to_currency(listing.price, unit: "₦") %></p>
+          </div>
+
+          <div class="listing-actions">
+            <span class="listing-status"><%= listing.status %></span>
+            <%= link_to "View", listing_path(listing) %>
+            <%= link_to "Edit", edit_listing_path(listing) %>
+          </div>
+        </div>
+      <% end %>
+    <% else %>
+      <div class="empty-state">
+        <p>You haven't published any listings yet.</p>
+        <%= link_to "Add your first listing",
+            new_listing_path,
+            class: "dashboard-btn primary-btn" %>
+      </div>
+    <% end %>
+  </section>
+
+  <section class="section">
+    <div class="section-header">
+      <h2>Recent Orders</h2>
+    </div>
+
+    <% if @recent_orders.any? %>
+      <% @recent_orders.each do |order| %>
+        <div class="order-card">
+          <div class="order-info">
+            <h3><%= order.listing&.title || "Order ##{order.id}" %></h3>
+            <p>
+              Buyer:
+              <%= order.buyer&.username || order.buyer&.email || "Unavailable" %>
+            </p>
+            <p><%= order.created_at.strftime("%d %b %Y") %></p>
+          </div>
+
+          <div>
+            <strong>
+              <%= number_to_currency(order.amount, unit: "₦") %>
+            </strong>
+            <p><span class="listing-status"><%= order.status %></span></p>
+          </div>
+        </div>
+      <% end %>
+    <% else %>
+      <div class="empty-state">
+        <p>You don't have any orders yet.</p>
+      </div>
+    <% end %>
+  </section>
+
+  <div class="dashboard-footer">
+    <%= link_to "← Back to marketplace", listings_path %>
+  </div>
+
+</div>

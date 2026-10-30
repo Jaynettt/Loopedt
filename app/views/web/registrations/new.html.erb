@@ -1,0 +1,132 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Create an account | Loopedt</title>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 35px 20px;
+      background: #f8f8f6;
+      color: #20231f;
+      font-family: Arial, sans-serif;
+    }
+
+    .card {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 32px;
+      background: white;
+      border: 1px solid #e5e8e2;
+      border-radius: 16px;
+    }
+
+    .logo {
+      color: #244e3b;
+      font-size: 29px;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    h1 { margin-top: 25px; }
+
+    .muted { color: #70756f; line-height: 1.5; }
+
+    label {
+      display: block;
+      margin: 17px 0 7px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d7ddd5;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 24px;
+      padding: 14px;
+      background: #244e3b;
+      color: white;
+      border: 0;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .errors {
+      padding: 12px;
+      background: #fff0ef;
+      color: #b42318;
+      border-radius: 8px;
+    }
+
+    a { color: #244e3b; }
+  </style>
+</head>
+
+<body>
+  <main class="card">
+    <a class="logo" href="/">loopedt.</a>
+
+    <h1>Create your account</h1>
+    <p class="muted">
+      Join Loopedt to discover and buy unique pre-loved items.
+    </p>
+
+    <% if @user&.errors&.any? %>
+      <div class="errors">
+        <strong>Please check the following:</strong>
+        <ul>
+          <% @user.errors.full_messages.each do |error| %>
+            <li><%= error %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <%= form_with model: @user, url: "/signup", method: :post do |form| %>
+
+      <% if params[:intent] == "seller" %>
+        <%= hidden_field_tag :intent, "seller" %>
+      <% end %>
+
+      <%= form.label :username, "Username" %>
+      <%= form.text_field :username, required: true, autocomplete: "username" %>
+
+      <%= form.label :first_name, "First name" %>
+      <%= form.text_field :first_name, required: true, autocomplete: "given-name" %>
+
+      <%= form.label :last_name, "Last name" %>
+      <%= form.text_field :last_name, required: true, autocomplete: "family-name" %>
+
+      <%= form.label :email, "Email address" %>
+      <%= form.email_field :email, required: true, autocomplete: "email" %>
+
+      <%= form.label :password, "Password (at least 8 characters)" %>
+      <%= form.password_field :password, required: true, minlength: 8, autocomplete: "new-password" %>
+
+      <%= form.label :password_confirmation, "Confirm password" %>
+      <%= form.password_field :password_confirmation, required: true, minlength: 8, autocomplete: "new-password" %>
+
+      <%= form.submit(params[:intent] == "seller" ? "Create seller account" : "Create an account") %>
+    <% end %>
+
+    <p class="muted">
+      Already registered?
+      <%= link_to "Log in", "/login" %>
+    </p>
+  </main>
+</body>
+</html>

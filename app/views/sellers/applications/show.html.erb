@@ -1,0 +1,221 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seller Application | Loopedt</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f8f8f6;
+      color: #26352c;
+    }
+
+    .navbar {
+      background: #244e3b;
+      padding: 20px 7%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      color: white;
+      font-size: 25px;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    .nav-link {
+      color: white;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .container {
+      max-width: 850px;
+      margin: 60px auto;
+      padding: 0 20px;
+    }
+
+    .page-heading {
+      margin-bottom: 30px;
+    }
+
+    .page-heading h1 {
+      font-size: 30px;
+      margin-bottom: 10px;
+    }
+
+    .page-heading p {
+      color: #777;
+      line-height: 1.6;
+    }
+
+    .application-card {
+      background: white;
+      border-radius: 14px;
+      padding: 35px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+    }
+
+    .status {
+      display: inline-block;
+      padding: 9px 16px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: bold;
+      margin-bottom: 25px;
+      text-transform: capitalize;
+    }
+
+    .pending {
+      background: #fff3d6;
+      color: #946200;
+    }
+
+    .approved {
+      background: #e1f4e8;
+      color: #237444;
+    }
+
+    .rejected {
+      background: #fde5e5;
+      color: #a83232;
+    }
+
+    .details {
+      margin-top: 25px;
+    }
+
+    .detail-item {
+      padding: 18px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .detail-item:last-child {
+      border-bottom: none;
+    }
+
+    .detail-item small {
+      display: block;
+      color: #888;
+      margin-bottom: 7px;
+    }
+
+    .detail-item p {
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .message {
+      background: #f4f7f4;
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 25px;
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .button {
+      display: inline-block;
+      margin-top: 25px;
+      padding: 13px 22px;
+      background: #244e3b;
+      color: white;
+      border-radius: 7px;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .button:hover {
+      background: #193b2b;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        margin: 35px auto;
+      }
+
+      .application-card {
+        padding: 24px;
+      }
+
+      .page-heading h1 {
+        font-size: 25px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="navbar">
+    <%= link_to "Loopedt", listings_path, class: "logo" %>
+    <%= link_to "Back to Marketplace", listings_path, class: "nav-link" %>
+  </nav>
+
+  <main class="container">
+    <div class="page-heading">
+      <h1>Your Seller Application</h1>
+      <p>Track the progress of your application to become a seller on Loopedt.</p>
+    </div>
+
+    <div class="application-card">
+      <span class="status <%= @application.status %>">
+        <%= @application.status.humanize %>
+      </span>
+
+      <div class="details">
+        <div class="detail-item">
+          <small>Shop Name</small>
+          <p><%= @application.shop_name %></p>
+        </div>
+
+        <div class="detail-item">
+          <small>Shop Description</small>
+          <p><%= @application.description %></p>
+        </div>
+
+        <div class="detail-item">
+          <small>Location</small>
+          <p><%= @application.location %></p>
+        </div>
+
+        <div class="detail-item">
+          <small>Application Submitted</small>
+          <p><%= @application.created_at.strftime("%B %d, %Y") %></p>
+        </div>
+      </div>
+
+      <% if @application.status == "pending" %>
+        <div class="message">
+          Your application has been received and is currently under review.
+          We'll update your application status once the review is complete.
+        </div>
+
+      <% elsif @application.status == "approved" %>
+        <div class="message">
+          Congratulations! Your seller application has been approved.
+          You can now access your seller dashboard and start managing your shop.
+        </div>
+
+        <%= link_to "Go to Seller Dashboard", seller_dashboard_path, class: "button" %>
+
+      <% elsif @application.status == "rejected" %>
+        <div class="message">
+          Unfortunately, your application was not approved.
+          Please contact the Loopedt team for further information.
+        </div>
+      <% end %>
+    </div>
+  </main>
+</body>
+</html>

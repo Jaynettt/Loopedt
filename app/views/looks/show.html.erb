@@ -1,0 +1,22 @@
+
+<div style="max-width:850px;margin:60px auto;padding:25px;font-family:Arial,sans-serif;color:#26352c;">
+  <%= link_to "← Back to marketplace", listings_path,
+      style: "color:#42684e;text-decoration:none;" %>
+
+  <h1 style="margin-top:30px;">Your inspiration look</h1>
+
+  <h2 style="margin-top:15px;"><%= @look.title %></h2>
+
+  <% if @look.inspiration_image.attached? %>
+    <%= image_tag @look.inspiration_image,
+        style: "width:100%;max-width:450px;margin-top:20px;border-radius:14px;" %>
+  <% end %>
+
+  <div style="margin-top:25px;padding:20px;background:#f4f7f4;border-radius:10px;">
+    <strong>Image uploaded successfully!</strong>
+    <p style="margin-top:10px;color:#68736b;">
+      Your inspiration has been saved. AI outfit analysis and product matching
+      will be connected in the next stage.
+    </p>
+  </div>
+</div>

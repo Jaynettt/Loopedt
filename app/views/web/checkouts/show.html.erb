@@ -1,0 +1,126 @@
+
+<div class="checkout-page">
+  <h1>Review your order</h1>
+
+  <div class="checkout-card">
+    <h2>Payment summary</h2>
+
+    <div class="checkout-row">
+      <span>Subtotal</span>
+      <strong><%= number_to_currency(@checkout.subtotal, unit: "₦", precision: 2) %></strong>
+    </div>
+
+    <div class="checkout-row">
+      <span>Service fee</span>
+      <strong><%= number_to_currency(@checkout.service_fee, unit: "₦", precision: 2) %></strong>
+    </div>
+
+    <div class="checkout-row">
+      <span>Payment processing fee</span>
+      <strong><%= number_to_currency(@checkout.payment_fee, unit: "₦", precision: 2) %></strong>
+    </div>
+
+    <hr>
+
+    <div class="checkout-row total">
+      <span>Total</span>
+      <strong><%= number_to_currency(@checkout.total_amount, unit: "₦", precision: 2) %></strong>
+    </div>
+  </div>
+
+  <div class="checkout-card">
+    <h2>Items in this order</h2>
+
+    <% @checkout.orders.includes(:listing, :seller).each do |order| %>
+      <div class="checkout-item">
+        <div>
+          <strong><%= order.listing.title %></strong>
+          <p>Seller: <%= order.seller.email %></p>
+        </div>
+
+        <strong>
+          <%= number_to_currency(order.amount, unit: "₦", precision: 2) %>
+        </strong>
+      </div>
+    <% end %>
+  </div>
+
+  <% if @checkout.status == "pending" %>
+    <p>Your payment will be processed securely by Paystack.</p>
+
+    <%= button_to "Pay with Paystack",
+                  pay_checkout_path(@checkout),
+                  method: :post,
+                  class: "pay-button" %>
+
+  <% elsif @checkout.status == "paid" %>
+    <div class="success-message">
+      Payment successful! Your order is confirmed.
+    </div>
+  <% else %>
+    <p>Checkout status: <%= @checkout.status.capitalize %></p>
+  <% end %>
+
+  <%= link_to "Back to cart", cart_items_path %>
+</div>
+
+<style>
+  .checkout-page {
+    max-width: 750px;
+    margin: 50px auto;
+    padding: 20px;
+    color: #222;
+  }
+
+  .checkout-card {
+    background: white;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+    padding: 25px;
+    margin: 20px 0;
+  }
+
+  .checkout-row,
+  .checkout-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    padding: 14px 0;
+  }
+
+  .checkout-item {
+    border-bottom: 1px solid #eee;
+  }
+
+  .checkout-item p {
+    color: #777;
+    font-size: 13px;
+  }
+
+  .total {
+    font-size: 20px;
+    color: #16834a;
+  }
+
+  .pay-button {
+    background: #16834a;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 15px 25px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+    margin: 20px 0;
+  }
+
+  .success-message {
+    background: #e8f7ed;
+    color: #16834a;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 20px 0;
+  }
+</style>

@@ -1,0 +1,147 @@
+
+<style>
+  .sell-page {
+    max-width: 760px;
+    margin: 45px auto;
+    padding: 35px;
+    background: #fff;
+    border-radius: 16px;
+    color: #24372a;
+    font-family: Arial, sans-serif;
+    box-shadow: 0 8px 35px rgba(0,0,0,.05);
+  }
+
+  .sell-page h1 {
+    font-size: 34px;
+    margin-bottom: 10px;
+  }
+
+  .sell-page .intro {
+    color: #727970;
+    margin-bottom: 30px;
+    line-height: 1.6;
+  }
+
+  .sell-form label {
+    display: block;
+    font-weight: 700;
+    margin: 20px 0 8px;
+    font-size: 14px;
+  }
+
+  .sell-form input,
+  .sell-form textarea,
+  .sell-form select {
+    width: 100%;
+    padding: 13px;
+    border: 1px solid #dce2da;
+    border-radius: 8px;
+    font-size: 14px;
+    background: #fff;
+  }
+
+  .sell-form textarea {
+    min-height: 120px;
+    resize: vertical;
+  }
+
+  .sell-form input[type="file"] {
+    background: #f6f8f5;
+  }
+
+  .sell-submit {
+    width: 100%;
+    margin-top: 28px;
+    padding: 15px;
+    border: none;
+    border-radius: 8px;
+    background: #244e3b;
+    color: white;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .sell-submit:hover {
+    background: #183a29;
+  }
+
+  .back-link {
+    display: inline-block;
+    margin-bottom: 25px;
+    color: #42684e;
+    text-decoration: none;
+    font-size: 14px;
+  }
+
+  @media (max-width: 600px) {
+    .sell-page {
+      margin: 20px 12px;
+      padding: 23px;
+    }
+
+    .sell-page h1 {
+      font-size: 28px;
+    }
+  }
+</style>
+
+<div class="sell-page">
+  <%= link_to "← Back to marketplace", listings_path, class: "back-link" %>
+
+  <h1>Sell something you love.</h1>
+  <p class="intro">
+    Give your pre-loved pieces a new home. Add the details below
+    to list your item on Looped.
+  </p>
+
+  <%= form_with model: @listing, url: listings_path,
+      local: true, html: { multipart: true }, class: "sell-form" do |f| %>
+
+    <% if @listing.errors.any? %>
+      <div style="color:#b42318;">
+        <h3>Please correct these errors:</h3>
+        <ul>
+          <% @listing.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <label>Item title</label>
+    <%= f.text_field :title, placeholder: "e.g. Vintage denim jacket", required: true %>
+
+    <label>Description</label>
+    <%= f.text_area :description, placeholder: "Describe your item, its features and condition...", required: true %>
+
+    <label>Category</label>
+    <%= f.collection_select :category_id, Category.order(:name),
+        :id, :name, { prompt: "Choose a category" }, required: true %>
+
+    <label>Price (NGN)</label>
+    <%= f.number_field :price, min: 0, step: 0.01,
+        placeholder: "e.g. 25000", required: true %>
+
+    <label>Condition</label>
+    <%= f.select :condition,
+        [["New", "New"], ["Like New", "Like New"], ["Good", "Good"], ["Fair", "Fair"]],
+        { prompt: "Select condition" }, required: true %>
+
+    <label>Brand</label>
+    <%= f.text_field :brand, placeholder: "e.g. Levi's" %>
+
+    <label>Size</label>
+    <%= f.text_field :size, placeholder: "e.g. M, 42, Medium" %>
+
+    <label>Colour</label>
+    <%= f.text_field :colour, placeholder: "e.g. Blue" %>
+
+    <label>Product photos</label>
+    <%= file_field_tag "images[]", multiple: true, accept: "image/*" %>
+
+    <%= f.hidden_field :status, value: "available" %>
+
+    <%= f.submit "Publish listing", class: "sell-submit" %>
+  <% end %>
+</div>

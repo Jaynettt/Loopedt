@@ -1,0 +1,332 @@
+
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    background: #f8f8f6;
+    color: #24372a;
+    font-family: Arial, sans-serif;
+  }
+
+  .profile-page {
+    max-width: 1150px;
+    margin: 40px auto;
+    padding: 0 22px;
+  }
+
+  .profile-back {
+    display: inline-block;
+    margin-bottom: 24px;
+    color: #42684e;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .profile-header {
+    background: white;
+    border: 1px solid #e5e9e3;
+    border-radius: 16px;
+    padding: 35px;
+    margin-bottom: 38px;
+  }
+
+  .profile-shop-name {
+    font-size: 30px;
+    margin: 0 0 12px;
+    color: #244e3b;
+  }
+
+  .profile-username {
+    color: #788278;
+    font-size: 14px;
+    margin-bottom: 18px;
+  }
+
+  .verified-label {
+    display: inline-block;
+    margin-left: 7px;
+    color: #244e3b;
+    background: #eaf5ed;
+    padding: 5px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: bold;
+  }
+
+  .profile-description {
+    color: #667168;
+    line-height: 1.7;
+    max-width: 700px;
+    margin-bottom: 22px;
+  }
+
+  .profile-location {
+    color: #667168;
+    font-size: 14px;
+    margin-bottom: 22px;
+  }
+
+  .profile-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 35px;
+    padding-top: 22px;
+    border-top: 1px solid #e9ece7;
+  }
+
+  .profile-stat strong {
+    display: block;
+    color: #244e3b;
+    font-size: 22px;
+    margin-bottom: 5px;
+  }
+
+  .profile-stat span {
+    color: #788278;
+    font-size: 13px;
+  }
+
+  .listings-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 22px;
+  }
+
+  .listings-heading h2 {
+    margin: 0;
+    font-size: 23px;
+  }
+
+  .listings-heading span {
+    color: #788278;
+    font-size: 14px;
+  }
+
+  .listings-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px;
+  }
+
+  .product-card {
+    display: block;
+    overflow: hidden;
+    background: white;
+    border: 1px solid #e5e9e3;
+    border-radius: 13px;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+
+  .product-card:hover {
+    transform: translateY(-3px);
+    border-color: #244e3b;
+  }
+
+  .product-image {
+    width: 100%;
+    height: 260px;
+    display: block;
+    object-fit: cover;
+    background: #f0f3ef;
+  }
+
+  .product-placeholder {
+    height: 260px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #f0f3ef;
+    color: #879187;
+    font-size: 13px;
+  }
+
+  .product-info {
+    padding: 17px;
+  }
+
+  .product-category {
+    color: #788278;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.7px;
+    margin-bottom: 8px;
+  }
+
+  .product-info h3 {
+    margin: 0 0 10px;
+    font-size: 16px;
+    color: #244e3b;
+  }
+
+  .product-price {
+    font-size: 18px;
+    font-weight: bold;
+    color: #244e3b;
+    margin: 0;
+  }
+
+  .empty-listings {
+    background: white;
+    border: 1px solid #e5e9e3;
+    border-radius: 13px;
+    padding: 45px 20px;
+    text-align: center;
+    color: #788278;
+  }
+
+  .empty-listings h3 {
+    color: #244e3b;
+  }
+
+  @media (max-width: 800px) {
+    .listings-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 15px;
+    }
+
+    .product-image,
+    .product-placeholder {
+      height: 220px;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .profile-page {
+      margin: 25px auto;
+      padding: 0 15px;
+    }
+
+    .profile-header {
+      padding: 23px;
+    }
+
+    .profile-shop-name {
+      font-size: 25px;
+    }
+
+    .profile-stats {
+      gap: 22px;
+    }
+
+    .listings-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .product-image,
+    .product-placeholder {
+      height: 170px;
+    }
+
+    .product-info {
+      padding: 12px;
+    }
+
+    .product-info h3 {
+      font-size: 14px;
+    }
+
+    .product-price {
+      font-size: 16px;
+    }
+  }
+</style>
+
+<div class="profile-page">
+  <%= link_to "← Back to marketplace", listings_path, class: "profile-back" %>
+
+  <section class="profile-header">
+    <h1 class="profile-shop-name">
+      <%= @seller_application.shop_name %>
+    </h1>
+
+    <div class="profile-username">
+      @<%= @seller.username %>
+
+      <% if @seller.verified? %>
+        <span class="verified-label">Verified</span>
+      <% end %>
+    </div>
+
+    <p class="profile-description">
+      <%= @seller_application.description %>
+    </p>
+
+    <p class="profile-location">
+      <strong>Location:</strong>
+      <%= @seller_application.location %>
+    </p>
+
+    <div class="profile-stats">
+      <div class="profile-stat">
+        <strong><%= @listings.size %></strong>
+        <span>Available items</span>
+      </div>
+
+      <div class="profile-stat">
+        <strong><%= @completed_sales %></strong>
+        <span>Completed sales</span>
+      </div>
+
+      <div class="profile-stat">
+        <strong><%= @seller.created_at.strftime("%b %Y") %></strong>
+        <span>Joined Loopedt</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="listings-heading">
+      <h2>Shop items</h2>
+      <span><%= @listings.size %> items</span>
+    </div>
+
+    <% if @listings.any? %>
+      <div class="listings-grid">
+        <% @listings.each do |listing| %>
+          <%= link_to listing_path(listing), class: "product-card" do %>
+
+            <% if listing.images.attached? %>
+              <%= image_tag listing.images.first,
+                  class: "product-image",
+                  alt: listing.title %>
+            <% else %>
+              <div class="product-placeholder">
+                No product photo
+              </div>
+            <% end %>
+
+            <div class="product-info">
+              <div class="product-category">
+                <%= listing.category&.name || "Pre-loved item" %>
+              </div>
+
+              <h3><%= listing.title %></h3>
+
+              <p class="product-price">
+                <%= number_to_currency(
+                  listing.price,
+                  unit: "₦",
+                  precision: 0
+                ) %>
+              </p>
+            </div>
+
+          <% end %>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="empty-listings">
+        <h3>No available items yet</h3>
+        <p>This seller hasn't listed any available items at the moment.</p>
+      </div>
+    <% end %>
+  </section>
+</div>

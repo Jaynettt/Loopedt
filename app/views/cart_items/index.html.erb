@@ -1,0 +1,203 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My Cart | Loopedt</title>
+
+  <style>
+    body {
+      margin: 0;
+      background: #f8f8f6;
+      color: #244e3b;
+      font-family: Arial, sans-serif;
+    }
+
+    header {
+      padding: 22px 8%;
+      background: #244e3b;
+      color: white;
+    }
+
+    header a {
+      color: white;
+      text-decoration: none;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    main {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .cart-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .cart-heading h1 {
+      margin: 0;
+    }
+
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      padding: 20px 0;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .item-details {
+      flex: 1;
+    }
+
+    button, .button {
+      display: inline-block;
+      background: #244e3b;
+      color: white;
+      padding: 10px 15px;
+      border: 0;
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    input {
+      width: 55px;
+      padding: 8px;
+    }
+
+    .remove {
+      background: #eee;
+      color: #333;
+    }
+
+    .total {
+      text-align: right;
+      margin-top: 30px;
+    }
+
+    .checkout-button {
+      display: inline-block;
+      margin-top: 15px;
+      background: #16834a;
+      color: white;
+      padding: 15px 25px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .empty-cart {
+      margin-top: 30px;
+    }
+
+    @media (max-width: 600px) {
+      .cart-heading {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .cart-item {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <a href="/">loopedt.</a>
+  </header>
+
+  <main>
+
+    <div class="cart-heading">
+      <h1>My shopping cart</h1>
+      <%= link_to "← Keep Shopping", listings_path, class: "button" %>
+    </div>
+
+    <% if @cart_items.any? %>
+
+      <% @cart_items.each do |item| %>
+        <section class="cart-item">
+
+          <div class="item-details">
+            <h3><%= item.listing.title %></h3>
+
+            <p>Seller: <%= item.listing.user.username %></p>
+
+            <p>
+              Price:
+              <%= number_to_currency(item.listing.price, unit: "₦", precision: 2) %>
+            </p>
+
+            <p>
+              Subtotal:
+              <%= number_to_currency(
+                item.listing.price * item.quantity,
+                unit: "₦",
+                precision: 2
+              ) %>
+            </p>
+          </div>
+
+          <div>
+            <%= form_with url: cart_item_path(item), method: :patch do |form| %>
+              <%= form.number_field :quantity, value: item.quantity, min: 1 %>
+              <%= form.submit "Update", class: "button" %>
+            <% end %>
+
+            <p>
+              <%= button_to "Message seller",
+                  "/listings/#{item.listing.id}/message_seller",
+                  method: :post %>
+            </p>
+
+            <%= button_to "Remove item",
+                cart_item_path(item),
+                method: :delete,
+                class: "remove" %>
+          </div>
+
+        </section>
+      <% end %>
+
+      <div class="total">
+        <h2>
+          Total:
+          <%= number_to_currency(
+            @cart_items.sum { |item| item.listing.price * item.quantity },
+            unit: "₦",
+            precision: 2
+          ) %>
+        </h2>
+
+        <%= button_to "Proceed to Checkout",
+            create_checkout_path,
+            method: :post,
+            class: "checkout-button" %>
+      </div>
+
+    <% else %>
+
+      <div class="empty-cart">
+        <p>Your cart is empty.</p>
+        <%= link_to "← Keep Shopping", listings_path, class: "button" %>
+      </div>
+
+    <% end %>
+
+  </main>
+</body>
+</html>

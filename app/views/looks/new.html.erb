@@ -1,0 +1,157 @@
+<h1>Looks#new</h1>
+<p>Find me in app/views/looks/new.html.erb</p>
+
+<style>
+  .look-page {
+    max-width: 900px;
+    margin: 55px auto;
+    padding: 25px;
+    font-family: Arial, sans-serif;
+    color: #26352c;
+  }
+
+  .look-heading {
+    text-align: center;
+    margin-bottom: 35px;
+  }
+
+  .look-heading h1 {
+    font-size: 36px;
+    margin-bottom: 12px;
+  }
+
+  .look-heading p {
+    color: #788078;
+    line-height: 1.7;
+  }
+
+  .look-card {
+    background: white;
+    padding: 35px;
+    border-radius: 18px;
+    box-shadow: 0 8px 35px rgba(0,0,0,.05);
+  }
+
+  .look-form label {
+    display: block;
+    margin: 22px 0 9px;
+    font-weight: 700;
+    font-size: 14px;
+  }
+
+  .look-form input[type="text"],
+  .look-form input[type="url"] {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid #dce2da;
+    border-radius: 8px;
+    font-size: 14px;
+  }
+
+  .upload-area {
+    border: 2px dashed #b7c8ba;
+    border-radius: 14px;
+    padding: 45px 20px;
+    text-align: center;
+    background: #f8faf7;
+    margin-top: 10px;
+  }
+
+  .upload-area .upload-icon {
+    font-size: 38px;
+    margin-bottom: 12px;
+  }
+
+  .upload-area p {
+    color: #788078;
+    font-size: 13px;
+    margin: 10px 0 18px;
+  }
+
+  .upload-area input {
+    max-width: 100%;
+  }
+
+  .look-submit {
+    width: 100%;
+    padding: 16px;
+    margin-top: 28px;
+    background: #244e3b;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .look-submit:hover {
+    background: #193b2b;
+  }
+
+  .look-back {
+    display: inline-block;
+    margin-bottom: 25px;
+    color: #42684e;
+    text-decoration: none;
+    font-size: 14px;
+  }
+
+  @media(max-width: 600px) {
+    .look-page { margin: 25px auto; padding: 15px; }
+    .look-card { padding: 22px; }
+    .look-heading h1 { font-size: 28px; }
+  }
+</style>
+
+<div class="look-page">
+  <%= link_to "← Back to marketplace", listings_path, class: "look-back" %>
+
+  <div class="look-heading">
+    <h1>Recreate Your Look.</h1>
+    <p>
+      Have an outfit saved on Pinterest or somewhere else?
+      Upload it and let Loopedt help you find similar pieces.
+    </p>
+  </div>
+
+  <div class="look-card">
+    <%= form_with model: @look, url: looks_path,
+        local: true, html: { multipart: true }, class: "look-form" do |f| %>
+
+      <% if @look.errors.any? %>
+        <div style="color:#b42318;">
+          <strong>Please correct the following:</strong>
+          <ul>
+            <% @look.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <label>Name your look</label>
+      <%= f.text_field :title,
+          placeholder: "e.g. My Summer Pinterest Outfit",
+          required: true %>
+
+      <label>Upload your inspiration image</label>
+
+      <div class="upload-area">
+        <div class="upload-icon">📸</div>
+        <strong>Upload your outfit inspiration</strong>
+        <p>Choose a Pinterest screenshot or an image saved on your device.</p>
+
+        <%= f.file_field :inspiration_image,
+            accept: "image/png,image/jpeg,image/webp",
+            required: true %>
+      </div>
+
+      <label>Pinterest board or pin link (optional)</label>
+      <%= f.url_field :source_url,
+          placeholder: "https://www.pinterest.com/..." %>
+
+      <%= f.submit "Find My Look", class: "look-submit" %>
+    <% end %>
+  </div>
+</div>

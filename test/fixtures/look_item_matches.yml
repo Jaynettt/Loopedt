@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  look_item: one
+  listing: one
+  match_score: 9.99
+  match_reason: MyText
+
+two:
+  look_item: two
+  listing: two
+  match_score: 9.99
+  match_reason: MyText
