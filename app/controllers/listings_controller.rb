@@ -12,10 +12,13 @@ class ListingsController < Web::PublicController
     @listings = Listing.includes(:user, :category).with_attached_images
 
     @listings = @listings.where(category_id: params[:category_id]) if params[:category_id].present?
-    @listings = @listings.where(condition: params[:condition]) if params[:condition].present?
-    @listings = @listings.where(brand: params[:brand]) if params[:brand].present?
-    @listings = @listings.where(size: params[:size]) if params[:size].present?
-    @listings = @listings.where(colour: params[:colour]) if params[:colour].present?
+
+    @listings = @listings.where("LOWER(condition) = ?", params[:condition].downcase) if params[:condition].present?
+    @listings = @listings.where("LOWER(brand) = ?", params[:brand].downcase) if params[:brand].present?
+    @listings = @listings.where("LOWER(size) = ?", params[:size].downcase) if params[:size].present?
+    @listings = @listings.where("LOWER(colour) = ?", params[:colour].downcase) if params[:colour].present?
+    @listings = @listings.where("LOWER(status) = ?", params[:status].downcase) if params[:status].present?
+
     @listings = @listings.where("price >= ?", params[:min_price]) if params[:min_price].present?
     @listings = @listings.where("price <= ?", params[:max_price]) if params[:max_price].present?
 
@@ -27,18 +30,89 @@ class ListingsController < Web::PublicController
       )
     end
 
-    @listings = @listings.where(status: params[:status]) if params[:status].present?
-    @listings = @listings.order(created_at: :desc)
+    @listings = case params[:sort]
+                when "price_low"
+                  @listings.order(price: :asc)
+                when "price_high"
+                  @listings.order(price: :desc)
+                else
+                  @listings.order(created_at: :desc)
+                end
 
     render :index
   end
 
-  def show
-    render :show
+  def style_results
+    styles = {
+      "minimalist" => {
+        name: "The Minimalist",
+        description: "You appreciate clean lines, timeless basics and pieces that never go out of style.",
+        keywords: %w[minimalist neutral basic classic simple]
+      },
+      "streetwear" => {
+        name: "Streetwear",
+        description: "Relaxed fits, expressive pieces and everyday looks with personality.",
+        keywords: %w[streetwear sneaker oversized hoodie graphic denim]
+      },
+      "feminine" => {
+        name: "Soft & Feminine",
+        description: "Romantic details, delicate pieces and outfits that feel effortlessly pretty.",
+        keywords: %w[feminine dress skirt blouse floral pink]
+      },
+      "vintage" => {
+        name: "Vintage Soul",
+        description: "You love pieces with character, timeless finds and fashion with a little history.",
+        keywords: %w[vintage retro classic denim]
+      },
+      "classic" => {
+        name: "Quiet Luxury",
+        description: "Understated, polished and sophisticated. You believe less can be more.",
+        keywords: %w[classic tailored elegant blazer neutral]
+      },
+      "statement" => {
+        name: "The Trendsetter",
+        description: "You like to stand out, experiment and make every outfit your own.",
+        keywords: %w[statement bold colourful colorful print unique]
+      }
+    }
+
+    @style_key = styles.key?(params[:style]) ? params[:style] : "vintage"
+    @style = styles[@style_key]
+    @categories = Category.order(:name)
+
+    @listings = Listing.includes(:user, :category).with_attached_images
+
+    if params[:category_id].present?
+      @listings = @listings.where(category_id: params[:category_id])
+    end
+
+    if params[:colour].present?
+      @listings = @listings.where("LOWER(colour) = ?", params[:colour].downcase)
+    end
+
+    if params[:max_price].present?
+      @listings = @listings.where("price <= ?", params[:max_price])
+    end
+
+    keywords = @style[:keywords]
+
+    conditions = keywords.map do
+      "(title ILIKE ? OR description ILIKE ? OR brand ILIKE ?)"
+    end
+
+    values = keywords.flat_map do |word|
+      pattern = "%#{word}%"
+      [pattern, pattern, pattern]
+    end
+
+    @listings = @listings.where(conditions.join(" OR "), *values)
+                         .order(created_at: :desc)
+
+    render :style_results
   end
 
-  def new
-    @listing = Listing.new
+  def show
+    render :show
   end
 
   def edit
@@ -166,7 +240,9 @@ class ListingsController < Web::PublicController
       :bust,
       :waist,
       :hips,
-      :length
+      :length,
+      :minimum_negotiable_price,
+      :stock_quantity
     )
   end
 

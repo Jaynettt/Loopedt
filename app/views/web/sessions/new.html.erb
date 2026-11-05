@@ -7,159 +7,645 @@
   <title>Log in | Loopedt</title>
 
   <style>
-    * { box-sizing: border-box; }
+    :root {
+      --green: #244e3b;
+      --dark: #193a2b;
+      --lime: #d9f36a;
+      --yellow: #ffe58a;
+      --orange: #ff9866;
+      --pink: #ffb9c9;
+      --cream: #fffdf5;
+      --ink: #25372c;
+      --muted: #7b877d;
+      --border: #e8ebdf;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
       min-height: 100vh;
-      background: #f8f8f6;
-      color: #20231f;
+      background: var(--cream);
+      color: var(--ink);
       font-family: Arial, sans-serif;
-      padding: 40px 20px;
     }
 
-    .page {
-      max-width: 460px;
-      margin: 0 auto;
+    a {
+      color: inherit;
     }
 
-    .logo {
-      display: inline-block;
-      margin-bottom: 25px;
-      color: #244e3b;
-      font-size: 30px;
-      font-weight: bold;
-      text-decoration: none;
+    .login-page {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
     }
 
-    .login-card, .seller-card {
-      border-radius: 16px;
-      padding: 30px;
-    }
+    /* LEFT EDITORIAL PANEL */
 
-    .login-card {
-      background: white;
-      border: 1px solid #e5e8e2;
-    }
-
-    h1 { margin: 0 0 10px; font-size: 27px; }
-
-    .muted {
-      color: #70756f;
-      line-height: 1.6;
-    }
-
-    label {
-      display: block;
-      margin: 20px 0 8px;
-      font-weight: bold;
-      font-size: 14px;
-    }
-
-    input {
-      width: 100%;
-      padding: 13px;
-      border: 1px solid #d7ddd5;
-      border-radius: 8px;
-      font-size: 15px;
-    }
-
-    button, .seller-link {
-      display: block;
-      width: 100%;
-      padding: 14px;
-      margin-top: 22px;
-      border: 0;
-      border-radius: 8px;
-      background: #244e3b;
+    .visual-panel {
+      position: relative;
+      overflow: hidden;
+      min-height: 100vh;
+      padding: 42px 50px;
+      background: var(--green);
       color: white;
-      font-size: 15px;
-      font-weight: bold;
-      text-align: center;
-      text-decoration: none;
-      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
 
-    .signup {
-      margin-top: 22px;
-      text-align: center;
+    .visual-panel::before {
+      content: "";
+      position: absolute;
+      width: 430px;
+      height: 430px;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 50%;
+      top: 22%;
+      left: 12%;
+    }
+
+    .visual-panel::after {
+      content: "";
+      position: absolute;
+      width: 310px;
+      height: 310px;
+      border: 1px solid rgba(255,255,255,0.13);
+      border-radius: 50%;
+      top: 30%;
+      left: 22%;
+    }
+
+    .brand {
+      position: relative;
+      z-index: 2;
+      display: inline-block;
+      width: fit-content;
+      color: white;
+      font-size: 31px;
+      font-weight: 800;
+      letter-spacing: -1.8px;
+      text-decoration: none;
+    }
+
+    .brand span {
+      color: var(--lime);
+    }
+
+    .visual-content {
+      position: relative;
+      z-index: 2;
+      max-width: 520px;
+      margin: 55px 0;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 9px 14px;
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 30px;
+      color: var(--lime);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    .eyebrow-dot {
+      width: 7px;
+      height: 7px;
+      background: var(--lime);
+      border-radius: 50%;
+    }
+
+    .visual-content h1 {
+      margin: 27px 0 18px;
+      font-size: clamp(48px, 5.5vw, 76px);
+      line-height: 0.98;
+      letter-spacing: -4px;
+      font-weight: 800;
+    }
+
+    .visual-content h1 em {
+      color: var(--lime);
+      font-style: normal;
+    }
+
+    .visual-description {
+      max-width: 380px;
+      color: rgba(255,255,255,0.72);
+      font-size: 15px;
+      line-height: 1.8;
+    }
+
+    /* DECORATIVE PRODUCT COMPOSITION */
+
+    .style-composition {
+      position: relative;
+      height: 230px;
+      max-width: 430px;
+      margin-top: 35px;
+    }
+
+    .style-card {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.16);
+    }
+
+    .style-card-one {
+      width: 165px;
+      height: 195px;
+      left: 25px;
+      top: 8px;
+      background: var(--pink);
+      border-radius: 90px 90px 18px 18px;
+      transform: rotate(-9deg);
+      color: var(--green);
+      font-size: 76px;
+      font-weight: 800;
+    }
+
+    .style-card-two {
+      width: 145px;
+      height: 170px;
+      left: 165px;
+      top: 30px;
+      background: var(--yellow);
+      border-radius: 18px;
+      transform: rotate(8deg);
+      color: var(--green);
+      font-size: 65px;
+    }
+
+    .style-card-three {
+      width: 105px;
+      height: 125px;
+      left: 290px;
+      top: 12px;
+      background: var(--orange);
+      border-radius: 55px 55px 15px 15px;
+      transform: rotate(12deg);
+      color: var(--green);
+      font-size: 48px;
+    }
+
+    .composition-caption {
+      position: absolute;
+      left: 18px;
+      bottom: -2px;
+      z-index: 2;
+      padding: 10px 15px;
+      background: var(--lime);
+      color: var(--dark);
+      border-radius: 30px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.7px;
+      transform: rotate(-3deg);
+    }
+
+    .visual-footer {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      color: rgba(255,255,255,0.58);
+      font-size: 11px;
+      letter-spacing: 0.5px;
+    }
+
+    .visual-footer strong {
+      color: var(--lime);
+    }
+
+    /* RIGHT LOGIN PANEL */
+
+    .form-panel {
+      min-height: 100vh;
+      padding: 42px 55px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    .form-top {
+      position: absolute;
+      top: 43px;
+      right: 55px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .form-top a {
+      color: var(--green);
+      font-weight: 700;
+      text-decoration: none;
+      margin-left: 5px;
+    }
+
+    .login-content {
+      width: 100%;
+      max-width: 410px;
+      padding: 35px 0;
+    }
+
+    .form-tag {
+      display: inline-block;
+      padding: 8px 12px;
+      background: #f0f4e6;
+      border-radius: 30px;
+      color: var(--green);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+    }
+
+    .login-content h2 {
+      margin: 22px 0 10px;
+      font-size: clamp(34px, 3.5vw, 43px);
+      letter-spacing: -2px;
+      color: var(--dark);
+    }
+
+    .intro {
+      margin: 0 0 30px;
+      color: var(--muted);
       font-size: 14px;
       line-height: 1.7;
     }
 
-    a { color: #244e3b; }
-
-    .seller-card {
-      margin-top: 22px;
-      background: #e8eee7;
+    .flash-message {
+      padding: 13px 15px;
+      margin-bottom: 18px;
+      border-radius: 10px;
+      font-size: 13px;
+      line-height: 1.5;
     }
 
-    .seller-card h2 {
-      margin: 0 0 10px;
-      color: #244e3b;
-      font-size: 21px;
+    .alert {
+      background: #fff0ed;
+      color: #a33125;
+      border: 1px solid #f4d0c9;
     }
 
-    .seller-link {
-      background: transparent;
-      color: #244e3b;
-      border: 1px solid #244e3b;
+    .notice {
+      background: #edf5e9;
+      color: var(--green);
+      border: 1px solid #d5e5ce;
     }
 
-    .alert { color: #b42318; }
-    .notice { color: #244e3b; }
+    .login-form label {
+      display: block;
+      margin: 20px 0 9px;
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 700;
+    }
 
-    @media (max-width: 480px) {
-      .login-card, .seller-card { padding: 23px; }
+    .login-form input {
+      width: 100%;
+      height: 53px;
+      padding: 0 16px;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      outline: none;
+      background: white;
+      color: var(--ink);
+      font-family: inherit;
+      font-size: 14px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .login-form input:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 4px rgba(36,78,59,0.08);
+    }
+
+    .login-form input::placeholder {
+      color: #aab1a9;
+    }
+
+    .login-form input[type="submit"] {
+      height: 55px;
+      margin-top: 28px;
+      border: none;
+      border-radius: 11px;
+      background: var(--green);
+      color: white;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .login-form input[type="submit"]:hover {
+      background: var(--dark);
+      transform: translateY(-2px);
+    }
+
+    .signup-prompt {
+      margin-top: 25px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .signup-prompt a {
+      color: var(--green);
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .signup-prompt a:hover,
+    .form-top a:hover {
+      text-decoration: underline;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      margin: 28px 0;
+      color: #a0a89f;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: "";
+      height: 1px;
+      flex: 1;
+      background: var(--border);
+    }
+
+    .seller-prompt {
+      padding: 19px;
+      background: #f2f5e9;
+      border: 1px solid #e7ecd9;
+      border-radius: 13px;
+    }
+
+    .seller-prompt h3 {
+      margin: 0 0 7px;
+      color: var(--green);
+      font-size: 14px;
+    }
+
+    .seller-prompt p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .seller-prompt a {
+      display: inline-block;
+      margin-top: 12px;
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .seller-prompt a:hover {
+      text-decoration: underline;
+    }
+
+    .bottom-note {
+      margin-top: 35px;
+      color: #a0a89f;
+      text-align: center;
+      font-size: 10px;
+      letter-spacing: 0.5px;
+    }
+
+    /* RESPONSIVE */
+
+    @media (max-width: 1000px) {
+      .visual-panel {
+        padding: 35px;
+      }
+
+      .form-panel {
+        padding: 35px;
+      }
+
+      .form-top {
+        right: 35px;
+        top: 35px;
+      }
+
+      .style-composition {
+        transform: scale(0.85);
+        transform-origin: left center;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .login-page {
+        display: block;
+      }
+
+      .visual-panel {
+        min-height: auto;
+        padding: 25px 25px 35px;
+      }
+
+      .visual-content {
+        margin: 55px 0 10px;
+      }
+
+      .visual-content h1 {
+        max-width: 480px;
+        font-size: 54px;
+      }
+
+      .visual-description {
+        max-width: 440px;
+      }
+
+      .style-composition {
+        height: 175px;
+        margin-top: 15px;
+        transform: scale(0.75);
+        transform-origin: left top;
+      }
+
+      .visual-footer {
+        margin-top: 0;
+      }
+
+      .form-panel {
+        min-height: auto;
+        padding: 75px 25px 40px;
+      }
+
+      .form-top {
+        top: 25px;
+        right: 25px;
+      }
+
+      .login-content {
+        max-width: 480px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .visual-content h1 {
+        font-size: 46px;
+        letter-spacing: -2.5px;
+      }
+
+      .visual-panel {
+        padding: 22px 20px 30px;
+      }
+
+      .form-panel {
+        padding: 70px 22px 35px;
+      }
+
+      .style-composition {
+        transform: scale(0.65);
+        height: 155px;
+      }
+
+      .visual-footer {
+        font-size: 9px;
+      }
+
+      .form-top {
+        right: 20px;
+      }
     }
   </style>
 </head>
 
 <body>
-  <main class="page">
-    <a class="logo" href="/">loopedt.</a>
+  <main class="login-page">
 
-    <section class="login-card">
-      <h1>Welcome back</h1>
-      <p class="muted">
-        Sign in to discover unique finds and connect with the Loopedt community.
-      </p>
-
-      <% if flash[:alert] %>
-        <p class="alert"><%= flash[:alert] %></p>
+    <section class="visual-panel">
+      <%= link_to root_path, class: "brand" do %>
+        loopedt<span>.</span>
       <% end %>
 
-      <% if flash[:notice] %>
-        <p class="notice"><%= flash[:notice] %></p>
-      <% end %>
+      <div class="visual-content">
+        <span class="eyebrow">
+          <span class="eyebrow-dot"></span>
+          GOOD STYLE, SECOND LIFE
+        </span>
 
-      <%= form_with url: "/login", method: :post do |form| %>
-        <%= form.label :email, "Email address" %>
-        <%= form.email_field :email, required: true, autocomplete: "email" %>
+        <h1>
+          Your next
+          favourite
+          <em>find.</em>
+        </h1>
 
-        <%= form.label :password, "Password" %>
-        <%= form.password_field :password, required: true, autocomplete: "current-password" %>
+        <p class="visual-description">
+          Great style doesn't have to start from scratch.
+          Discover pieces with stories, give them a new home,
+          and make your wardrobe your own.
+        </p>
 
-        <%= form.submit "Log in" %>
-      <% end %>
+        <div class="style-composition">
+          <div class="style-card style-card-one">L</div>
+          <div class="style-card style-card-two">✳</div>
+          <div class="style-card style-card-three">↗</div>
+          <span class="composition-caption">FOUND. LOVED. LOOPED.</span>
+        </div>
+      </div>
 
-      <div class="signup">
-        New to Loopedt?<br>
-        <%= link_to "Create an account", "/signup" %>
+      <div class="visual-footer">
+        <span>THE CIRCULAR STYLE COMMUNITY</span>
+        <strong>WEAR IT AGAIN.</strong>
       </div>
     </section>
 
-    <section class="seller-card">
-      <h2>Ready to sell on Loopedt?</h2>
+    <section class="form-panel">
 
-      <p class="muted">
-        Give your pre-loved items a new home. Create your seller account,
-        submit your shop details and start your journey with our marketplace.
-      </p>
+      <div class="form-top">
+        New here?
+        <%= link_to "Create account", signup_path %>
+      </div>
 
-      <%= link_to "Become a seller →", "/signup?intent=seller",
-          class: "seller-link" %>
+      <div class="login-content">
+
+        <span class="form-tag">WELCOME BACK</span>
+
+        <h2>Good to see you again.</h2>
+
+        <p class="intro">
+          Sign in to pick up where you left off.
+          Your next great find might be waiting.
+        </p>
+
+        <% if flash[:alert] %>
+          <div class="flash-message alert">
+            <%= flash[:alert] %>
+          </div>
+        <% end %>
+
+        <% if flash[:notice] %>
+          <div class="flash-message notice">
+            <%= flash[:notice] %>
+          </div>
+        <% end %>
+
+        <%= form_with url: login_path, method: :post, class: "login-form" do |form| %>
+
+          <%= form.label :email, "Email address" %>
+          <%= form.email_field :email,
+              required: true,
+              autocomplete: "email",
+              placeholder: "you@example.com" %>
+
+          <%= form.label :password, "Password" %>
+          <%= form.password_field :password,
+              required: true,
+              autocomplete: "current-password",
+              placeholder: "Enter your password" %>
+
+          <%= form.submit "Sign in to Loopedt →" %>
+
+        <% end %>
+
+        <div class="signup-prompt">
+          Don't have an account?
+          <%= link_to "Join Loopedt", signup_path %>
+        </div>
+
+        <div class="divider">OR</div>
+
+        <div class="seller-prompt">
+          <h3>Have great pieces to share?</h3>
+          <p>
+            Turn your pre-loved pieces into someone else's next favourite find.
+          </p>
+
+          <%= link_to "Become a seller →", "/signup?intent=seller" %>
+        </div>
+
+        <p class="bottom-note">
+          MADE FOR GOOD FINDS AND SECOND CHANCES.
+        </p>
+
+      </div>
     </section>
+
   </main>
 </body>
 </html>

@@ -7,197 +7,994 @@
   <title>My Cart | Loopedt</title>
 
   <style>
+    :root {
+      --loop-green: #244e3b;
+      --loop-dark: #193a2b;
+      --loop-lime: #d9f36a;
+      --loop-yellow: #ffe58a;
+      --loop-orange: #ff9866;
+      --loop-pink: #ffb9c9;
+      --loop-cream: #fffdf5;
+      --loop-ink: #25372c;
+      --loop-muted: #818a7f;
+      --loop-border: #e9ecdf;
+    }
+
+    * { box-sizing: border-box; }
+
     body {
       margin: 0;
-      background: #f8f8f6;
-      color: #244e3b;
+      background:
+        radial-gradient(circle at 5% 10%, rgba(217, 243, 106, .12), transparent 25%),
+        var(--loop-cream);
+      color: var(--loop-ink);
       font-family: Arial, sans-serif;
     }
 
-    header {
-      padding: 22px 8%;
-      background: #244e3b;
+    .cart-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 19px 7%;
+      background: var(--loop-dark);
       color: white;
     }
 
-    header a {
+    .cart-logo {
       color: white;
       text-decoration: none;
-      font-size: 24px;
-      font-weight: bold;
+      font-size: 27px;
+      font-weight: 900;
+      letter-spacing: -1.5px;
     }
 
-    main {
-      max-width: 900px;
-      margin: 40px auto;
-      padding: 0 20px;
+    .cart-logo span { color: var(--loop-lime); }
+
+    .header-label {
+      color: rgba(255, 255, 255, .7);
+      font-size: 12px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
     }
 
-    .cart-heading {
+    .cart-main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 55px 25px 90px;
+    }
+
+    .cart-topline {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      gap: 15px;
-      margin-bottom: 25px;
-    }
-
-    .cart-heading h1 {
-      margin: 0;
-    }
-
-    .cart-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      align-items: flex-end;
       gap: 20px;
-      padding: 20px 0;
-      border-bottom: 1px solid #ddd;
+      margin-bottom: 35px;
     }
 
-    .item-details {
-      flex: 1;
+    .cart-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      color: var(--loop-green);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
     }
 
-    button, .button {
-      display: inline-block;
-      background: #244e3b;
-      color: white;
-      padding: 10px 15px;
-      border: 0;
-      border-radius: 6px;
-      cursor: pointer;
-      text-decoration: none;
+    .cart-eyebrow::before {
+      content: "";
+      width: 22px;
+      height: 2px;
+      background: var(--loop-orange);
+    }
+
+    .cart-topline h1 {
+      margin: 0;
+      color: var(--loop-dark);
+      font-size: clamp(32px, 5vw, 46px);
+      letter-spacing: -1.8px;
+    }
+
+    .cart-subtitle {
+      margin: 10px 0 0;
+      color: var(--loop-muted);
       font-size: 14px;
     }
 
-    input {
-      width: 55px;
-      padding: 8px;
+    .keep-shopping {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      padding: 13px 19px;
+      color: var(--loop-green);
+      background: white;
+      border: 1px solid var(--loop-border);
+      border-radius: 30px;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      transition: .2s ease;
+      white-space: nowrap;
     }
 
-    .remove {
-      background: #eee;
-      color: #333;
+    .keep-shopping:hover {
+      color: white;
+      background: var(--loop-green);
+      border-color: var(--loop-green);
+      transform: translateY(-2px);
     }
 
-    .total {
-      text-align: right;
-      margin-top: 30px;
+    .cart-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 350px;
+      gap: 28px;
+      align-items: start;
+    }
+
+    .cart-items-panel { min-width: 0; }
+
+    .cart-section-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .cart-section-heading h2 {
+      margin: 0;
+      color: var(--loop-dark);
+      font-size: 19px;
+      letter-spacing: -.4px;
+    }
+
+    .item-count {
+      padding: 7px 12px;
+      color: var(--loop-green);
+      background: #eff5e7;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .cart-item {
+      display: grid;
+      grid-template-columns: 155px minmax(0, 1fr);
+      gap: 22px;
+      padding: 19px;
+      margin-bottom: 15px;
+      background: white;
+      border: 1px solid var(--loop-border);
+      border-radius: 18px;
+      box-shadow: 0 5px 18px rgba(25, 58, 43, .035);
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+
+    .cart-item:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 28px rgba(25, 58, 43, .07);
+    }
+
+    .cart-item-image,
+    .cart-image-placeholder {
+      width: 155px;
+      height: 175px;
+      display: block;
+      object-fit: cover;
+      border-radius: 12px;
+      background: #f0f3e9;
+    }
+
+    .cart-image-placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 15px;
+      text-align: center;
+      color: var(--loop-muted);
+      font-size: 12px;
+    }
+
+    .cart-item-details {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-width: 0;
+    }
+
+    .item-category {
+      margin: 0 0 8px;
+      color: #829078;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .item-title {
+      margin: 0 0 9px;
+      color: var(--loop-dark);
+      font-size: 19px;
+      line-height: 1.35;
+    }
+
+    .seller-name {
+      margin: 0 0 14px;
+      color: var(--loop-muted);
+      font-size: 12px;
+    }
+
+    .seller-name strong { color: var(--loop-green); }
+
+    .item-price {
+      margin: 0;
+      color: var(--loop-green);
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .item-price-label {
+      margin: 5px 0 0;
+      color: var(--loop-muted);
+      font-size: 11px;
+    }
+
+    .cart-item-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 12px;
+      margin-top: 17px;
+      padding-top: 14px;
+      border-top: 1px solid #edf0e9;
+    }
+
+    .quantity-form {
+      display: inline-flex;
+      align-items: center;
+      gap: 0;
+      padding: 4px;
+      background: #f3f6eb;
+      border: 1px solid #e2e8d9;
+      border-radius: 10px;
+    }
+
+    .quantity-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      color: var(--loop-green);
+      background: white;
+      border: 0;
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: 20px;
+      font-weight: 700;
+      transition: .2s ease;
+    }
+
+    .quantity-button:hover {
+      color: var(--loop-dark);
+      background: var(--loop-lime);
+    }
+
+    .quantity-button:disabled {
+      opacity: .45;
+      cursor: wait;
+    }
+
+    .quantity-input {
+      width: 42px;
+      height: 34px;
+      padding: 0;
+      color: var(--loop-dark);
+      background: transparent;
+      border: 0;
+      outline: none;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 800;
+      appearance: textfield;
+      -moz-appearance: textfield;
+    }
+
+    .quantity-input::-webkit-inner-spin-button,
+    .quantity-input::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    .item-actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .message-seller-button,
+    .remove-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 35px;
+      padding: 0 11px;
+      border: 0;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 700;
+      transition: .2s ease;
+    }
+
+    .message-seller-button {
+      color: var(--loop-green);
+      background: #f0f5e7;
+    }
+
+    .message-seller-button:hover { background: var(--loop-lime); }
+
+    .remove-button {
+      color: #9a5a54;
+      background: #fff0ec;
+    }
+
+    .remove-button:hover {
+      color: white;
+      background: #b95c50;
+    }
+
+    .order-summary {
+      position: sticky;
+      top: 25px;
+      overflow: hidden;
+      background: white;
+      border: 1px solid var(--loop-border);
+      border-radius: 20px;
+      box-shadow: 0 12px 35px rgba(25, 58, 43, .07);
+    }
+
+    .summary-top {
+      padding: 25px;
+      color: white;
+      background: linear-gradient(130deg, var(--loop-dark), var(--loop-green));
+    }
+
+    .summary-eyebrow {
+      margin: 0 0 10px;
+      color: var(--loop-lime);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+    }
+
+    .summary-top h2 {
+      margin: 0;
+      font-size: 23px;
+      letter-spacing: -.7px;
+    }
+
+    .summary-content { padding: 25px; }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 17px;
+      color: var(--loop-muted);
+      font-size: 13px;
+    }
+
+    .summary-row strong {
+      color: var(--loop-ink);
+      font-weight: 700;
+    }
+
+    .summary-divider {
+      height: 1px;
+      margin: 20px 0;
+      background: var(--loop-border);
+    }
+
+    .summary-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+
+    .summary-total span {
+      color: var(--loop-dark);
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .summary-total strong {
+      color: var(--loop-green);
+      font-size: 24px;
+      letter-spacing: -.8px;
     }
 
     .checkout-button {
-      display: inline-block;
-      margin-top: 15px;
-      background: #16834a;
-      color: white;
-      padding: 15px 25px;
-      border-radius: 8px;
+      display: block;
+      width: 100%;
+      padding: 17px 15px;
+      color: var(--loop-dark);
+      background: var(--loop-lime);
+      border: 0;
+      border-radius: 11px;
+      cursor: pointer;
+      text-align: center;
       text-decoration: none;
-      font-weight: bold;
-      font-size: 16px;
+      font-size: 14px;
+      font-weight: 900;
+      transition: transform .2s ease, background .2s ease;
     }
+
+    .checkout-button:hover {
+      transform: translateY(-3px);
+      background: #c9e94e;
+    }
+
+    .checkout-note {
+      margin: 15px 0 0;
+      color: var(--loop-muted);
+      font-size: 11px;
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    .checkout-note span {
+      color: var(--loop-green);
+      font-weight: 800;
+    }
+
+    .continue-link {
+      display: block;
+      margin-top: 17px;
+      color: var(--loop-green);
+      text-align: center;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .continue-link:hover { text-decoration: underline; }
+
+    .cart-feedback {
+      display: none;
+      margin: 0 0 15px;
+      padding: 11px 14px;
+      color: #8b453d;
+      background: #fff0ec;
+      border-radius: 9px;
+      font-size: 12px;
+    }
+
+    .cart-feedback.visible { display: block; }
 
     .empty-cart {
-      margin-top: 30px;
+      max-width: 650px;
+      margin: 20px auto 0;
+      padding: 75px 25px;
+      text-align: center;
+      background: white;
+      border: 1px solid var(--loop-border);
+      border-radius: 24px;
+      box-shadow: 0 15px 40px rgba(25, 58, 43, .05);
     }
 
-    @media (max-width: 600px) {
-      .cart-heading {
+    .empty-cart-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 105px;
+      height: 105px;
+      margin: 0 auto 25px;
+      color: var(--loop-dark);
+      background: var(--loop-lime);
+      border-radius: 50%;
+      font-size: 42px;
+    }
+
+    .empty-cart h2 {
+      margin: 0 0 12px;
+      color: var(--loop-dark);
+      font-size: 29px;
+      letter-spacing: -1px;
+    }
+
+    .empty-cart p {
+      max-width: 380px;
+      margin: 0 auto 25px;
+      color: var(--loop-muted);
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .empty-cart .checkout-button {
+      display: inline-block;
+      width: auto;
+      padding: 15px 26px;
+      background: var(--loop-green);
+      color: white;
+    }
+
+    .empty-cart .checkout-button:hover { background: var(--loop-dark); }
+
+    @media (max-width: 900px) {
+      .cart-layout {
+        grid-template-columns: minmax(0, 1fr) 290px;
+        gap: 17px;
+      }
+
+      .cart-item {
+        grid-template-columns: 120px minmax(0, 1fr);
+        gap: 15px;
+        padding: 14px;
+      }
+
+      .cart-item-image,
+      .cart-image-placeholder {
+        width: 120px;
+        height: 155px;
+      }
+
+      .cart-item-bottom {
         align-items: flex-start;
         flex-direction: column;
       }
 
-      .cart-item {
+      .item-actions { justify-content: flex-start; }
+    }
+
+    @media (max-width: 700px) {
+      .cart-header { padding: 17px 20px; }
+      .header-label { font-size: 10px; }
+
+      .cart-main { padding: 35px 16px 65px; }
+
+      .cart-topline {
         align-items: flex-start;
         flex-direction: column;
+        margin-bottom: 27px;
+      }
+
+      .cart-layout { grid-template-columns: 1fr; }
+
+      .order-summary {
+        position: static;
+        grid-row: 1;
+      }
+
+      .cart-items-panel { grid-row: 2; }
+
+      .cart-item {
+        grid-template-columns: 115px minmax(0, 1fr);
+        gap: 13px;
+      }
+
+      .cart-item-image,
+      .cart-image-placeholder {
+        width: 115px;
+        height: 145px;
+      }
+
+      .item-title { font-size: 16px; }
+      .item-price { font-size: 16px; }
+    }
+
+    @media (max-width: 420px) {
+      .cart-main {
+        padding-right: 12px;
+        padding-left: 12px;
+      }
+
+      .cart-item {
+        grid-template-columns: 95px minmax(0, 1fr);
+        gap: 11px;
+        padding: 11px;
+      }
+
+      .cart-item-image,
+      .cart-image-placeholder {
+        width: 95px;
+        height: 125px;
+      }
+
+      .item-title { font-size: 14px; }
+      .seller-name { font-size: 11px; }
+      .cart-item-bottom { gap: 12px; }
+
+      .quantity-button {
+        width: 30px;
+        height: 32px;
+      }
+
+      .quantity-input { width: 34px; }
+
+      .item-actions { gap: 6px; }
+
+      .message-seller-button,
+      .remove-button {
+        padding: 0 8px;
+        font-size: 10px;
+      }
+
+      .summary-total strong { font-size: 20px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        transition: none !important;
+        animation: none !important;
       }
     }
   </style>
 </head>
 
 <body>
-  <header>
-    <a href="/">loopedt.</a>
+
+  <header class="cart-header">
+    <a href="/" class="cart-logo">loopedt<span>.</span></a>
+    <span class="header-label">Your next favourite find</span>
   </header>
 
-  <main>
+  <main class="cart-main">
 
-    <div class="cart-heading">
-      <h1>My shopping cart</h1>
-      <%= link_to "← Keep Shopping", listings_path, class: "button" %>
+    <div class="cart-topline">
+      <div>
+        <div class="cart-eyebrow">Almost yours</div>
+        <h1>Your thrifting bag.</h1>
+        <p class="cart-subtitle">
+          Good finds don't stay around forever. Take another look at yours.
+        </p>
+      </div>
+
+      <%= link_to listings_path, class: "keep-shopping js-return-to-shopping" do %>
+        ← Keep shopping
+      <% end %>
     </div>
 
     <% if @cart_items.any? %>
 
-      <% @cart_items.each do |item| %>
-        <section class="cart-item">
+      <% cart_total = @cart_items.sum { |item| item.effective_unit_price * item.quantity } %>
+      <% total_quantity = @cart_items.sum(&:quantity) %>
 
-          <div class="item-details">
-            <h3><%= item.listing.title %></h3>
+      <div class="cart-feedback" id="cart-feedback" role="alert"></div>
 
-            <p>Seller: <%= item.listing.user.username %></p>
+      <div class="cart-layout">
 
-            <p>
-              Price:
-              <%= number_to_currency(item.listing.price, unit: "₦", precision: 2) %>
-            </p>
+        <section class="cart-items-panel">
 
-            <p>
-              Subtotal:
-              <%= number_to_currency(
-                item.listing.price * item.quantity,
-                unit: "₦",
-                precision: 2
-              ) %>
-            </p>
+          <div class="cart-section-heading">
+            <h2>Your selected finds</h2>
+            <span class="item-count" id="cart-item-count">
+              <%= total_quantity %> items
+            </span>
           </div>
 
-          <div>
-            <%= form_with url: cart_item_path(item), method: :patch do |form| %>
-              <%= form.number_field :quantity, value: item.quantity, min: 1 %>
-              <%= form.submit "Update", class: "button" %>
-            <% end %>
+          <% @cart_items.each do |item| %>
+            <% listing = item.listing %>
+            <% available = listing.available_quantity %>
+            <% stock_problem = !listing.available_for_purchase? || item.quantity > available %>
+                      <article class="cart-item" data-cart-item>
 
-            <p>
-              <%= button_to "Message seller",
-                  "/listings/#{item.listing.id}/message_seller",
-                  method: :post %>
-            </p>
+              <div>
+                <% if listing.images.attached? %>
+                  <%= image_tag listing.images.first,
+                      class: "cart-item-image",
+                      alt: listing.title %>
+                <% else %>
+                  <div class="cart-image-placeholder">
+                    No product photo
+                  </div>
+                <% end %>
+              </div>
 
-            <%= button_to "Remove item",
-                cart_item_path(item),
-                method: :delete,
-                class: "remove" %>
-          </div>
+              <div class="cart-item-details">
+
+                <div>
+                  <p class="item-category">
+                    <%= listing.category&.name || "Pre-loved find" %>
+                  </p>
+
+                  <h3 class="item-title"><%= listing.title %></h3>
+
+                  <p class="seller-name">
+                    From <strong>@<%= listing.user.username %></strong>
+                  </p>
+
+                  <p class="item-price">
+                    <%= number_to_currency(
+                      item.effective_unit_price,
+                      unit: "₦",
+                      precision: 2
+                    ) %>
+                  </p>
+
+                  <p class="item-price-label">
+                    <% if stock_problem %>
+                      <span style="color:#b95c50; font-weight:700;">
+                        <% if available <= 0 %>
+                          Currently unavailable
+                        <% else %>
+                          Only <%= available %> available. Please reduce your quantity.
+                        <% end %>
+                      </span>
+                    <% else %>
+                      <%= available %> available
+                    <% end %>
+                  </p>
+
+                </div>
+
+                <div class="cart-item-bottom">
+
+                  <%= form_with url: cart_item_path(item),
+                      method: :patch,
+                      local: true,
+                      html: { class: "quantity-form" } do |form| %>
+
+                    <button type="button"
+                            class="quantity-button quantity-minus"
+                            aria-label="Decrease quantity">
+                      −
+                    </button>
+
+                    <%= form.number_field :quantity,
+                        value: item.quantity,
+                        min: 1,
+                        max: available,
+                        step: 1,
+                        class: "quantity-input",
+                        aria: { label: "Quantity" } %>
+
+                    <button type="button"
+                            class="quantity-button quantity-plus"
+                            aria-label="Increase quantity">
+                      +
+                    </button>
+
+                  <% end %>
+
+                  <div class="item-actions">
+
+                    <%= button_to "Message seller",
+                        "/listings/#{listing.id}/message_seller",
+                        method: :post,
+                        class: "message-seller-button" %>
+
+                    <%= button_to "Remove",
+                        cart_item_path(item),
+                        method: :delete,
+                        class: "remove-button" %>
+
+                  </div>
+
+                </div>
+              </div>
+            </article>
+
+          <% end %>
 
         </section>
-      <% end %>
 
-      <div class="total">
-        <h2>
-          Total:
-          <%= number_to_currency(
-            @cart_items.sum { |item| item.listing.price * item.quantity },
-            unit: "₦",
-            precision: 2
-          ) %>
-        </h2>
+        <aside class="order-summary">
 
-        <%= button_to "Proceed to Checkout",
-            create_checkout_path,
-            method: :post,
-            class: "checkout-button" %>
+          <div class="summary-top">
+            <p class="summary-eyebrow">The good stuff</p>
+            <h2>Order summary</h2>
+          </div>
+
+          <div class="summary-content">
+
+            <div class="summary-row">
+              <span>Items in your bag</span>
+              <strong id="summary-item-count"><%= total_quantity %></strong>
+            </div>
+
+            <div class="summary-row">
+              <span>Unique finds</span>
+              <strong><%= @cart_items.size %></strong>
+            </div>
+
+            <div class="summary-divider"></div>
+
+            <div class="summary-total">
+              <span>Subtotal</span>
+              <strong id="cart-subtotal">
+                <%= number_to_currency(
+                  cart_total,
+                  unit: "₦",
+                  precision: 2
+                ) %>
+              </strong>
+            </div>
+
+            <%= button_to "Proceed to checkout →",
+                create_checkout_path,
+                method: :post,
+                class: "checkout-button" %>
+
+            <p class="checkout-note">
+              Your finds are waiting.
+              <span>Checkout when you're ready.</span>
+            </p>
+
+            <%= link_to "← Add more finds",
+                listings_path,
+                class: "continue-link js-return-to-shopping" %>
+
+          </div>
+        </aside>
+
       </div>
 
     <% else %>
 
-      <div class="empty-cart">
-        <p>Your cart is empty.</p>
-        <%= link_to "← Keep Shopping", listings_path, class: "button" %>
-      </div>
+      <section class="empty-cart">
+        <div class="empty-cart-icon">✳</div>
+
+        <h2>Your bag is feeling lonely.</h2>
+
+        <p>
+          Looks like you haven't found your next favourite piece yet.
+          There's plenty waiting to be discovered.
+        </p>
+
+        <%= link_to "Explore the marketplace →",
+            listings_path,
+            class: "checkout-button js-return-to-shopping" %>
+      </section>
 
     <% end %>
 
   </main>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const feedback = document.getElementById("cart-feedback");
+
+      // Return to the page the user was browsing before opening the cart.
+      // The browser can then restore the previous scroll position.
+      document.querySelectorAll(".js-return-to-shopping").forEach(link => {
+        link.addEventListener("click", function(event) {
+          const previousPage = document.referrer;
+
+          if (!previousPage) return;
+
+          try {
+            const previousUrl = new URL(previousPage);
+
+            if (previousUrl.origin === window.location.origin) {
+              event.preventDefault();
+              window.history.back();
+            }
+          } catch (error) {
+            // If the previous URL cannot be read, use the normal Discover link.
+          }
+        });
+      });
+
+      function formatNaira(amount) {
+        return "₦" + Number(amount).toLocaleString("en-NG", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
+      }
+
+      function showError(message) {
+        if (!feedback) return;
+
+        feedback.textContent = message;
+        feedback.classList.add("visible");
+      }
+
+      function clearError() {
+        if (!feedback) return;
+
+        feedback.textContent = "";
+        feedback.classList.remove("visible");
+      }
+
+      async function saveQuantity(form) {
+        const input = form.querySelector(".quantity-input");
+        const buttons = form.querySelectorAll(".quantity-button");
+        const originalQuantity = input.dataset.savedQuantity || input.value;
+        const quantity = Math.max(1, parseInt(input.value, 10) || 1);
+
+        input.value = quantity;
+
+        // Collect form data BEFORE disabling the input.
+        const formData = new FormData(form);
+
+        buttons.forEach(button => button.disabled = true);
+        input.disabled = true;
+        form.classList.add("is-loading");
+        clearError();
+
+        try {
+          const response = await fetch(form.action, {
+            method: "POST",
+            body: formData,
+            credentials: "same-origin",
+            headers: {
+              "Accept": "application/json",
+              "X-Requested-With": "XMLHttpRequest"
+            }
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.error || "Could not update your cart.");
+          }
+
+          input.value = data.quantity;
+          input.dataset.savedQuantity = data.quantity;
+
+          document.getElementById("cart-subtotal").textContent =
+            formatNaira(data.cart_total);
+
+          document.getElementById("summary-item-count").textContent =
+            data.cart_count;
+
+          document.getElementById("cart-item-count").textContent =
+            data.cart_count + (data.cart_count === 1 ? " item" : " items");
+
+        } catch (error) {
+          input.value = originalQuantity;
+          showError(error.message || "Something went wrong. Please try again.");
+        } finally {
+          buttons.forEach(button => button.disabled = false);
+          input.disabled = false;
+          form.classList.remove("is-loading");
+        }
+      }
+
+      document.querySelectorAll(".quantity-input").forEach(input => {
+        input.dataset.savedQuantity = input.value;
+      });
+
+      document.addEventListener("click", function(event) {
+        const button = event.target.closest(".quantity-button");
+        if (!button || button.disabled) return;
+
+        const form = button.closest(".quantity-form");
+        const input = form.querySelector(".quantity-input");
+
+        if (input.disabled) return;
+
+        let quantity = parseInt(input.value, 10) || 1;
+
+        if (button.classList.contains("quantity-plus")) {
+          quantity += 1;
+        } else {
+          quantity = Math.max(1, quantity - 1);
+        }
+
+        input.value = quantity;
+        saveQuantity(form);
+      });
+
+      document.addEventListener("change", function(event) {
+        if (!event.target.matches(".quantity-input")) return;
+
+        const form = event.target.closest(".quantity-form");
+        if (form) saveQuantity(form);
+      });
+    });
+  </script>
+
 </body>
 </html>

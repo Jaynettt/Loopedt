@@ -1,0 +1,2 @@
+module Web::NegotiationsHelper
+end

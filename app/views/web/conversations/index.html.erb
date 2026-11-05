@@ -4,228 +4,1105 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Inbox | Loopedt</title>
+  <title>Messages | Loopedt</title>
 
   <style>
     * {
       box-sizing: border-box;
     }
 
+    :root {
+      --green: #244e3b;
+      --dark: #193a2b;
+      --lime: #d9f36a;
+      --yellow: #ffe58a;
+      --orange: #ff9866;
+      --pink: #ffb9c9;
+      --cream: #fffdf5;
+      --ink: #25372c;
+      --muted: #829084;
+      --line: #e9eee5;
+      --white: #fff;
+    }
+
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f8f8f6;
-      color: #20231f;
+      background: var(--cream);
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
     }
 
-    header {
-      background: white;
-      border-bottom: 1px solid #e5e8e2;
-      padding: 20px 7%;
+    a {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    /* NAVIGATION */
+
+    .topbar {
+      height: 78px;
+      padding: 0 6%;
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
+      background: var(--dark);
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      box-shadow: 0 5px 25px rgba(25, 58, 43, .12);
     }
 
-    .logo {
-      color: #244e3b;
-      font-size: 26px;
-      font-weight: bold;
+    .brand {
+      color: var(--cream);
       text-decoration: none;
+      font-size: 30px;
+      font-weight: 900;
+      letter-spacing: -1.8px;
     }
 
-    header a:last-child {
-      color: #244e3b;
+    .brand span {
+      color: var(--lime);
+    }
+
+    .top-navigation {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      gap: 34px;
+    }
+
+    .top-link {
+      height: 100%;
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      color: rgba(255, 253, 245, .7);
       text-decoration: none;
-      font-weight: bold;
+      font-size: 13px;
+      font-weight: 700;
+      transition: color .2s;
     }
 
-    main {
-      max-width: 900px;
-      margin: 45px auto;
-      padding: 0 20px;
+    .top-link:hover,
+    .top-link.active {
+      color: var(--lime);
     }
 
-    h1 {
-      margin-bottom: 8px;
+    .top-link.active::after {
+      content: "";
+      position: absolute;
+      height: 3px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--lime);
+      border-radius: 5px 5px 0 0;
     }
 
-    .subtitle {
-      color: #70756f;
+    .unread-count {
+      min-width: 21px;
+      height: 21px;
+      padding: 0 6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 30px;
+      background: var(--lime);
+      color: var(--dark);
+      font-size: 10px;
+      font-weight: 900;
+    }
+
+    .unread-count[hidden] {
+      display: none;
+    }
+
+    /* PAGE */
+
+    .page {
+      max-width: 1480px;
+      margin: auto;
+      padding: 55px 5% 65px;
+    }
+
+    /* INBOX ACTIONS */
+
+    .inbox-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
       margin-bottom: 28px;
     }
 
+    .inbox-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      min-height: 43px;
+      padding: 0 17px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 800;
+      transition: .2s ease;
+    }
+
+    .back-action {
+      background: #fff;
+      border: 1px solid #e5ebdf;
+      color: var(--green);
+    }
+
+    .back-action:hover {
+      background: #f3f7ed;
+    }
+
+    .shopping-action {
+      background: var(--green);
+      border: 1px solid var(--green);
+      color: var(--cream);
+    }
+
+    .shopping-action:hover {
+      background: var(--dark);
+      transform: translateY(-2px);
+    }
+
+    .shopping-action span {
+      color: var(--lime);
+      font-size: 16px;
+    }
+
+    .page-heading {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin: 0 0 13px;
+      color: #8a988b;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 10px;
+      font-weight: 900;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 23px;
+      height: 3px;
+      background: var(--orange);
+      border-radius: 5px;
+    }
+
+    .page-heading h1 {
+      margin: 0;
+      color: var(--dark);
+      font-size: clamp(34px, 4vw, 47px);
+      letter-spacing: -2.2px;
+      line-height: 1;
+    }
+
+    .page-heading h1 span {
+      color: var(--green);
+    }
+
+    .page-description {
+      margin: 13px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .heading-count {
+      padding: 11px 16px;
+      background: #f0f4e8;
+      border: 1px solid #e5ebd9;
+      border-radius: 30px;
+      color: var(--green);
+      font-size: 11px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    /* WORKSPACE */
+
+    .workspace {
+      min-height: 650px;
+      display: grid;
+      grid-template-columns: 390px minmax(0, 1fr);
+      overflow: hidden;
+      background: var(--white);
+      border: 1px solid #e8ede4;
+      border-radius: 25px;
+      box-shadow: 0 22px 65px rgba(25, 58, 43, .08);
+    }
+
+    /* INBOX SIDEBAR */
+
+    .inbox-sidebar {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      background: #fff;
+      border-right: 1px solid var(--line);
+    }
+
+    .sidebar-header {
+      padding: 26px 24px 21px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .sidebar-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 19px;
+    }
+
+    .sidebar-title-row h2 {
+      margin: 0;
+      color: var(--dark);
+      font-size: 17px;
+      font-weight: 900;
+      letter-spacing: -.5px;
+    }
+
+    .sidebar-total {
+      padding: 6px 10px;
+      border-radius: 20px;
+      background: #f2f5ed;
+      color: #758476;
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    .search-box {
+      height: 47px;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 0 15px;
+      background: #f7f9f4;
+      border: 1px solid #edf0e8;
+      border-radius: 13px;
+      color: var(--green);
+      transition: border-color .2s, box-shadow .2s;
+    }
+
+    .search-box:focus-within {
+      border-color: #a9c58d;
+      box-shadow: 0 0 0 4px rgba(217, 243, 106, .18);
+    }
+
+    .search-icon {
+      font-size: 21px;
+      line-height: 1;
+    }
+
+    .search-box input {
+      width: 100%;
+      border: none;
+      outline: none;
+      background: transparent;
+      color: var(--ink);
+      font-size: 12px;
+    }
+
+    .search-box input::placeholder {
+      color: #a1aca0;
+    }
+
+    .conversation-list {
+      flex: 1;
+      max-height: 720px;
+      overflow-y: auto;
+    }
+
+    .conversation-list::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    .conversation-list::-webkit-scrollbar-thumb {
+      background: #dce6d7;
+      border-radius: 10px;
+    }
+
     .conversation {
+      position: relative;
       display: block;
-      background: white;
-      border: 1px solid #e5e8e2;
-      border-radius: 12px;
-      padding: 22px;
-      margin-bottom: 12px;
+      padding: 21px 22px;
       color: inherit;
       text-decoration: none;
-      transition: border-color 0.2s, background 0.2s;
+      border-bottom: 1px solid #f0f2ed;
+      transition: background .2s, padding .2s;
     }
 
     .conversation:hover {
-      border-color: #244e3b;
-      background: #fcfdfb;
+      background: #f8faf4;
+      padding-left: 26px;
     }
 
     .conversation.has-unread {
-      border-color: #e5484d;
-      background: #fffdfd;
+      background: #f6faed;
+    }
+
+    .conversation.has-unread::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 4px;
+      background: var(--lime);
     }
 
     .conversation-top {
       display: flex;
+      align-items: flex-start;
       justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 8px;
+      gap: 10px;
+      margin-bottom: 13px;
     }
 
-    .conversation h3 {
-      margin: 0;
-      color: #244e3b;
+    .conversation-title {
+      min-width: 0;
+      color: var(--dark);
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
     }
 
-    .unread-badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      background: #e5484d;
-      color: white;
-      padding: 6px 11px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: bold;
+    .conversation-date {
+      padding-top: 2px;
+      color: #a0aaa0;
+      font-size: 10px;
       white-space: nowrap;
     }
 
-    .unread-dot {
-      width: 7px;
-      height: 7px;
-      background: white;
-      border-radius: 50%;
+    .conversation-person {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+      color: #879387;
+      font-size: 11px;
     }
 
-    .conversation p {
-      margin: 0 0 12px;
-    }
-
-    .details {
-      color: #70756f;
-      font-size: 14px;
-    }
-
-    .empty {
-      background: #e8eee7;
+    .person-avatar {
+      width: 34px;
+      height: 34px;
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       border-radius: 12px;
-      padding: 35px;
+      background: #eaf1df;
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .conversation-person strong {
+      color: #425b48;
+      font-weight: 800;
+    }
+
+    .conversation-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .conversation-status {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 7px;
+      background: #edf3e9;
+      color: #58715b;
+      font-size: 9px;
+      font-weight: 900;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+    }
+
+    /* NEGOTIATION STATUS */
+
+    .inbox-negotiation-status {
+      display: inline-block;
+      width: fit-content;
+      margin-top: 10px;
+      padding: 6px 9px;
+      border-radius: 6px;
+      background: #edf4e9;
+      color: #244e3b;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: .5px;
+    }
+
+    .new-messages {
+      color: var(--green);
+      font-size: 10px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .conversation-arrow {
+      color: #9eaa9c;
+      font-size: 17px;
+      transition: transform .2s;
+    }
+
+    .conversation:hover .conversation-arrow {
+      transform: translate(3px, -3px);
+      color: var(--green);
+    }
+
+    .sidebar-empty {
+      padding: 35px 20px;
+      color: #879387;
+      text-align: center;
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    /* RIGHT-HAND WELCOME PANEL */
+
+    .welcome-panel {
+      position: relative;
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 50px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 90% 10%, rgba(217, 243, 106, .18), transparent 26%),
+        linear-gradient(145deg, #ffffff 0%, #f8faf4 100%);
+    }
+
+    .welcome-content {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 460px;
+      padding: 48px 35px;
+      text-align: center;
+      background: rgba(255, 255, 255, .82);
+      border: 1px solid #edf1e9;
+      border-radius: 24px;
+      box-shadow: 0 15px 45px rgba(25, 58, 43, .045);
+    }
+
+    .welcome-illustration {
+      width: 76px;
+      height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 25px;
+      border-radius: 23px;
+      background: #eaf2e6;
+      color: var(--green);
+      font-size: 32px;
+    }
+
+    .welcome-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 17px;
+      color: #789078;
+      font-size: 9px;
+      font-weight: 900;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+    }
+
+    .welcome-label span {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #a8c56e;
+    }
+
+    .welcome-content h2 {
+      max-width: 340px;
+      margin: 0 auto 15px;
+      color: var(--dark);
+      font-size: clamp(25px, 3vw, 32px);
+      letter-spacing: -1.2px;
+      line-height: 1.2;
+    }
+
+    .welcome-content p {
+      max-width: 350px;
+      margin: 0 auto;
+      color: #839087;
+      font-size: 13px;
+      line-height: 1.9;
+    }
+
+    .welcome-divider {
+      width: 38px;
+      height: 3px;
+      margin: 25px auto;
+      border-radius: 10px;
+      background: var(--orange);
+    }
+
+    .welcome-hint {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 11px 15px;
+      border: 1px solid #edf1e9;
+      border-radius: 10px;
+      background: #fbfcf9;
+      color: #718274;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .welcome-hint span {
+      color: #88a65c;
+      font-size: 13px;
+    }
+
+    /* EMPTY INBOX */
+
+    .empty-workspace {
+      position: relative;
+      min-height: 590px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 45px 25px;
+      overflow: hidden;
+      border: 1px solid #e8ede4;
+      border-radius: 25px;
+      background:
+        radial-gradient(circle at 85% 15%, rgba(217, 243, 106, .3), transparent 25%),
+        linear-gradient(145deg, #fffdf5, #f2f7eb);
+      box-shadow: 0 22px 65px rgba(25, 58, 43, .06);
+    }
+
+    .empty-content {
+      position: relative;
+      z-index: 1;
+      max-width: 440px;
       text-align: center;
     }
 
-    .empty p {
-      color: #60685f;
+    .empty-icon {
+      width: 110px;
+      height: 110px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 28px;
+      border-radius: 35px;
+      background: var(--green);
+      color: var(--lime);
+      font-size: 42px;
+      box-shadow: 0 18px 40px rgba(36, 78, 59, .18);
+      transform: rotate(-5deg);
     }
 
-    .browse-link {
-      display: inline-block;
-      margin-top: 10px;
-      color: #244e3b;
-      font-weight: bold;
+    .empty-content h2 {
+      margin: 0 0 14px;
+      color: var(--dark);
+      font-size: 29px;
+      letter-spacing: -1px;
+    }
+
+    .empty-content p {
+      margin: 0 auto 27px;
+      color: #829084;
+      font-size: 13px;
+      line-height: 1.9;
+    }
+
+    .discover-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 11px;
+      padding: 14px 21px;
+      border-radius: 11px;
+      background: var(--green);
+      color: var(--cream);
       text-decoration: none;
+      font-size: 12px;
+      font-weight: 900;
+      transition: background .2s, transform .2s;
     }
 
-    @media (max-width: 600px) {
-      header {
-        padding: 18px 5%;
+    .discover-link span {
+      color: var(--lime);
+      font-size: 17px;
+    }
+
+    .discover-link:hover {
+      background: var(--dark);
+      transform: translateY(-3px);
+    }
+
+    .footer-note {
+      margin: 23px 0 0;
+      color: #9ba69a;
+      text-align: center;
+      font-size: 10px;
+      letter-spacing: .2px;
+    }
+
+    /* RESPONSIVE */
+
+    @media (max-width: 1000px) {
+      .workspace {
+        grid-template-columns: 340px minmax(0, 1fr);
       }
 
-      main {
-        margin: 30px auto;
+      .welcome-panel {
+        padding: 30px;
+      }
+
+      .welcome-content {
+        padding: 38px 25px;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .topbar {
+        height: 68px;
+        padding: 0 5%;
+      }
+
+      .brand {
+        font-size: 25px;
+      }
+
+      .top-navigation {
+        gap: 19px;
+      }
+
+      .top-link {
+        font-size: 11px;
+      }
+
+      .page {
+        padding: 37px 15px 45px;
+      }
+
+      .page-heading {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 13px;
+        margin-bottom: 22px;
+      }
+
+      .page-heading h1 {
+        font-size: 36px;
+      }
+
+      .workspace {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        border-radius: 19px;
+      }
+
+      .inbox-sidebar {
+        border-right: none;
+      }
+
+      .sidebar-header {
+        padding: 21px 17px;
+      }
+
+      .conversation-list {
+        max-height: 440px;
       }
 
       .conversation {
-        padding: 17px;
+        padding: 18px 16px;
       }
 
-      .conversation-top {
-        align-items: flex-start;
+      .conversation:hover {
+        padding-left: 20px;
       }
 
-      .conversation h3 {
-        font-size: 16px;
+      .welcome-panel {
+        min-height: 370px;
+        padding: 25px 16px;
+        border-top: 1px solid var(--line);
       }
 
-      .unread-badge {
-        font-size: 11px;
-        padding: 5px 8px;
+      .welcome-content {
+        padding: 32px 22px;
+      }
+
+      .welcome-illustration {
+        width: 65px;
+        height: 65px;
+        border-radius: 19px;
+        font-size: 27px;
+        margin-bottom: 19px;
+      }
+
+      .welcome-content h2 {
+        font-size: 25px;
+      }
+
+      .welcome-content p {
+        font-size: 12px;
+      }
+
+      .empty-workspace {
+        min-height: 450px;
+        border-radius: 19px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .inbox-actions {
+        gap: 8px;
+      }
+
+      .inbox-action {
+        padding: 0 12px;
+        font-size: 10px;
+      }
+    }
+
+    @media (max-width: 390px) {
+      .top-navigation {
+        gap: 12px;
+      }
+
+      .top-link {
+        font-size: 10px;
+      }
+
+      .page-heading h1 {
+        font-size: 32px;
+      }
+
+      .conversation-date {
+        font-size: 9px;
       }
     }
   </style>
 </head>
 
 <body>
-  <header>
-    <%= link_to "loopedt.", listings_path, class: "logo" %>
-    <%= link_to "Discover items", listings_path %>
+
+  <header class="topbar">
+    <%= link_to listings_path, class: "brand" do %>
+      loopedt<span>.</span>
+    <% end %>
+
+    <nav class="top-navigation">
+      <%= link_to "Discover items", listings_path, class: "top-link" %>
+
+      <%= link_to inbox_path, class: "top-link active" do %>
+        Inbox
+        <span
+          id="navbar-unread-count"
+          class="unread-count"
+          <%= "hidden" if @unread_counts.values.sum.zero? %>
+        ><%= @unread_counts.values.sum %></span>
+      <% end %>
+    </nav>
   </header>
 
-  <main>
-    <h1>Your messages</h1>
-    <p class="subtitle">Chat with buyers and sellers, all in one place.</p>
+  <main class="page">
+
+    <!-- BACK AND KEEP SHOPPING ACTIONS -->
+
+    <div class="inbox-actions">
+      <%= link_to @back_path,
+          class: "inbox-action back-action",
+          onclick: "if (document.referrer.startsWith(window.location.origin)) { window.history.back(); return false; }" do %>
+        ← Back
+      <% end %>
+
+      <%= link_to @keep_shopping_path, class: "inbox-action shopping-action" do %>
+        Keep Shopping <span>→</span>
+      <% end %>
+    </div>
+
+    <div class="page-heading">
+      <div>
+        <p class="eyebrow">Your Loopedt activity</p>
+        <h1>Good things <span>happen here.</span></h1>
+        <p class="page-description">
+          Your conversations, item discussions and negotiations, all in one place.
+        </p>
+      </div>
+
+      <% if @conversations.any? %>
+        <span class="heading-count">
+          <%= pluralize(@conversations.count, "conversation") %>
+        </span>
+      <% end %>
+    </div>
 
     <% if @conversations.any? %>
 
-      <% @conversations.each do |conversation| %>
+      <section class="workspace">
 
-        <% other_person =
-          conversation.buyer_id == @current_user.id ?
-          conversation.seller : conversation.buyer %>
+        <aside class="inbox-sidebar">
 
-        <% unread_count = @unread_counts[conversation.id].to_i %>
-
-        <%= link_to inbox_conversation_path(conversation),
-            class: "conversation #{'has-unread' if unread_count > 0}" do %>
-
-          <div class="conversation-top">
-            <h3><%= conversation.listing.title %></h3>
-
-            <% if unread_count > 0 %>
-              <span class="unread-badge">
-                <span class="unread-dot"></span>
-                New message<%= unread_count > 1 ? "s" : "" %>
-                (<%= unread_count %>)
+          <div class="sidebar-header">
+            <div class="sidebar-title-row">
+              <h2>Your inbox</h2>
+              <span class="sidebar-total">
+                <%= @conversations.count %> total
               </span>
+            </div>
+
+            <label class="search-box">
+              <span class="search-icon">⌕</span>
+              <input
+                type="search"
+                id="conversation-search"
+                placeholder="Find a conversation..."
+                autocomplete="off"
+                aria-label="Search conversations"
+              >
+            </label>
+          </div>
+
+          <div class="conversation-list" id="conversation-list">
+
+            <% @conversations.each do |conversation| %>
+
+              <% other_person =
+                conversation.buyer_id == @current_user.id ?
+                conversation.seller : conversation.buyer %>
+
+              <% unread_count = @unread_counts[conversation.id].to_i %>
+
+              <%= link_to inbox_conversation_path(conversation),
+              class: "conversation #{'has-unread' if unread_count > 0}",
+              data: {
+                search: "#{conversation.listing.title} #{other_person.username}".downcase
+              } do %>
+
+                <div class="conversation-top">
+                  <span class="conversation-title">
+                    <%= conversation.listing.title %>
+                  </span>
+
+                  <span class="conversation-date">
+                    <%= conversation.created_at.strftime("%d %b") %>
+                  </span>
+                </div>
+
+                <div class="conversation-person">
+                  <span class="person-avatar">
+                    <%= other_person.username.to_s.first.to_s.upcase %>
+                  </span>
+
+                  <span>
+                    With <strong><%= other_person.username %></strong>
+                  </span>
+                </div>
+
+                <% if conversation.negotiation_status != "not_requested" %>
+                  <div class="inbox-negotiation-status">
+                    <% case conversation.negotiation_status %>
+                    <% when "requested" %>
+                      <% if @current_user.id == conversation.seller_id %>
+                        NEW PRICE REQUEST
+                      <% else %>
+                        REQUEST SENT · WAITING FOR SELLER
+                      <% end %>
+                    <% when "active" %>
+                      NEGOTIATION ACTIVE
+                    <% when "agreed" %>
+                      PRICE AGREED
+                    <% when "declined" %>
+                      REQUEST DECLINED
+                    <% end %>
+                  </div>
+                <% end %>
+
+                <div class="conversation-footer">
+                  <span class="conversation-status">
+                    <%= conversation.status.titleize %>
+                  </span>
+
+                  <% if unread_count > 0 %>
+                    <span class="new-messages">
+                      <%= unread_count %> new
+                    </span>
+                  <% else %>
+                    <span class="conversation-arrow">↗</span>
+                  <% end %>
+                </div>
+
+              <% end %>
+
             <% end %>
+
+            <div class="sidebar-empty" id="no-search-results" hidden>
+              No conversations match your search.
+            </div>
+
           </div>
+        </aside>
 
-          <p>
-            Conversation with
-            <strong><%= other_person.username %></strong>
-          </p>
+        <!-- REDESIGNED RIGHT-HAND PANEL -->
 
-          <div class="details">
-            Status: <%= conversation.status.titleize %>
-            · Started <%= conversation.created_at.strftime("%d %b %Y") %>
+        <div class="welcome-panel">
+          <div class="welcome-content">
+
+            <div class="welcome-illustration">✉</div>
+
+            <div class="welcome-label">
+              <span></span>
+              YOUR LOOPEDT INBOX
+            </div>
+
+            <h2>Every good find starts with a conversation.</h2>
+
+            <p>
+              Connect with sellers, ask questions about items
+              and work out a deal. Your conversations are all
+              organised right here.
+            </p>
+
+            <div class="welcome-divider"></div>
+
+            <div class="welcome-hint">
+              <span>↖</span>
+              Choose a conversation from the left to get started.
+            </div>
+
           </div>
+        </div>
 
-        <% end %>
-
-      <% end %>
+      </section>
 
     <% else %>
 
-      <div class="empty">
-        <h3>No conversations yet</h3>
-        <p>When you contact a buyer or seller, your messages will appear here.</p>
-        <%= link_to "Browse items", listings_path, class: "browse-link" %>
-      </div>
+      <section class="empty-workspace">
+        <div class="empty-content">
+
+          <div class="empty-icon">✉</div>
+
+          <h2>Your inbox is waiting.</h2>
+
+          <p>
+            Nothing here just yet. Start exploring the marketplace
+            and discover something worth talking about.
+          </p>
+
+          <%= link_to listings_path, class: "discover-link" do %>
+            Explore the marketplace <span>→</span>
+          <% end %>
+
+        </div>
+      </section>
 
     <% end %>
+
+    <p class="footer-note">
+      Good finds. Better connections. A little more Loopedt.
+    </p>
+
   </main>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const searchInput = document.getElementById("conversation-search");
+      const conversationList = document.getElementById("conversation-list");
+      const noResults = document.getElementById("no-search-results");
+
+      if (searchInput && conversationList) {
+        searchInput.addEventListener("input", function () {
+          const query = searchInput.value.trim().toLowerCase();
+          const conversations = conversationList.querySelectorAll(".conversation");
+          let visibleCount = 0;
+
+          conversations.forEach(function (conversation) {
+            const searchText = conversation.dataset.search || "";
+            const matches = searchText.includes(query);
+
+            conversation.hidden = !matches;
+
+            if (matches) visibleCount++;
+          });
+
+          if (noResults) {
+            noResults.hidden = visibleCount !== 0;
+          }
+        });
+      }
+
+      const badge = document.getElementById("navbar-unread-count");
+
+      if (!badge) return;
+
+      const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+      const socket = new WebSocket(
+        `${protocol}//${window.location.host}/cable`
+      );
+
+      const identifier = JSON.stringify({
+        channel: "NotificationsChannel"
+      });
+
+      let subscribed = false;
+
+      socket.addEventListener("message", function (event) {
+        const frame = JSON.parse(event.data);
+
+        if (frame.type === "welcome" && !subscribed) {
+          subscribed = true;
+
+          socket.send(JSON.stringify({
+            command: "subscribe",
+            identifier: identifier
+          }));
+        }
+
+        if (
+          frame.message &&
+          typeof frame.message.unread_count === "number"
+        ) {
+          const count = frame.message.unread_count;
+
+          badge.textContent = count;
+          badge.hidden = count === 0;
+        }
+      });
+
+      socket.addEventListener("error", function () {
+        console.error("Live notifications connection failed.");
+      });
+    });
+  </script>
+
 </body>
 </html>

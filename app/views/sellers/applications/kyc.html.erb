@@ -1,0 +1,646 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Identity Verification | Loopedt</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --green: #244e3b;
+      --dark: #193a2b;
+      --lime: #d9f36a;
+      --cream: #fffdf5;
+      --ink: #25372c;
+      --muted: #78847a;
+      --line: #e9e9df;
+      --white: #ffffff;
+      --orange: #ff9866;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #f5f5ed;
+      color: var(--ink);
+      font-family: "DM Sans", sans-serif;
+    }
+
+    .page {
+      min-height: 100vh;
+      padding: 35px 20px 60px;
+    }
+
+    .topbar {
+      max-width: 1120px;
+      margin: 0 auto 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      color: var(--green);
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 27px;
+      font-weight: 700;
+      letter-spacing: -1.5px;
+      text-decoration: none;
+    }
+
+    .step-label {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .progress {
+      max-width: 1120px;
+      height: 6px;
+      margin: 0 auto 30px;
+      background: #e5e8dc;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      width: 100%;
+      height: 100%;
+      background: var(--green);
+      border-radius: 20px;
+    }
+
+    .layout {
+      max-width: 1120px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 0.8fr 1.2fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .intro {
+      background: var(--green);
+      color: white;
+      padding: 42px 34px;
+      border-radius: 24px;
+      position: sticky;
+      top: 25px;
+      overflow: hidden;
+    }
+
+    .intro::after {
+      content: "";
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      background: var(--lime);
+      opacity: 0.12;
+      border-radius: 50%;
+      right: -100px;
+      bottom: -90px;
+    }
+
+    .step-tag {
+      display: inline-block;
+      background: var(--lime);
+      color: var(--dark);
+      padding: 8px 13px;
+      border-radius: 30px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .intro h1 {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: clamp(32px, 4vw, 43px);
+      line-height: 1.12;
+      letter-spacing: -1.8px;
+      margin: 28px 0 16px;
+    }
+
+    .intro h1 span {
+      color: var(--lime);
+    }
+
+    .intro > p {
+      color: #d7e2d8;
+      line-height: 1.8;
+      font-size: 14px;
+    }
+
+    .security-note {
+      margin-top: 38px;
+      padding: 18px;
+      background: rgba(255,255,255,0.09);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 15px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .security-note strong {
+      display: block;
+      color: var(--lime);
+      font-size: 13px;
+      margin-bottom: 7px;
+    }
+
+    .security-note p {
+      margin: 0;
+      color: #e0e8df;
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .form-panel {
+      background: var(--cream);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 38px;
+    }
+
+    .form-heading {
+      margin-bottom: 30px;
+    }
+
+    .form-heading h2 {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 27px;
+      letter-spacing: -1px;
+      margin: 0 0 9px;
+    }
+
+    .form-heading p {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+      margin: 0;
+    }
+
+    .section {
+      padding: 25px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .section-title {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 17px;
+      margin: 0 0 5px;
+    }
+
+    .section-description {
+      color: var(--muted);
+      font-size: 12px;
+      margin: 0 0 20px;
+      line-height: 1.6;
+    }
+
+    .fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 17px;
+    }
+
+    .field {
+      min-width: 0;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 13px 14px;
+      border: 1px solid #dedfd5;
+      border-radius: 10px;
+      background: white;
+      color: var(--ink);
+      font: inherit;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(36, 78, 59, 0.08);
+    }
+
+    input[type="file"] {
+      padding: 11px;
+      font-size: 12px;
+    }
+
+    textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    .upload-box {
+      padding: 17px;
+      border: 1px dashed #b8c3b5;
+      background: #fafbf5;
+      border-radius: 13px;
+    }
+
+    .upload-box p {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.6;
+    }
+
+    .country-display {
+      background: #f0f2e9;
+      color: var(--green);
+      font-weight: 700;
+    }
+
+    .error-messages {
+      background: #fff0ed;
+      color: #9c392c;
+      border: 1px solid #f2c5bd;
+      padding: 14px 17px;
+      border-radius: 12px;
+      margin-bottom: 22px;
+      font-size: 13px;
+    }
+
+    .error-messages ul {
+      margin: 8px 0 0;
+      padding-left: 20px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 25px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 0;
+      border-radius: 11px;
+      padding: 15px 20px;
+      font-family: "DM Sans", sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    .button:hover {
+      transform: translateY(-2px);
+    }
+
+    .button-primary {
+      background: var(--green);
+      color: white;
+      flex: 1;
+    }
+
+    .button-primary:hover {
+      background: var(--dark);
+    }
+
+    .button-secondary {
+      background: #eef0e6;
+      color: var(--green);
+    }
+
+    .submit-section {
+      border-top: 1px solid var(--line);
+      margin-top: 26px;
+      padding-top: 24px;
+    }
+
+    .submit-section p {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+      margin: 0 0 16px;
+    }
+
+    .final-button {
+      width: 100%;
+      background: var(--lime);
+      color: var(--dark);
+    }
+
+    .final-button:hover {
+      background: #cce65a;
+    }
+
+    .required-note {
+      color: var(--muted);
+      font-size: 11px;
+      margin-top: 16px;
+    }
+
+    @media (max-width: 800px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .intro {
+        position: relative;
+        top: auto;
+        padding: 30px;
+      }
+
+      .intro h1 {
+        font-size: 34px;
+      }
+
+      .form-panel {
+        padding: 25px;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .fields {
+        grid-template-columns: 1fr;
+      }
+
+      .field.full {
+        grid-column: auto;
+      }
+
+      .topbar {
+        margin-bottom: 20px;
+      }
+
+      .form-panel {
+        padding: 21px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <header class="topbar">
+      <%= link_to "loopedt.", root_path, class: "logo" %>
+      <span class="step-label">STEP 2 OF 2</span>
+    </header>
+
+    <div class="progress">
+      <div class="progress-fill"></div>
+    </div>
+
+    <div class="layout">
+      <aside class="intro">
+        <span class="step-tag">Almost there</span>
+
+        <h1>
+          Let's make your shop <span>official.</span>
+        </h1>
+
+        <p>
+          Before your shop goes live, we need to verify your identity
+          and confirm your address. This helps keep the Loopedt community
+          safe and trustworthy.
+        </p>
+
+        <div class="security-note">
+          <strong>🔒 Your information matters</strong>
+          <p>
+            Your verification documents are collected for seller review.
+            They should only be accessible to authorised reviewers.
+          </p>
+        </div>
+      </aside>
+
+      <section class="form-panel">
+        <div class="form-heading">
+          <h2>Identity verification</h2>
+          <p>
+            Complete the details below and upload your documents.
+            You can save your progress before submitting.
+          </p>
+        </div>
+
+        <% if @seller_application.errors.any? %>
+          <div class="error-messages">
+            <strong>Please check the following:</strong>
+            <ul>
+              <% @seller_application.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <%= form_with model: @seller_application,
+                      url: update_seller_onboarding_kyc_path,
+                      method: :patch,
+                      multipart: true do |form| %>
+
+          <div class="section">
+            <h3 class="section-title">Personal information</h3>
+            <p class="section-description">
+              Enter your details exactly as they appear on your identification document.
+            </p>
+
+            <div class="fields">
+              <div class="field full">
+                <%= form.label :legal_full_name, "Full legal name *" %>
+                <%= form.text_field :legal_full_name,
+                    placeholder: "Enter your full name",
+                    autocomplete: "name",
+                    required: true %>
+              </div>
+
+              <div class="field">
+                <%= form.label :date_of_birth, "Date of birth *" %>
+                <%= form.date_field :date_of_birth, required: true %>
+              </div>
+
+              <div class="field">
+                <%= form.label :phone_number, "Phone number *" %>
+                <%= form.telephone_field :phone_number,
+                    placeholder: "+234...",
+                    autocomplete: "tel",
+                    required: true %>
+              </div>
+            </div>
+          </div>
+
+          <div class="section">
+            <h3 class="section-title">Residential address</h3>
+            <p class="section-description">
+              Provide your current residential address in Nigeria.
+            </p>
+
+            <div class="fields">
+              <div class="field full">
+                <%= form.label :residential_address, "Street address *" %>
+                <%= form.text_area :residential_address,
+                    placeholder: "House number, street name and area",
+                    required: true %>
+              </div>
+
+              <div class="field">
+                <%= form.label :city, "City *" %>
+                <%= form.text_field :city,
+                    placeholder: "e.g. Lagos",
+                    required: true %>
+              </div>
+
+              <div class="field">
+                <%= form.label :state, "State *" %>
+                <%= form.text_field :state,
+                    placeholder: "e.g. Lagos State",
+                    required: true %>
+              </div>
+
+              <div class="field">
+                <%= form.label :lga, "Local Government Area *" %>
+                <%= form.text_field :lga,
+                    placeholder: "Enter your LGA",
+                    required: true %>
+              </div>
+
+              <div class="field">
+                <%= form.label :postal_code, "Postal code" %>
+                <%= form.text_field :postal_code,
+                    placeholder: "Optional" %>
+              </div>
+
+              <div class="field full">
+                <label for="country_display">Country</label>
+                <input id="country_display"
+                       type="text"
+                       value="Nigeria"
+                       class="country-display"
+                       disabled>
+              </div>
+            </div>
+          </div>
+
+          <div class="section">
+            <h3 class="section-title">Identity document</h3>
+            <p class="section-description">
+              Select the identification document you will use for verification.
+            </p>
+
+            <div class="fields">
+              <div class="field">
+                <%= form.label :id_type, "Document type *" %>
+                <%= form.select :id_type,
+                    [
+                      ["National Identification Number (NIN)", "NIN"],
+                      ["International Passport", "International Passport"],
+                      ["Driver's Licence", "Driver's Licence"],
+                      ["Voter's Card", "Voter's Card"]
+                    ],
+                    { prompt: "Select document type" },
+                    required: true %>
+              </div>
+
+              <div class="field">
+                <%= form.label :id_number, "Document number *" %>
+                <%= form.text_field :id_number,
+                    placeholder: "Enter document number",
+                    autocomplete: "off",
+                    required: true %>
+              </div>
+
+              <div class="field full">
+                <%= form.label :identity_document, "Upload identity document *" %>
+                <div class="upload-box">
+                  <p>
+                    Upload a clear image or PDF of your selected identification document.
+                  </p>
+                  <%= form.file_field :identity_document,
+                      accept: "image/jpeg,image/png,application/pdf" %>
+                </div>
+
+                <% if @seller_application.identity_document.attached? %>
+                  <p class="required-note">An identity document is already attached.</p>
+                <% end %>
+              </div>
+            </div>
+          </div>
+
+          <div class="section">
+            <h3 class="section-title">Proof of address</h3>
+            <p class="section-description">
+              Upload a recent document that shows your residential address.
+            </p>
+
+            <div class="field">
+              <%= form.label :proof_of_address, "Upload proof of address *" %>
+              <div class="upload-box">
+                <p>
+                  Examples include a recent utility bill or bank statement
+                  showing your name and address.
+                </p>
+                <%= form.file_field :proof_of_address,
+                    accept: "image/jpeg,image/png,application/pdf" %>
+              </div>
+
+              <% if @seller_application.proof_of_address.attached? %>
+                <p class="required-note">Proof of address is already attached.</p>
+              <% end %>
+            </div>
+          </div>
+
+          <div class="actions">
+            <%= link_to "Back to shop details",
+                seller_onboarding_path,
+                class: "button button-secondary" %>
+
+            <%= form.submit "Save verification details",
+                class: "button button-primary" %>
+          </div>
+        <% end %>
+
+        <div class="submit-section">
+          <p>
+            Once all your details and documents have been saved,
+            you can submit your application for review.
+          </p>
+
+          <%= button_to "Submit application for review",
+              submit_seller_onboarding_path,
+              method: :patch,
+              class: "button final-button",
+              form: { data: { turbo_confirm: "Submit your seller application for review?" } } %>
+
+          <div class="required-note">
+            * Required fields. Please save your verification details before final submission.
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+</body>
+</html>

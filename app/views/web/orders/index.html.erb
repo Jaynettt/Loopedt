@@ -1,0 +1,260 @@
+
+<% content_for :title, "My Orders | Loopedt" %>
+
+<style>
+  .orders-page {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 24px;
+    color: #26372e;
+    font-family: Arial, sans-serif;
+  }
+
+  .orders-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 30px;
+  }
+
+  .orders-header h1 {
+    margin: 0 0 8px;
+    font-size: 30px;
+  }
+
+  .orders-header p {
+    margin: 0;
+    color: #78847b;
+    font-size: 14px;
+  }
+
+  .orders-list {
+    display: grid;
+    gap: 16px;
+  }
+
+  .order-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    padding: 22px;
+    border: 1px solid #e5eae3;
+    border-radius: 14px;
+    background: white;
+  }
+
+  .order-details {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .order-details h2 {
+    margin: 0 0 10px;
+    font-size: 17px;
+    color: #244e3b;
+  }
+
+  .order-details p {
+    margin: 6px 0;
+    color: #78847b;
+    font-size: 13px;
+  }
+
+  .order-details a {
+    color: #244e3b;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .order-details a:hover {
+    text-decoration: underline;
+  }
+
+  .order-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  .order-amount {
+    font-size: 17px;
+    font-weight: 800;
+    color: #244e3b;
+  }
+
+  .status-label {
+    display: inline-block;
+    padding: 7px 11px;
+    border-radius: 20px;
+    background: #edf4e8;
+    color: #315d45;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: capitalize;
+  }
+
+  .delivery-label {
+    background: #fff4d9;
+    color: #876719;
+  }
+
+  .dispatch-button {
+    display: inline-block;
+    padding: 11px 16px;
+    border: none;
+    border-radius: 8px;
+    background: #244e3b;
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .dispatch-button:hover {
+    background: #193a2b;
+  }
+
+  .empty-orders {
+    padding: 45px 20px;
+    border: 1px dashed #d6dfd2;
+    border-radius: 14px;
+    background: #f8faf5;
+    text-align: center;
+  }
+
+  .empty-orders h2 {
+    margin-bottom: 8px;
+    color: #244e3b;
+    font-size: 18px;
+  }
+
+  .empty-orders p {
+    color: #78847b;
+    font-size: 13px;
+  }
+
+  .back-link {
+    color: #315d45;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  @media (max-width: 650px) {
+    .orders-page {
+      padding: 18px;
+    }
+
+    .orders-header {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .order-card {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .order-actions {
+      align-items: flex-start;
+      width: 100%;
+    }
+  }
+</style>
+
+<div class="orders-page">
+
+  <div class="orders-header">
+    <div>
+      <h1>My Orders</h1>
+      <p>Manage your purchases and sales on Loopedt.</p>
+    </div>
+
+    <%= link_to "← Back to dashboard",
+        seller_dashboard_path,
+        class: "back-link" %>
+  </div>
+
+  <% if @orders.any? %>
+
+    <div class="orders-list">
+
+      <% @orders.each do |order| %>
+
+        <div class="order-card">
+
+          <div class="order-details">
+            <h2>
+              <%= link_to(
+                order.listing&.title || "Order ##{order.id}",
+                order_path(order)
+              ) %>
+            </h2>
+
+            <p>Order #<%= order.id %></p>
+
+            <% if order.buyer_id == @current_user.id %>
+              <p>
+                Seller:
+                <%= order.seller&.username || order.seller&.email || "Unavailable" %>
+              </p>
+            <% else %>
+              <p>
+                Buyer:
+                <%= order.buyer&.username || order.buyer&.email || "Unavailable" %>
+              </p>
+            <% end %>
+
+            <p>
+              Placed:
+              <%= order.created_at.strftime("%d %B %Y, %I:%M %p") %>
+            </p>
+          </div>
+
+          <div class="order-actions">
+
+            <div class="order-amount">
+              <%= number_to_currency(order.amount, unit: "₦") %>
+            </div>
+
+            <span class="status-label">
+              Payment: <%= order.status.humanize %>
+            </span>
+
+            <span class="status-label delivery-label">
+              Delivery: <%= order.delivery_status.humanize %>
+            </span>
+
+            <% if order.seller_id == @current_user.id &&
+                  order.status == "paid" &&
+                  order.delivery_status == "pending" %>
+
+              <%= button_to "Mark as ready for dispatch",
+                    ready_for_dispatch_order_path(order),
+                    method: :patch,
+                    class: "dispatch-button" %>
+
+            <% end %>
+
+          </div>
+
+        </div>
+
+      <% end %>
+
+    </div>
+
+  <% else %>
+
+    <div class="empty-orders">
+      <h2>No orders yet</h2>
+      <p>Your orders will appear here when customers purchase your listings.</p>
+    </div>
+
+  <% end %>
+
+</div>

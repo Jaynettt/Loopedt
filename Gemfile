@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-ruby "3.3.5"
+ruby ">= 3.3.5", "< 3.4.0"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 7.1.6"
@@ -49,3 +49,6 @@ end
 gem "jbuilder", "~> 2.15"
 
 gem "bcrypt", "~> 3.1"
+
+gem "turbo-rails", "~> 2.0"
+gem "importmap-rails", "~> 2.2"

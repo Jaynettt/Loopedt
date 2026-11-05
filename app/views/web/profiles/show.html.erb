@@ -1,0 +1,362 @@
+
+<style>
+  .my-profile, .my-profile * { box-sizing: border-box; }
+
+  .my-profile {
+    min-height: 100vh;
+    padding: 38px 22px 80px;
+    background: #fffdf5;
+    color: #25372c;
+    font-family: Arial, sans-serif;
+  }
+
+  .my-profile-container { max-width: 1050px; margin: auto; }
+
+  .my-profile a { text-decoration: none; }
+
+  .profile-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 30px;
+  }
+
+  .profile-back {
+    color: #244e3b;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .profile-edit-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 19px;
+    background: #d9f36a;
+    color: #193a2b;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 800;
+  }
+
+  .profile-edit-btn:hover { background: #c9e65c; }
+
+  .my-profile-banner {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 25px;
+    padding: 42px;
+    color: white;
+    background: linear-gradient(125deg, #193a2b, #244e3b);
+    border-radius: 23px;
+  }
+
+  .my-profile-banner::after {
+    content: "";
+    position: absolute;
+    width: 270px;
+    height: 270px;
+    right: -90px;
+    top: -130px;
+    border: 1px solid rgba(217,243,106,.35);
+    border-radius: 50%;
+    box-shadow: 0 0 0 30px rgba(217,243,106,.04),
+                0 0 0 65px rgba(217,243,106,.03);
+  }
+
+  .profile-intro { position: relative; z-index: 1; }
+
+  .profile-label {
+    margin-bottom: 13px;
+    color: #d9f36a;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .profile-intro h1 {
+    margin: 0 0 10px;
+    color: white;
+    font-size: clamp(30px, 5vw, 43px);
+    letter-spacing: -1.5px;
+    overflow-wrap: anywhere;
+  }
+
+  .profile-intro p {
+    margin: 0;
+    color: rgba(255,255,255,.75);
+    font-size: 14px;
+  }
+
+  .profile-avatar {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 112px;
+    height: 112px;
+    flex-shrink: 0;
+    color: #193a2b;
+    background: #d9f36a;
+    border: 8px solid rgba(255,255,255,.12);
+    border-radius: 50%;
+    font-size: 39px;
+    font-weight: 900;
+  }
+
+  .profile-content {
+    display: grid;
+    grid-template-columns: 1.15fr .85fr;
+    gap: 20px;
+    margin-top: 25px;
+  }
+
+  .profile-card {
+    padding: 27px;
+    background: white;
+    border: 1px solid #e8ebdf;
+    border-radius: 17px;
+    box-shadow: 0 8px 25px rgba(25,58,43,.04);
+  }
+
+  .profile-card h2 {
+    margin: 0 0 23px;
+    color: #193a2b;
+    font-size: 19px;
+  }
+
+  .profile-field {
+    padding: 15px 0;
+    border-bottom: 1px solid #edf0e9;
+  }
+
+  .profile-field:last-child { border-bottom: 0; }
+
+  .profile-field span {
+    display: block;
+    margin-bottom: 7px;
+    color: #7b877d;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .7px;
+    text-transform: uppercase;
+  }
+
+  .profile-field strong {
+    display: block;
+    color: #25372c;
+    font-size: 14px;
+    font-weight: 650;
+    overflow-wrap: anywhere;
+  }
+
+  .profile-bio {
+    color: #59675d;
+    font-size: 14px;
+    line-height: 1.8;
+    overflow-wrap: anywhere;
+  }
+
+  .profile-account-type {
+    display: inline-block;
+    margin-bottom: 18px;
+    padding: 7px 12px;
+    color: #244e3b;
+    background: #eff5e7;
+    border-radius: 30px;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  .shop-card {
+    margin-top: 20px;
+    padding: 27px;
+    background: #f3f6eb;
+    border: 1px solid #e4ebd8;
+    border-radius: 17px;
+  }
+
+  .shop-card h2 {
+    margin: 0 0 10px;
+    color: #193a2b;
+    font-size: 19px;
+  }
+
+  .shop-card p {
+    margin: 0 0 18px;
+    color: #657267;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+
+  .shop-link {
+    color: #244e3b;
+    font-size: 13px;
+    font-weight: 800;
+  }
+
+  .profile-footer {
+    margin-top: 25px;
+    color: #89938a;
+    font-size: 12px;
+  }
+      .logout-btn {
+  background: #fff;
+  color: #c0392b;
+  border: 1px solid #f0d5d2;
+  border-radius: 10px;
+  padding: 12px 18px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.logout-btn:hover {
+  background: #fff3f1;
+}
+
+  @media(max-width: 700px) {
+    .my-profile { padding: 25px 15px 60px; }
+    .my-profile-banner { padding: 30px 24px; }
+    .profile-avatar { width: 80px; height: 80px; font-size: 29px; }
+    .profile-content { grid-template-columns: 1fr; }
+    .profile-card, .shop-card { padding: 22px; }
+  }
+
+  @media(max-width: 420px) {
+    .my-profile-banner { align-items: flex-start; flex-direction: column-reverse; }
+    .profile-top { align-items: flex-start; }
+    .profile-edit-btn { padding: 10px 12px; }
+  }
+</style>
+
+<div class="my-profile">
+  <div class="my-profile-container">
+
+    <div class="profile-top">
+      <%= link_to "← Back to marketplace", listings_path, class: "profile-back" %>
+      <%= link_to "Edit profile ↗", edit_my_profile_path, class: "profile-edit-btn" %> <%= button_to "Log out",
+      logout_path,
+      method: :delete,
+    class: "profile-btn logout-btn" %>
+    </div>
+
+    <section class="my-profile-banner">
+      <div class="profile-intro">
+        <div class="profile-label">Your Loopedt account</div>
+
+        <h1>
+          <%= @profile_user.first_name.presence || @profile_user.username %>
+          <%= @profile_user.last_name %>
+        </h1>
+
+        <p>@<%= @profile_user.username %></p>
+      </div>
+
+      <div class="profile-avatar">
+        <%= @profile_user.first_name.to_s.first&.upcase ||
+            @profile_user.username.to_s.first&.upcase || "L" %>
+      </div>
+    </section>
+
+    <div class="profile-content">
+      <section class="profile-card">
+        <h2>Personal information</h2>
+
+        <div class="profile-field">
+          <span>Username</span>
+          <strong>@<%= @profile_user.username %></strong>
+        </div>
+
+        <div class="profile-field">
+          <span>First name</span>
+          <strong><%= @profile_user.first_name.presence || "Not added" %></strong>
+        </div>
+
+        <div class="profile-field">
+          <span>Last name</span>
+          <strong><%= @profile_user.last_name.presence || "Not added" %></strong>
+        </div>
+
+        <div class="profile-field">
+          <span>Email address</span>
+          <strong><%= @profile_user.email %></strong>
+        </div>
+
+        <div class="profile-field">
+          <span>Phone number</span>
+          <strong><%= @profile_user.phone_number.presence || "Not added" %></strong>
+        </div>
+
+        <div class="profile-field">
+          <span>About you</span>
+          <div class="profile-bio">
+            <%= @profile_user.bio.presence || "You haven't added a bio yet." %>
+          </div>
+        </div>
+      </section>
+
+      <div>
+        <section class="profile-card">
+          <h2>Account details</h2>
+
+          <% if @seller_application&.status == "approved" %>
+            <span class="profile-account-type">Approved seller</span>
+          <% elsif @seller_application.present? %>
+            <span class="profile-account-type">Seller application</span>
+          <% else %>
+            <span class="profile-account-type">Buyer account</span>
+          <% end %>
+
+          <div class="profile-field">
+            <span>Member since</span>
+            <strong><%= @profile_user.created_at.strftime("%B %Y") %></strong>
+          </div>
+
+          <div class="profile-field">
+            <span>Email verification</span>
+            <strong><%= @profile_user.verified? ? "Verified" : "Not verified" %></strong>
+          </div>
+        </section>
+
+        <% if @seller_application.present? %>
+          <section class="shop-card">
+            <h2>Your storefront</h2>
+
+            <p>
+              <strong><%= @seller_application.shop_name %></strong><br>
+              <%= @seller_application.description %>
+            </p>
+
+            <p>
+              Shop location:
+              <%= @seller_application.location %>
+            </p>
+
+            <% if @seller_application.status == "approved" %>
+              <%= link_to "View your public shop →",
+                  seller_profile_path(@profile_user),
+                  class: "shop-link" %>
+            <% else %>
+              <span class="shop-link">
+                Application status: <%= @seller_application.status.humanize %>
+              </span>
+            <% end %>
+          </section>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="profile-footer">
+      Your profile information is only editable by you.
+    </div>
+
+  </div>
+</div>

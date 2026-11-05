@@ -7,126 +7,661 @@
   <title>Create an account | Loopedt</title>
 
   <style>
-    * { box-sizing: border-box; }
+    :root {
+      --green: #244e3b;
+      --dark: #193a2b;
+      --lime: #d9f36a;
+      --yellow: #ffe58a;
+      --orange: #ff9866;
+      --pink: #ffb9c9;
+      --cream: #fffdf5;
+      --ink: #25372c;
+      --muted: #7b877d;
+      --border: #e8ebdf;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
-      padding: 35px 20px;
-      background: #f8f8f6;
-      color: #20231f;
+      min-height: 100vh;
+      background: var(--cream);
+      color: var(--ink);
       font-family: Arial, sans-serif;
     }
 
-    .card {
-      max-width: 500px;
-      margin: 0 auto;
-      padding: 32px;
-      background: white;
-      border: 1px solid #e5e8e2;
-      border-radius: 16px;
+    a {
+      color: inherit;
     }
 
-    .logo {
-      color: #244e3b;
-      font-size: 29px;
-      font-weight: bold;
+    .signup-page {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+    }
+
+    /* LEFT BRAND PANEL */
+
+    .visual-panel {
+      position: relative;
+      overflow: hidden;
+      min-height: 100vh;
+      padding: 42px 50px;
+      background: var(--green);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .visual-panel::before,
+    .visual-panel::after {
+      content: "";
+      position: absolute;
+      border: 1px solid rgba(255,255,255,0.13);
+      border-radius: 50%;
+    }
+
+    .visual-panel::before {
+      width: 470px;
+      height: 470px;
+      top: 18%;
+      left: 5%;
+    }
+
+    .visual-panel::after {
+      width: 340px;
+      height: 340px;
+      top: 27%;
+      left: 19%;
+    }
+
+    .brand {
+      position: relative;
+      z-index: 2;
+      width: fit-content;
+      color: white;
+      font-size: 31px;
+      font-weight: 800;
+      letter-spacing: -1.8px;
       text-decoration: none;
     }
 
-    h1 { margin-top: 25px; }
+    .brand span {
+      color: var(--lime);
+    }
 
-    .muted { color: #70756f; line-height: 1.5; }
+    .visual-content {
+      position: relative;
+      z-index: 2;
+      max-width: 480px;
+      margin: 55px 0;
+    }
 
-    label {
-      display: block;
-      margin: 17px 0 7px;
-      font-weight: bold;
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 9px 14px;
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 30px;
+      color: var(--lime);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1.3px;
+    }
+
+    .eyebrow-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--lime);
+    }
+
+    .visual-content h1 {
+      margin: 28px 0 18px;
+      font-size: clamp(49px, 5.4vw, 75px);
+      line-height: 0.98;
+      letter-spacing: -4px;
+    }
+
+    .visual-content h1 em {
+      color: var(--lime);
+      font-style: normal;
+    }
+
+    .visual-description {
+      max-width: 370px;
+      color: rgba(255,255,255,0.72);
       font-size: 14px;
+      line-height: 1.9;
     }
 
-    input {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #d7ddd5;
-      border-radius: 8px;
-      font-size: 15px;
+    /* DECORATIVE COMPOSITION */
+
+    .loop-art {
+      position: relative;
+      height: 240px;
+      max-width: 430px;
+      margin-top: 35px;
     }
 
-    button {
+    .art-shape {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 20px 45px rgba(0,0,0,0.15);
+    }
+
+    .art-one {
+      width: 155px;
+      height: 190px;
+      left: 25px;
+      top: 15px;
+      background: var(--yellow);
+      color: var(--green);
+      border-radius: 80px 80px 18px 18px;
+      transform: rotate(-9deg);
+      font-size: 75px;
+      font-weight: 800;
+    }
+
+    .art-two {
+      width: 150px;
+      height: 155px;
+      left: 160px;
+      top: 35px;
+      background: var(--pink);
+      color: var(--green);
+      border-radius: 20px;
+      transform: rotate(8deg);
+      font-size: 70px;
+    }
+
+    .art-three {
+      width: 105px;
+      height: 125px;
+      left: 290px;
+      top: 5px;
+      background: var(--orange);
+      color: var(--green);
+      border-radius: 60px 60px 15px 15px;
+      transform: rotate(12deg);
+      font-size: 50px;
+    }
+
+    .art-caption {
+      position: absolute;
+      z-index: 2;
+      left: 20px;
+      bottom: 0;
+      padding: 11px 16px;
+      background: var(--lime);
+      color: var(--dark);
+      border-radius: 30px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      transform: rotate(-3deg);
+    }
+
+    .visual-footer {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: rgba(255,255,255,0.58);
+      font-size: 10px;
+      letter-spacing: 0.6px;
+    }
+
+    .visual-footer strong {
+      color: var(--lime);
+    }
+
+    /* SIGNUP FORM */
+
+    .form-panel {
+      min-height: 100vh;
+      padding: 45px 55px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    .form-top {
+      position: absolute;
+      top: 43px;
+      right: 55px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .form-top a {
+      margin-left: 5px;
+      color: var(--green);
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .signup-content {
       width: 100%;
-      margin-top: 24px;
-      padding: 14px;
-      background: #244e3b;
-      color: white;
-      border: 0;
-      border-radius: 8px;
-      font-size: 15px;
-      font-weight: bold;
-      cursor: pointer;
+      max-width: 465px;
+      padding: 35px 0;
+    }
+
+    .form-tag {
+      display: inline-block;
+      padding: 8px 12px;
+      background: #f0f4e6;
+      border-radius: 30px;
+      color: var(--green);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1.2px;
+    }
+
+    .signup-content h2 {
+      margin: 19px 0 9px;
+      color: var(--dark);
+      font-size: clamp(32px, 3.5vw, 42px);
+      letter-spacing: -2px;
+    }
+
+    .intro {
+      margin: 0 0 25px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
     }
 
     .errors {
-      padding: 12px;
-      background: #fff0ef;
-      color: #b42318;
-      border-radius: 8px;
+      padding: 14px 17px;
+      margin-bottom: 20px;
+      background: #fff0ed;
+      border: 1px solid #f4d0c9;
+      border-radius: 11px;
+      color: #a33125;
+      font-size: 12px;
+      line-height: 1.7;
     }
 
-    a { color: #244e3b; }
+    .errors strong {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .errors ul {
+      margin: 0;
+      padding-left: 19px;
+    }
+
+    .signup-form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 15px;
+    }
+
+    .field {
+      min-width: 0;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    .signup-form label {
+      display: block;
+      margin: 16px 0 8px;
+      color: var(--ink);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .signup-form input:not([type="submit"]) {
+      width: 100%;
+      height: 49px;
+      padding: 0 13px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      outline: none;
+      background: white;
+      color: var(--ink);
+      font-family: inherit;
+      font-size: 13px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .signup-form input:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 4px rgba(36,78,59,0.08);
+    }
+
+    .signup-form input::placeholder {
+      color: #aab1a9;
+    }
+
+    .signup-form input[type="submit"] {
+      grid-column: 1 / -1;
+      width: 100%;
+      height: 54px;
+      margin-top: 27px;
+      border: 0;
+      border-radius: 11px;
+      background: var(--green);
+      color: white;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .signup-form input[type="submit"]:hover {
+      background: var(--dark);
+      transform: translateY(-2px);
+    }
+
+    .login-prompt {
+      margin-top: 23px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 12px;
+    }
+
+    .login-prompt a {
+      color: var(--green);
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .login-prompt a:hover,
+    .form-top a:hover {
+      text-decoration: underline;
+    }
+
+    .bottom-note {
+      margin-top: 30px;
+      color: #a0a89f;
+      text-align: center;
+      font-size: 9px;
+      letter-spacing: 0.6px;
+    }
+
+    /* RESPONSIVE */
+
+    @media (max-width: 1050px) {
+      .visual-panel {
+        padding: 35px;
+      }
+
+      .form-panel {
+        padding: 35px;
+      }
+
+      .form-top {
+        right: 35px;
+        top: 35px;
+      }
+
+      .art-three {
+        left: 260px;
+      }
+    }
+
+    @media (max-width: 800px) {
+      .signup-page {
+        display: block;
+      }
+
+      .visual-panel {
+        min-height: auto;
+        padding: 25px 25px 35px;
+      }
+
+      .visual-content {
+        margin: 55px 0 10px;
+      }
+
+      .visual-content h1 {
+        font-size: 55px;
+      }
+
+      .loop-art {
+        height: 185px;
+        transform: scale(0.8);
+        transform-origin: left top;
+      }
+
+      .visual-footer {
+        margin-top: 0;
+      }
+
+      .form-panel {
+        min-height: auto;
+        padding: 75px 25px 40px;
+      }
+
+      .form-top {
+        top: 25px;
+        right: 25px;
+      }
+
+      .signup-content {
+        max-width: 520px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .visual-panel {
+        padding: 22px 20px 28px;
+      }
+
+      .visual-content h1 {
+        font-size: 46px;
+        letter-spacing: -2.5px;
+      }
+
+      .visual-description {
+        font-size: 13px;
+      }
+
+      .loop-art {
+        transform: scale(0.65);
+        height: 155px;
+      }
+
+      .form-panel {
+        padding: 70px 22px 35px;
+      }
+
+      .signup-form {
+        grid-template-columns: 1fr;
+      }
+
+      .field.full {
+        grid-column: auto;
+      }
+
+      .signup-form input[type="submit"] {
+        grid-column: auto;
+      }
+
+      .visual-footer {
+        font-size: 9px;
+      }
+
+      .form-top {
+        right: 20px;
+      }
+    }
   </style>
 </head>
 
 <body>
-  <main class="card">
-    <a class="logo" href="/">loopedt.</a>
+  <main class="signup-page">
 
-    <h1>Create your account</h1>
-    <p class="muted">
-      Join Loopedt to discover and buy unique pre-loved items.
-    </p>
+    <section class="visual-panel">
 
-    <% if @user&.errors&.any? %>
-      <div class="errors">
-        <strong>Please check the following:</strong>
-        <ul>
-          <% @user.errors.full_messages.each do |error| %>
-            <li><%= error %></li>
-          <% end %>
-        </ul>
-      </div>
-    <% end %>
-
-    <%= form_with model: @user, url: "/signup", method: :post do |form| %>
-
-      <% if params[:intent] == "seller" %>
-        <%= hidden_field_tag :intent, "seller" %>
+      <%= link_to root_path, class: "brand" do %>
+        loopedt<span>.</span>
       <% end %>
 
-      <%= form.label :username, "Username" %>
-      <%= form.text_field :username, required: true, autocomplete: "username" %>
+      <div class="visual-content">
 
-      <%= form.label :first_name, "First name" %>
-      <%= form.text_field :first_name, required: true, autocomplete: "given-name" %>
+        <span class="eyebrow">
+          <span class="eyebrow-dot"></span>
+          YOUR STYLE, YOUR STORY
+        </span>
 
-      <%= form.label :last_name, "Last name" %>
-      <%= form.text_field :last_name, required: true, autocomplete: "family-name" %>
+        <h1>
+          Good things
+          deserve
+          <em>another
+          round.</em>
+        </h1>
 
-      <%= form.label :email, "Email address" %>
-      <%= form.email_field :email, required: true, autocomplete: "email" %>
+        <p class="visual-description">
+          Join a community where great pieces find new homes.
+          Discover something different, express your style
+          and keep good fashion in circulation.
+        </p>
 
-      <%= form.label :password, "Password (at least 8 characters)" %>
-      <%= form.password_field :password, required: true, minlength: 8, autocomplete: "new-password" %>
+        <div class="loop-art">
+          <div class="art-shape art-one">L</div>
+          <div class="art-shape art-two">✳</div>
+          <div class="art-shape art-three">↗</div>
+          <span class="art-caption">YOUR LOOP STARTS HERE.</span>
+        </div>
 
-      <%= form.label :password_confirmation, "Confirm password" %>
-      <%= form.password_field :password_confirmation, required: true, minlength: 8, autocomplete: "new-password" %>
+      </div>
 
-      <%= form.submit(params[:intent] == "seller" ? "Create seller account" : "Create an account") %>
-    <% end %>
+      <div class="visual-footer">
+        <span>THE CIRCULAR STYLE COMMUNITY</span>
+        <strong>FOUND. LOVED. LOOPED.</strong>
+      </div>
 
-    <p class="muted">
-      Already registered?
-      <%= link_to "Log in", "/login" %>
-    </p>
+    </section>
+
+    <section class="form-panel">
+
+      <div class="form-top">
+        Already a member?
+        <%= link_to "Log in", login_path %>
+      </div>
+
+      <div class="signup-content">
+
+        <span class="form-tag">
+          <%= params[:intent] == "seller" ? "JOIN AS A SELLER" : "COME ON IN" %>
+        </span>
+
+        <h2>
+          <%= params[:intent] == "seller" ? "Let's get you selling." : "Create your account." %>
+        </h2>
+
+        <p class="intro">
+          <%= params[:intent] == "seller" ?
+              "Set up your account and take the first step towards sharing your pieces with the Loopedt community." :
+              "A little introduction is all it takes. Create your account and start discovering." %>
+        </p>
+
+        <% if @user&.errors&.any? %>
+          <div class="errors">
+            <strong>Please check the following:</strong>
+            <ul>
+              <% @user.errors.full_messages.each do |error| %>
+                <li><%= error %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <%= form_with model: @user,
+            url: signup_path,
+            method: :post,
+            class: "signup-form" do |form| %>
+
+          <% if params[:intent] == "seller" %>
+            <%= hidden_field_tag :intent, "seller" %>
+          <% end %>
+
+          <div class="field full">
+            <%= form.label :username, "Username" %>
+            <%= form.text_field :username,
+                required: true,
+                autocomplete: "username",
+                placeholder: "Choose a username" %>
+          </div>
+
+          <div class="field">
+            <%= form.label :first_name, "First name" %>
+            <%= form.text_field :first_name,
+                required: true,
+                autocomplete: "given-name",
+                placeholder: "First name" %>
+          </div>
+
+          <div class="field">
+            <%= form.label :last_name, "Last name" %>
+            <%= form.text_field :last_name,
+                required: true,
+                autocomplete: "family-name",
+                placeholder: "Last name" %>
+          </div>
+
+          <div class="field full">
+            <%= form.label :email, "Email address" %>
+            <%= form.email_field :email,
+                required: true,
+                autocomplete: "email",
+                placeholder: "you@example.com" %>
+          </div>
+
+          <div class="field">
+            <%= form.label :password, "Password" %>
+            <%= form.password_field :password,
+                required: true,
+                minlength: 8,
+                autocomplete: "new-password",
+                placeholder: "At least 8 characters" %>
+          </div>
+
+          <div class="field">
+            <%= form.label :password_confirmation, "Confirm password" %>
+            <%= form.password_field :password_confirmation,
+                required: true,
+                minlength: 8,
+                autocomplete: "new-password",
+                placeholder: "Enter it again" %>
+          </div>
+
+          <%= form.submit(
+              params[:intent] == "seller" ?
+              "Create seller account →" :
+              "Create my account →"
+          ) %>
+
+        <% end %>
+
+        <div class="login-prompt">
+          Already registered?
+          <%= link_to "Log in to your account", login_path %>
+        </div>
+
+        <p class="bottom-note">
+          MADE FOR GOOD FINDS AND SECOND CHANCES.
+        </p>
+
+      </div>
+    </section>
+
   </main>
 </body>
 </html>

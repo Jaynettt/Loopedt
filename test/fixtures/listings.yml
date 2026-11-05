@@ -1,25 +1,27 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
-
 one:
   user: one
   category: one
-  title: MyString
-  description: MyText
+  title: Listing One
+  description: First test listing
   price: 9.99
-  condition: MyString
-  brand: MyString
-  size: MyString
-  colour: MyString
-  status: MyString
+  condition: Good
+  brand: Test Brand
+  size: M
+  colour: Black
+  status: available
+  stock_quantity: 5
+  reserved_quantity: 0
 
 two:
   user: two
   category: two
-  title: MyString
-  description: MyText
-  price: 9.99
-  condition: MyString
-  brand: MyString
-  size: MyString
-  colour: MyString
-  status: MyString
+  title: Listing Two
+  description: Second test listing
+  price: 19.99
+  condition: Good
+  brand: Test Brand
+  size: L
+  colour: Blue
+  status: available
+  stock_quantity: 5
+  reserved_quantity: 0

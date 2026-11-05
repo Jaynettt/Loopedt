@@ -1,0 +1,255 @@
+
+<style>
+  .edit-profile, .edit-profile * { box-sizing: border-box; }
+
+  .edit-profile {
+    min-height: 100vh;
+    padding: 38px 20px 80px;
+    background: #fffdf5;
+    color: #25372c;
+    font-family: Arial, sans-serif;
+  }
+
+  .edit-container { max-width: 760px; margin: auto; }
+
+  .edit-back {
+    display: inline-block;
+    margin-bottom: 25px;
+    color: #244e3b;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .edit-heading {
+    padding: 32px;
+    margin-bottom: 22px;
+    color: white;
+    background: linear-gradient(125deg, #193a2b, #244e3b);
+    border-radius: 19px;
+  }
+
+  .edit-heading span {
+    color: #d9f36a;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .edit-heading h1 {
+    margin: 12px 0 8px;
+    color: white;
+    font-size: 31px;
+    letter-spacing: -1px;
+  }
+
+  .edit-heading p {
+    margin: 0;
+    color: rgba(255,255,255,.75);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .edit-section {
+    padding: 28px;
+    margin-bottom: 20px;
+    background: white;
+    border: 1px solid #e8ebdf;
+    border-radius: 16px;
+  }
+
+  .edit-section h2 {
+    margin: 0 0 8px;
+    color: #193a2b;
+    font-size: 19px;
+  }
+
+  .edit-section > p {
+    margin: 0 0 23px;
+    color: #7b877d;
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  .edit-field { margin-bottom: 19px; }
+
+  .edit-field:last-child { margin-bottom: 0; }
+
+  .edit-field label {
+    display: block;
+    margin-bottom: 8px;
+    color: #34483a;
+    font-size: 12px;
+    font-weight: 800;
+  }
+
+  .edit-field input,
+  .edit-field textarea {
+    display: block;
+    width: 100%;
+    padding: 13px 14px;
+    color: #25372c;
+    background: #fff;
+    border: 1px solid #dfe5dc;
+    border-radius: 9px;
+    outline: none;
+    font: inherit;
+    font-size: 14px;
+  }
+
+  .edit-field textarea {
+    min-height: 115px;
+    resize: vertical;
+    line-height: 1.6;
+  }
+
+  .edit-field input:focus,
+  .edit-field textarea:focus {
+    border-color: #638a5b;
+    box-shadow: 0 0 0 3px rgba(99,138,91,.12);
+  }
+
+  .edit-field small {
+    display: block;
+    margin-top: 7px;
+    color: #89938a;
+    font-size: 11px;
+  }
+
+  .edit-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 25px;
+  }
+
+  .edit-cancel,
+  .edit-save {
+    display: inline-block;
+    padding: 13px 21px;
+    border: 0;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 800;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .edit-cancel {
+    color: #244e3b;
+    background: #eff3e9;
+  }
+
+  .edit-save {
+    color: #193a2b;
+    background: #d9f36a;
+  }
+
+  .edit-save:hover { background: #c9e65c; }
+
+  .edit-alert {
+    padding: 13px 15px;
+    margin-bottom: 18px;
+    color: #8b3434;
+    background: #fff0ed;
+    border: 1px solid #f4d1ca;
+    border-radius: 9px;
+    font-size: 13px;
+  }
+
+  @media(max-width: 550px) {
+    .edit-profile { padding: 25px 14px 60px; }
+    .edit-heading, .edit-section { padding: 23px; }
+    .edit-heading h1 { font-size: 26px; }
+  }
+</style>
+
+<div class="edit-profile">
+  <div class="edit-container">
+
+    <%= link_to "← Back to my profile", my_profile_path, class: "edit-back" %>
+
+    <div class="edit-heading">
+      <span>Make it yours</span>
+      <h1>Edit your profile</h1>
+      <p>Keep your Loopedt account information up to date.</p>
+    </div>
+
+    <% if flash.now[:alert].present? %>
+      <div class="edit-alert"><%= flash.now[:alert] %></div>
+    <% end %>
+
+    <%= form_with model: @profile_user,
+        url: my_profile_path,
+        method: :patch do |f| %>
+
+      <section class="edit-section">
+        <h2>Personal information</h2>
+        <p>These details belong to your Loopedt account.</p>
+
+        <div class="edit-field">
+          <%= f.label :username, "Username" %>
+          <%= f.text_field :username, required: true %>
+        </div>
+
+        <div class="edit-field">
+          <%= f.label :first_name, "First name" %>
+          <%= f.text_field :first_name %>
+        </div>
+
+        <div class="edit-field">
+          <%= f.label :last_name, "Last name" %>
+          <%= f.text_field :last_name %>
+        </div>
+
+        <div class="edit-field">
+          <%= f.label :email, "Email address" %>
+          <%= f.email_field :email, required: true %>
+        </div>
+
+        <div class="edit-field">
+          <%= f.label :phone_number, "Phone number" %>
+          <%= f.telephone_field :phone_number %>
+        </div>
+
+        <div class="edit-field">
+          <%= f.label :bio, "About you" %>
+          <%= f.text_area :bio, placeholder: "Tell the Loopedt community a little about yourself..." %>
+        </div>
+      </section>
+
+      <% if @seller_application.present? %>
+        <section class="edit-section">
+          <h2>Your storefront</h2>
+          <p>Update how your shop appears to other Loopedt members.</p>
+
+          <%= fields_for :seller_application, @seller_application do |shop| %>
+            <div class="edit-field">
+              <%= shop.label :shop_name, "Shop name" %>
+              <%= shop.text_field :shop_name, required: true %>
+            </div>
+
+            <div class="edit-field">
+              <%= shop.label :description, "Shop description" %>
+              <%= shop.text_area :description, required: true %>
+            </div>
+
+            <div class="edit-field">
+              <%= shop.label :location, "Shop location" %>
+              <%= shop.text_field :location, required: true %>
+            </div>
+          <% end %>
+        </section>
+      <% end %>
+
+      <div class="edit-actions">
+        <%= link_to "Cancel", my_profile_path, class: "edit-cancel" %>
+        <%= f.submit "Save changes", class: "edit-save" %>
+      </div>
+
+    <% end %>
+
+  </div>
+</div>

@@ -28,6 +28,7 @@ class PaystackService
       {
         email: email,
         amount: amount_kobo,
+        currency: "NGN",
         reference: reference,
         callback_url: callback_url,
         metadata: {

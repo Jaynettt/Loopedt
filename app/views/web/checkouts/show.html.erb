@@ -1,126 +1,824 @@
 
 <div class="checkout-page">
-  <h1>Review your order</h1>
 
-  <div class="checkout-card">
-    <h2>Payment summary</h2>
+  <header class="checkout-header">
+    <%= link_to root_path, class: "checkout-brand" do %>
+      <span class="brand-dot"></span>
+      <span>loopedt</span>
+    <% end %>
+    <p>Your next favourite find.</p>
+  </header>
 
-    <div class="checkout-row">
-      <span>Subtotal</span>
-      <strong><%= number_to_currency(@checkout.subtotal, unit: "₦", precision: 2) %></strong>
+  <main class="checkout-container">
+
+    <div class="checkout-top">
+      <div>
+        <span class="eyebrow">ALMOST YOURS <span class="eyebrow-line"></span></span>
+        <h1>One last look<span>.</span></h1>
+        <p class="checkout-intro">
+          Take a moment to review your finds before making them yours.
+        </p>
+      </div>
+
+      <div class="checkout-step">
+        <div class="step completed">
+          <span>✓</span>
+          <small>Cart</small>
+        </div>
+        <div class="step-line active"></div>
+        <div class="step active">
+          <span>2</span>
+          <small>Review</small>
+        </div>
+        <div class="step-line"></div>
+        <div class="step">
+          <span>3</span>
+          <small>Payment</small>
+        </div>
+      </div>
     </div>
 
-    <div class="checkout-row">
-      <span>Service fee</span>
-      <strong><%= number_to_currency(@checkout.service_fee, unit: "₦", precision: 2) %></strong>
-    </div>
+    <div class="checkout-layout">
 
-    <div class="checkout-row">
-      <span>Payment processing fee</span>
-      <strong><%= number_to_currency(@checkout.payment_fee, unit: "₦", precision: 2) %></strong>
-    </div>
-
-    <hr>
-
-    <div class="checkout-row total">
-      <span>Total</span>
-      <strong><%= number_to_currency(@checkout.total_amount, unit: "₦", precision: 2) %></strong>
-    </div>
-  </div>
-
-  <div class="checkout-card">
-    <h2>Items in this order</h2>
-
-    <% @checkout.orders.includes(:listing, :seller).each do |order| %>
-      <div class="checkout-item">
-        <div>
-          <strong><%= order.listing.title %></strong>
-          <p>Seller: <%= order.seller.email %></p>
+      <!-- ORDER ITEMS -->
+      <section class="items-section">
+        <div class="section-heading">
+          <div>
+            <span class="section-kicker">THE GOOD FINDS</span>
+            <h2>What's in your order?</h2>
+          </div>
+          <span class="item-count">
+            <%= @checkout.orders.count %>
+            <%= "item".pluralize(@checkout.orders.count) %>
+          </span>
         </div>
 
-        <strong>
-          <%= number_to_currency(order.amount, unit: "₦", precision: 2) %>
-        </strong>
-      </div>
-    <% end %>
-  </div>
+        <div class="items-card">
+          <% @checkout.orders.includes(:listing, :seller).each do |order| %>
+            <div class="checkout-item">
 
-  <% if @checkout.status == "pending" %>
-    <p>Your payment will be processed securely by Paystack.</p>
+              <div class="item-image">
+                <% if order.listing.images.attached? %>
+                  <%= image_tag order.listing.images.first, alt: order.listing.title %>
+                <% else %>
+                  <div class="image-placeholder">L</div>
+                <% end %>
+              </div>
 
-    <%= button_to "Pay with Paystack",
-                  pay_checkout_path(@checkout),
-                  method: :post,
-                  class: "pay-button" %>
+              <div class="item-details">
+                <span class="item-label">PRE-LOVED FIND</span>
+                <h3><%= order.listing.title %></h3>
 
-  <% elsif @checkout.status == "paid" %>
-    <div class="success-message">
-      Payment successful! Your order is confirmed.
+                <p class="seller-name">
+                  Seller: <%= order.seller.email %>
+                </p>
+
+                <div class="item-meta">
+                  <span>Qty: <%= order.quantity %></span>
+                  <span>
+                    Unit price:
+                    <%= number_to_currency(
+                      order.amount / order.quantity,
+                      unit: "₦",
+                      precision: 2
+                    ) %>
+                  </span>
+                </div>
+              </div>
+
+              <div class="item-price">
+                <strong>
+                  <%= number_to_currency(order.amount, unit: "₦", precision: 2) %>
+                </strong>
+              </div>
+
+            </div>
+          <% end %>
+        </div>
+
+        <div class="reservation-note">
+          <div class="reservation-icon">✦</div>
+          <div>
+            <strong>Your finds are reserved.</strong>
+            <p>
+              We'll hold these items while you complete your payment.
+              Please complete checkout before
+              <strong><%= l(@checkout.expires_at, format: :long) %></strong>.
+            </p>
+          </div>
+        </div>
+
+        <%= link_to cart_items_path, class: "back-to-cart" do %>
+          <span>←</span> Back to cart
+        <% end %>
+      </section>
+
+      <!-- PAYMENT SUMMARY -->
+      <aside class="summary-section">
+        <div class="summary-card">
+
+          <div class="summary-header">
+            <span class="summary-kicker">YOUR ORDER</span>
+            <div class="summary-heading">
+              <h2>Payment summary</h2>
+              <span class="summary-sparkle">✳</span>
+            </div>
+            <p>Everything looks good. Here's your breakdown.</p>
+          </div>
+
+          <div class="summary-body">
+
+            <div class="summary-row">
+              <span>Subtotal</span>
+              <strong>
+                <%= number_to_currency(@checkout.subtotal, unit: "₦", precision: 2) %>
+              </strong>
+            </div>
+
+            <div class="summary-row">
+              <span>Service fee</span>
+              <strong>
+                <%= number_to_currency(@checkout.service_fee, unit: "₦", precision: 2) %>
+              </strong>
+            </div>
+
+            <div class="summary-row">
+              <span>Payment processing fee</span>
+              <strong>
+                <%= number_to_currency(@checkout.payment_fee, unit: "₦", precision: 2) %>
+              </strong>
+            </div>
+
+            <div class="summary-divider"></div>
+
+            <div class="total-row">
+              <span>Total to pay</span>
+              <strong>
+                <%= number_to_currency(@checkout.total_amount, unit: "₦", precision: 2) %>
+              </strong>
+            </div>
+
+            <% if @checkout.status == "pending" && !@checkout.expired? %>
+
+              <%= button_to pay_checkout_path(@checkout),
+                    method: :post,
+                    class: "pay-button" do %>
+                <span>Proceed to payment</span>
+                <span class="pay-arrow">→</span>
+              <% end %>
+
+              <div class="secure-payment">
+                <span>🔒</span>
+                <p>Secure payment powered by <strong>Paystack</strong></p>
+              </div>
+
+            <% elsif @checkout.status == "paid" %>
+
+              <div class="status-message success-message">
+                <span>✓</span>
+                <div>
+                  <strong>Payment successful!</strong>
+                  <p>Your order is confirmed. Thank you for shopping with Loopedt.</p>
+                </div>
+              </div>
+
+            <% elsif @checkout.status == "failed" %>
+
+              <div class="status-message failed-message">
+                <strong>Checkout unsuccessful</strong>
+                <p>
+                  This checkout has failed or expired. Its reserved stock has
+                  been released. Please return to your cart to start again.
+                </p>
+              </div>
+
+            <% else %>
+
+              <div class="status-message failed-message">
+                <strong>Checkout unavailable</strong>
+                <p>This checkout is no longer available for payment.</p>
+              </div>
+
+            <% end %>
+
+            <div class="summary-footer">
+              <span>✦</span>
+              A little something you'll love, coming your way.
+            </div>
+
+          </div>
+        </div>
+
+        <div class="checkout-trust">
+          <span>✳</span>
+          <p>Shop thoughtfully. Wear it differently. Love it longer.</p>
+        </div>
+      </aside>
+
     </div>
-  <% else %>
-    <p>Checkout status: <%= @checkout.status.capitalize %></p>
-  <% end %>
-
-  <%= link_to "Back to cart", cart_items_path %>
+  </main>
 </div>
 
 <style>
+  :root {
+    --loop-green: #244e3b;
+    --loop-dark: #193a2b;
+    --loop-lime: #d9f36a;
+    --loop-yellow: #ffe58a;
+    --loop-orange: #ff9866;
+    --loop-pink: #ffb9c9;
+    --loop-cream: #fffdf5;
+    --loop-ink: #25372c;
+    --loop-muted: #818a7f;
+    --loop-border: #e9ecdf;
+  }
+
   .checkout-page {
-    max-width: 750px;
-    margin: 50px auto;
-    padding: 20px;
-    color: #222;
+    min-height: 100vh;
+    background:
+      radial-gradient(circle at 90% 5%, rgba(217, 243, 106, .17), transparent 25%),
+      var(--loop-cream);
+    color: var(--loop-ink);
+    font-family: Arial, sans-serif;
+    padding-bottom: 70px;
   }
 
-  .checkout-card {
-    background: white;
-    border: 1px solid #e5e5e5;
-    border-radius: 12px;
-    padding: 25px;
-    margin: 20px 0;
-  }
-
-  .checkout-row,
-  .checkout-item {
+  .checkout-header {
+    min-height: 76px;
+    background: var(--loop-dark);
+    color: white;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    gap: 15px;
-    padding: 14px 0;
+    justify-content: space-between;
+    padding: 0 6%;
   }
 
-  .checkout-item {
-    border-bottom: 1px solid #eee;
+  .checkout-brand {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    color: white;
+    text-decoration: none;
+    font-size: 25px;
+    font-weight: 800;
+    letter-spacing: -1px;
   }
 
-  .checkout-item p {
-    color: #777;
+  .brand-dot {
+    width: 11px;
+    height: 11px;
+    background: var(--loop-lime);
+    border-radius: 50%;
+  }
+
+  .checkout-header p {
+    color: rgba(255,255,255,.7);
     font-size: 13px;
   }
 
-  .total {
-    font-size: 20px;
-    color: #16834a;
+  .checkout-container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 55px 25px 40px;
+  }
+
+  .checkout-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 30px;
+    margin-bottom: 42px;
+  }
+
+  .eyebrow,
+  .section-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--loop-green);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+  }
+
+  .eyebrow-line {
+    width: 22px;
+    height: 2px;
+    background: var(--loop-orange);
+  }
+
+  .checkout-top h1 {
+    color: var(--loop-dark);
+    font-size: clamp(36px, 5vw, 48px);
+    letter-spacing: -2px;
+    margin: 12px 0 8px;
+  }
+
+  .checkout-top h1 span {
+    color: var(--loop-orange);
+  }
+
+  .checkout-intro {
+    color: var(--loop-muted);
+    font-size: 14px;
+    margin: 0;
+  }
+
+  .checkout-step {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 8px;
+  }
+
+  .step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    color: #a8afa4;
+  }
+
+  .step span {
+    width: 30px;
+    height: 30px;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--loop-border);
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .step small {
+    font-size: 10px;
+  }
+
+  .step.completed span,
+  .step.active span {
+    background: var(--loop-lime);
+    border-color: var(--loop-lime);
+    color: var(--loop-dark);
+  }
+
+  .step.active small,
+  .step.completed small {
+    color: var(--loop-green);
+    font-weight: 700;
+  }
+
+  .step-line {
+    width: 35px;
+    height: 1px;
+    background: var(--loop-border);
+    margin-bottom: 17px;
+  }
+
+  .step-line.active {
+    background: var(--loop-green);
+  }
+
+  .checkout-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 365px;
+    gap: 30px;
+    align-items: start;
+  }
+
+  .section-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 18px;
+  }
+
+  .section-heading h2 {
+    color: var(--loop-dark);
+    font-size: 23px;
+    letter-spacing: -.8px;
+    margin: 7px 0 0;
+  }
+
+  .item-count {
+    color: var(--loop-green);
+    background: #edf5d9;
+    padding: 8px 12px;
+    border-radius: 30px;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .items-card {
+    background: white;
+    border: 1px solid var(--loop-border);
+    border-radius: 20px;
+    padding: 8px 22px;
+    box-shadow: 0 8px 30px rgba(25, 58, 43, .04);
+  }
+
+  .checkout-item {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--loop-border);
+  }
+
+  .checkout-item:last-child {
+    border-bottom: 0;
+  }
+
+  .item-image {
+    width: 105px;
+    height: 120px;
+    flex-shrink: 0;
+    border-radius: 13px;
+    overflow: hidden;
+    background: #f1f3e9;
+  }
+
+  .item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .image-placeholder {
+    height: 100%;
+    display: grid;
+    place-items: center;
+    color: var(--loop-green);
+    font-size: 30px;
+    font-weight: 800;
+    background: var(--loop-lime);
+  }
+
+  .item-details {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .item-label {
+    color: #9a9f91;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+  }
+
+  .item-details h3 {
+    color: var(--loop-dark);
+    font-size: 16px;
+    margin: 7px 0;
+  }
+
+  .seller-name {
+    color: var(--loop-muted);
+    font-size: 12px;
+    margin: 0 0 12px;
+    overflow-wrap: anywhere;
+  }
+
+  .item-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    color: var(--loop-muted);
+    font-size: 11px;
+  }
+
+  .item-price {
+    color: var(--loop-green);
+    font-size: 14px;
+    white-space: nowrap;
+    align-self: flex-start;
+    padding-top: 24px;
+  }
+
+  .reservation-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    background: #f2f6e7;
+    border: 1px solid #e5edcf;
+    border-radius: 15px;
+    padding: 18px;
+    margin-top: 22px;
+  }
+
+  .reservation-icon {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    background: var(--loop-lime);
+    color: var(--loop-dark);
+    border-radius: 10px;
+  }
+
+  .reservation-note strong {
+    color: var(--loop-dark);
+    font-size: 13px;
+  }
+
+  .reservation-note p {
+    color: #697565;
+    font-size: 12px;
+    line-height: 1.7;
+    margin: 5px 0 0;
+  }
+
+  .back-to-cart {
+    display: inline-flex;
+    gap: 9px;
+    align-items: center;
+    color: var(--loop-green);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+    margin-top: 25px;
+  }
+
+  .back-to-cart:hover {
+    color: var(--loop-dark);
+  }
+
+  .summary-section {
+    position: sticky;
+    top: 25px;
+  }
+
+  .summary-card {
+    background: white;
+    border: 1px solid var(--loop-border);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 12px 35px rgba(25, 58, 43, .08);
+  }
+
+  .summary-header {
+    background: linear-gradient(135deg, var(--loop-dark), var(--loop-green));
+    color: white;
+    padding: 25px;
+  }
+
+  .summary-kicker {
+    color: var(--loop-lime);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 2px;
+  }
+
+  .summary-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .summary-heading h2 {
+    font-size: 22px;
+    letter-spacing: -.8px;
+    margin: 12px 0 5px;
+  }
+
+  .summary-sparkle {
+    color: var(--loop-lime);
+    font-size: 26px;
+  }
+
+  .summary-header p {
+    color: rgba(255,255,255,.7);
+    font-size: 12px;
+    margin: 0;
+  }
+
+  .summary-body {
+    padding: 25px;
+  }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    color: var(--loop-muted);
+    font-size: 12px;
+    margin-bottom: 18px;
+  }
+
+  .summary-row strong {
+    color: var(--loop-ink);
+    font-size: 12px;
+    text-align: right;
+  }
+
+  .summary-divider {
+    height: 1px;
+    background: var(--loop-border);
+    margin: 22px 0;
+  }
+
+  .total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 25px;
+  }
+
+  .total-row span {
+    color: var(--loop-dark);
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .total-row strong {
+    color: var(--loop-green);
+    font-size: 23px;
+    letter-spacing: -.8px;
+    text-align: right;
   }
 
   .pay-button {
-    background: #16834a;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 15px 25px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
     width: 100%;
-    margin: 20px 0;
+    min-height: 54px;
+    border: 0;
+    border-radius: 11px;
+    background: var(--loop-lime);
+    color: var(--loop-dark);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 19px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: .2s ease;
+  }
+
+  .pay-button:hover {
+    background: #c9e653;
+    transform: translateY(-2px);
+    box-shadow: 0 7px 18px rgba(36, 78, 59, .12);
+  }
+
+  .pay-arrow {
+    font-size: 20px;
+  }
+
+  .secure-payment {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    margin-top: 16px;
+    color: var(--loop-muted);
+  }
+
+  .secure-payment p {
+    font-size: 10px;
+    margin: 0;
+  }
+
+  .secure-payment strong {
+    color: var(--loop-green);
+  }
+
+  .summary-footer {
+    display: flex;
+    gap: 9px;
+    align-items: center;
+    border-top: 1px solid var(--loop-border);
+    margin-top: 22px;
+    padding-top: 17px;
+    color: var(--loop-muted);
+    font-size: 10px;
+    line-height: 1.5;
+  }
+
+  .summary-footer span {
+    color: var(--loop-orange);
+    font-size: 17px;
+  }
+
+  .checkout-trust {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 18px;
+    color: var(--loop-muted);
+    font-size: 10px;
+    text-align: center;
+  }
+
+  .checkout-trust span {
+    color: var(--loop-orange);
+    font-size: 16px;
+  }
+
+  .checkout-trust p {
+    margin: 0;
+  }
+
+  .status-message {
+    padding: 15px;
+    border-radius: 12px;
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  .status-message p {
+    margin: 5px 0 0;
   }
 
   .success-message {
-    background: #e8f7ed;
-    color: #16834a;
-    padding: 15px;
-    border-radius: 8px;
-    margin: 20px 0;
+    background: #eff7df;
+    color: var(--loop-green);
+  }
+
+  .failed-message {
+    background: #fff0e9;
+    color: #9b4e32;
+  }
+
+  @media (max-width: 900px) {
+    .checkout-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .summary-section {
+      position: static;
+    }
+  }
+
+  @media (max-width: 700px) {
+    .checkout-header {
+      padding: 0 22px;
+    }
+
+    .checkout-container {
+      padding: 38px 18px;
+    }
+
+    .checkout-top {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 25px;
+    }
+
+    .checkout-step {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .step-line {
+      flex: 1;
+      max-width: 65px;
+    }
+
+    .checkout-item {
+      gap: 12px;
+    }
+
+    .item-image {
+      width: 82px;
+      height: 100px;
+    }
+
+    .item-price {
+      font-size: 12px;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .checkout-header p {
+      font-size: 11px;
+    }
+
+    .items-card {
+      padding: 5px 13px;
+    }
+
+    .checkout-item {
+      flex-wrap: wrap;
+    }
+
+    .item-details h3 {
+      font-size: 14px;
+    }
+
+    .item-price {
+      width: 100%;
+      padding: 0 0 0 94px;
+      text-align: left;
+    }
+
+    .section-heading h2 {
+      font-size: 20px;
+    }
+
+    .summary-body {
+      padding: 20px;
+    }
   }
 </style>

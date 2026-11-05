@@ -1,183 +1,684 @@
 
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+  :root {
+    --loop-green: #244e3b;
+    --loop-dark: #193a2b;
+    --loop-lime: #d9f36a;
+    --loop-yellow: #ffe58a;
+    --loop-orange: #ff9866;
+    --loop-pink: #ffb9c9;
+    --loop-cream: #fffdf5;
+    --loop-ink: #25372c;
+  }
+
   .listing-page {
-    max-width: 1100px;
-    margin: 45px auto;
-    padding: 25px;
-    color: #24372a;
-    font-family: Arial, sans-serif;
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 35px 38px 95px;
+    color: var(--loop-ink);
+    font-family: 'DM Sans', sans-serif;
+    animation: pagePop .65s ease both;
+  }
+
+  @keyframes pagePop {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes stickerFloat {
+    0%, 100% { transform: rotate(-9deg) translateY(0); }
+    50% { transform: rotate(-5deg) translateY(-7px); }
+  }
+
+  @keyframes littleWiggle {
+    0%, 100% { transform: rotate(0); }
+    25% { transform: rotate(-4deg); }
+    75% { transform: rotate(4deg); }
+  }
+
+  @keyframes sparkle {
+    0%, 100% { opacity: .45; transform: scale(.8) rotate(0); }
+    50% { opacity: 1; transform: scale(1.2) rotate(20deg); }
+  }
+
+  @keyframes stickerIn {
+    from { opacity: 0; transform: scale(.5) rotate(-20deg); }
+    to { opacity: 1; transform: scale(1) rotate(-9deg); }
   }
 
   .listing-back {
-    display: inline-block;
-    margin-bottom: 25px;
-    color: #42684e;
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    margin-bottom: 30px;
+    color: var(--loop-green);
+    font-size: 13px;
+    font-weight: 800;
     text-decoration: none;
-    font-size: 14px;
+    transition: gap .2s ease, color .2s ease;
+  }
+
+  .listing-back:hover {
+    gap: 15px;
+    color: var(--loop-orange);
   }
 
   .listing-success {
-    padding: 15px 18px;
-    margin-bottom: 25px;
-    border-radius: 9px;
-    background: #eaf5ed;
-    color: #245b38;
-    font-size: 14px;
+    padding: 16px 20px;
+    margin-bottom: 28px;
+    border: 1px solid #c8e4bd;
+    border-radius: 15px;
+    background: #effbdc;
+    color: var(--loop-green);
+    font-size: 13px;
+    font-weight: 700;
+    box-shadow: 0 5px 18px rgba(36,78,59,.05);
   }
 
   .listing-layout {
     display: grid;
-    grid-template-columns: 1.1fr .9fr;
-    gap: 45px;
+    grid-template-columns: minmax(0, 1.08fr) minmax(350px, .92fr);
+    gap: 58px;
     align-items: start;
   }
 
+  /* GALLERY */
+
   .listing-gallery {
-    background: #f5f7f4;
-    border-radius: 16px;
-    overflow: hidden;
-    min-height: 420px;
+    min-width: 0;
+    position: sticky;
+    top: 25px;
   }
 
-  .listing-main-image {
+  .gallery-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+  }
+
+  .gallery-heading span {
+    color: #788278;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 1.3px;
+    text-transform: uppercase;
+  }
+
+  .gallery-heading .gallery-fun {
+    color: var(--loop-orange);
+    font-size: 21px;
+    letter-spacing: 0;
+    animation: sparkle 2s ease-in-out infinite;
+  }
+
+  .gallery-main {
+    position: relative;
+    padding: 12px;
+    overflow: hidden;
+    border: 1px solid #e9eddf;
+    border-radius: 26px;
+    background: linear-gradient(145deg, #f7f8ee, #edf2e5);
+    box-shadow: 0 16px 45px rgba(36,78,59,.08);
+    transition: box-shadow .3s ease, transform .3s ease;
+  }
+
+  .gallery-main:hover {
+    box-shadow: 0 22px 55px rgba(36,78,59,.13);
+    transform: translateY(-3px);
+  }
+
+  .carousel-container {
+    position: relative;
     width: 100%;
-    height: 520px;
-    object-fit: cover;
+  }
+
+  .carousel-track {
+    position: relative;
+    width: 100%;
+    height: 550px;
+    overflow: hidden;
+    border-radius: 17px;
+    background: white;
+  }
+
+  .carousel-slide {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(.96) rotate(1deg);
+    transition:
+      opacity .4s ease,
+      transform .55s cubic-bezier(.2,.8,.2,1),
+      visibility .4s ease;
+  }
+
+  .carousel-slide.active {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1) rotate(0);
+  }
+
+  .carousel-slide img {
     display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform .6s ease;
+  }
+
+  .gallery-main:hover .carousel-slide.active img {
+    transform: scale(1.025);
+  }
+
+  .gallery-sticker {
+    position: absolute;
+    z-index: 4;
+    top: 28px;
+    left: 27px;
+    display: grid;
+    place-items: center;
+    width: 88px;
+    height: 88px;
+    border: 4px solid white;
+    border-radius: 50%;
+    background: var(--loop-lime);
+    color: var(--loop-green);
+    font-size: 11px;
+    font-weight: 900;
+    line-height: 1.2;
+    text-align: center;
+    transform: rotate(-9deg);
+    box-shadow: 3px 6px 0 rgba(36,78,59,.13);
+    animation: stickerIn .6s .3s both, stickerFloat 3s 1s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  .gallery-sparkle {
+    position: absolute;
+    top: 112px;
+    right: 27px;
+    z-index: 3;
+    color: var(--loop-orange);
+    font-size: 32px;
+    animation: sparkle 2.2s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  .carousel-arrow {
+    position: absolute;
+    top: 50%;
+    z-index: 5;
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    border: 1px solid rgba(36,78,59,.15);
+    border-radius: 50%;
+    background: white;
+    color: var(--loop-green);
+    font-size: 25px;
+    cursor: pointer;
+    box-shadow: 0 5px 18px rgba(36,78,59,.13);
+    transform: translateY(-50%);
+    transition: transform .2s, background .2s, color .2s;
+  }
+
+  .carousel-arrow:hover {
+    background: var(--loop-green);
+    color: white;
+    transform: translateY(-50%) scale(1.1);
+  }
+
+  .carousel-arrow.prev { left: 17px; }
+  .carousel-arrow.next { right: 17px; }
+
+  .carousel-counter {
+    position: absolute;
+    right: 17px;
+    bottom: 17px;
+    z-index: 5;
+    padding: 9px 14px;
+    border: 1px solid rgba(255,255,255,.15);
+    border-radius: 30px;
+    background: var(--loop-green);
+    color: white;
+    font-size: 11px;
+    font-weight: 800;
+    box-shadow: 0 4px 12px rgba(0,0,0,.12);
+  }
+
+  .carousel-thumbnails {
+    display: flex;
+    gap: 12px;
+    margin-top: 17px;
+    padding: 3px 3px 10px;
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+
+  .carousel-thumb {
+    flex: 0 0 78px;
+    width: 78px;
+    height: 78px;
+    padding: 3px;
+    overflow: hidden;
+    border: 2px solid transparent;
+    border-radius: 14px;
+    background: #f1f3e9;
+    cursor: pointer;
+    opacity: .65;
+    transition: all .25s ease;
+  }
+
+  .carousel-thumb:nth-child(3n + 1) {
+    border-radius: 14px 14px 14px 5px;
+  }
+
+  .carousel-thumb:hover {
+    opacity: 1;
+    transform: translateY(-5px) rotate(-2deg);
+  }
+
+  .carousel-thumb.active {
+    border-color: var(--loop-green);
+    background: var(--loop-lime);
+    opacity: 1;
+    transform: translateY(-3px);
+  }
+
+  .carousel-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 9px;
+    object-fit: cover;
   }
 
   .listing-placeholder {
-    min-height: 420px;
+    min-height: 550px;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    color: #879187;
-    font-size: 15px;
+    gap: 12px;
+    border-radius: 17px;
+    background: var(--loop-lime);
+    color: var(--loop-green);
+    font-size: 14px;
+    font-weight: 800;
   }
 
+  .placeholder-icon {
+    font-size: 48px;
+    animation: littleWiggle 2s ease-in-out infinite;
+  }
+
+  .gallery-caption {
+    margin: 15px 0 0;
+    color: #849084;
+    font-size: 11px;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  /* DETAILS */
+
   .listing-details {
-    padding: 10px 0;
+    padding: 8px 0;
+    min-width: 0;
   }
 
   .listing-category {
-    color: #718075;
-    font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 14px;
+    margin: 0 0 20px;
+    border-radius: 30px;
+    background: var(--loop-pink);
+    color: #663b49;
+    font-size: 10px;
+    font-weight: 900;
     text-transform: uppercase;
     letter-spacing: 1px;
-    margin-bottom: 14px;
+  }
+
+  .listing-category::before {
+    content: "✦";
+    font-size: 12px;
   }
 
   .listing-details h1 {
-    font-size: 34px;
-    line-height: 1.2;
-    margin: 0 0 15px;
+    margin: 0 0 19px;
+    color: var(--loop-green);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(34px, 3.6vw, 48px);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -1.8px;
+    overflow-wrap: anywhere;
   }
 
   .listing-price {
-    font-size: 27px;
+    display: inline-block;
+    margin: 0;
+    padding: 10px 16px;
+    border-radius: 11px;
+    background: var(--loop-lime);
+    color: var(--loop-green);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 31px;
     font-weight: 700;
-    color: #244e3b;
-    margin: 0 0 25px;
+    transform: rotate(-1deg);
+    box-shadow: 3px 4px 0 rgba(36,78,59,.08);
+    transition: transform .2s ease, box-shadow .2s ease;
+  }
+
+  .listing-price:hover {
+    transform: rotate(1deg) scale(1.04);
+    box-shadow: 4px 6px 0 rgba(36,78,59,.12);
+  }
+
+  .price-caption {
+    margin: 13px 0 0;
+    color: #899389;
+    font-size: 11px;
+    font-weight: 700;
   }
 
   .listing-divider {
+    height: 2px;
+    margin: 30px 0;
     border: 0;
-    border-top: 1px solid #e5e9e3;
-    margin: 25px 0;
+    background: repeating-linear-gradient(
+      to right,
+      #dce5d8 0 7px,
+      transparent 7px 13px
+    );
+  }
+
+  .listing-section-heading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 17px;
+    color: var(--loop-green);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 21px;
+    font-weight: 700;
+    letter-spacing: -.5px;
   }
 
   .listing-info {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 18px;
+    gap: 12px;
   }
 
-  .listing-info div {
-    padding: 13px;
-    background: #f7f9f6;
-    border-radius: 9px;
+  .listing-info-item {
+    padding: 18px;
+    border: 1px solid #e8ecdf;
+    border-radius: 15px;
+    background: #fafbf5;
+    transition: transform .25s ease, box-shadow .25s ease;
   }
 
-  .listing-info span {
+  .listing-info-item:nth-child(2) {
+    background: #fff5e9;
+  }
+
+  .listing-info-item:nth-child(3) {
+    background: #f2f5e8;
+  }
+
+  .listing-info-item:nth-child(4) {
+    background: #fff0f3;
+  }
+
+  .listing-info-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 9px 22px rgba(36,78,59,.08);
+  }
+
+  .listing-info-item span {
     display: block;
-    color: #788278;
-    font-size: 12px;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
+    color: #899389;
+    font-size: 10px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 1px;
   }
 
-  .listing-info strong {
+  .listing-info-item strong {
+    color: #34483a;
     font-size: 14px;
-  }
-
-  .listing-description h3 {
-    font-size: 17px;
-    margin-bottom: 10px;
+    font-weight: 800;
+    overflow-wrap: anywhere;
   }
 
   .listing-description p {
-    color: #667168;
-    line-height: 1.7;
+    margin: 0;
+    color: #69756b;
+    font-size: 14px;
+    line-height: 1.9;
     white-space: pre-line;
   }
 
-  .listing-seller {
-    color: #667168;
-    font-size: 14px;
+  .listing-hashtag {
+    color: var(--loop-green);
+    font-weight: 900;
+    text-decoration: none;
+  }
+
+  .listing-hashtag:hover {
+    text-decoration: underline;
+  }
+
+  /* SELLER */
+
+  .seller-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 20px;
+    border: 1px solid #dce7d7;
+    border-radius: 17px;
+    background: linear-gradient(120deg, #f5f8ed, #fbfdf5);
+    transition: border-color .25s, transform .25s, box-shadow .25s;
+  }
+
+  .seller-card:hover {
+    border-color: var(--loop-green);
+    transform: translateY(-3px);
+    box-shadow: 0 9px 22px rgba(36,78,59,.07);
+  }
+
+  .seller-card-label {
+    margin: 0 0 8px;
+    color: #899389;
+    font-size: 10px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 1px;
   }
 
   .seller-profile-link {
-    color: #244e3b;
-    font-weight: 700;
-    text-decoration: underline;
-    text-underline-offset: 3px;
+    color: var(--loop-green);
+    font-size: 15px;
+    font-weight: 900;
+    text-decoration: none;
   }
+
+  .seller-profile-link:hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  .seller-arrow {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: var(--loop-lime);
+    color: var(--loop-green);
+    font-size: 20px;
+    transition: transform .25s;
+  }
+
+  .seller-card:hover .seller-arrow {
+    transform: rotate(-35deg);
+  }
+
+  /* ACTIONS */
 
   .listing-actions {
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
-    margin-top: 28px;
+    margin-top: 29px;
   }
 
   .listing-button {
-    display: inline-block;
-    padding: 14px 20px;
-    border-radius: 8px;
-    background: #244e3b;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    min-height: 51px;
+    padding: 14px 21px;
+    border: 2px solid var(--loop-green);
+    border-radius: 12px;
+    background: var(--loop-green);
     color: white;
+    font-size: 12px;
+    font-weight: 900;
     text-decoration: none;
-    font-weight: 700;
-    font-size: 14px;
+    cursor: pointer;
+    transition: transform .2s ease, box-shadow .2s ease, background .2s;
+  }
+
+  .listing-button:hover {
+    background: var(--loop-dark);
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 4px 5px 0 var(--loop-lime);
   }
 
   .listing-button.secondary {
-    background: #edf2ed;
-    color: #244e3b;
+    border-color: var(--loop-green);
+    background: white;
+    color: var(--loop-green);
   }
 
-  @media (max-width: 750px) {
+  .listing-button.secondary:hover {
+    background: var(--loop-lime);
+    color: var(--loop-green);
+  }
+
+  .listing-footnote {
+    margin-top: 21px;
+    color: #879187;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.7;
+  }
+
+  .listing-footnote span {
+    color: var(--loop-orange);
+    font-size: 15px;
+  }
+
+  /* RESPONSIVE */
+
+  @media (max-width: 850px) {
     .listing-page {
-      margin: 20px auto;
-      padding: 15px;
+      padding: 25px 22px 65px;
     }
 
     .listing-layout {
       grid-template-columns: 1fr;
-      gap: 25px;
+      gap: 38px;
     }
 
-    .listing-main-image {
-      height: 350px;
+    .listing-gallery {
+      position: static;
+    }
+
+    .carousel-track {
+      height: min(68vw, 550px);
+      min-height: 340px;
+    }
+
+    .listing-placeholder {
+      min-height: 340px;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .listing-page {
+      padding: 20px 15px 50px;
+    }
+
+    .carousel-track {
+      height: 100vw;
+      max-height: 430px;
+      min-height: 290px;
+    }
+
+    .gallery-sticker {
+      width: 70px;
+      height: 70px;
+      font-size: 9px;
     }
 
     .listing-details h1 {
-      font-size: 28px;
+      font-size: 34px;
+    }
+
+    .listing-price {
+      font-size: 27px;
+    }
+
+    .listing-info {
+      gap: 9px;
+    }
+
+    .listing-info-item {
+      padding: 13px;
+    }
+
+    .listing-actions {
+      flex-direction: column;
+    }
+
+    .listing-button {
+      width: 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .listing-page *,
+    .listing-page *::before,
+    .listing-page *::after {
+      animation: none !important;
+      transition: none !important;
     }
   }
 </style>
 
 <div class="listing-page">
-  <%= link_to "← Back to marketplace", listings_path, class: "listing-back" %>
+
+  <%= link_to listings_path, class: "listing-back" do %>
+    <span>←</span> Back to Discover
+  <% end %>
 
   <% if notice.present? %>
     <div class="listing-success">
@@ -186,19 +687,89 @@
   <% end %>
 
   <div class="listing-layout">
-    <div class="listing-gallery">
-      <% if @listing.images.attached? %>
-        <%= image_tag @listing.images.first,
-            class: "listing-main-image",
-            alt: @listing.title %>
-      <% else %>
-        <div class="listing-placeholder">
-          No product photo available
+
+    <!-- PRODUCT GALLERY -->
+
+    <section class="listing-gallery">
+
+      <div class="gallery-heading">
+        <span>Look what we found!</span>
+        <span class="gallery-fun">✳</span>
+      </div>
+
+      <div class="gallery-main">
+
+        <div class="gallery-sticker">
+          GOOD<br>FIND!<br>✦
+        </div>
+
+        <div class="gallery-sparkle">✦</div>
+
+        <% if @listing.images.attached? %>
+          <div class="carousel-container" data-carousel>
+
+            <div class="carousel-track">
+              <% @listing.images.each_with_index do |image, index| %>
+                <div class="carousel-slide <%= 'active' if index.zero? %>">
+                  <%= image_tag image,
+                      alt: "#{@listing.title} photo #{index + 1}" %>
+                </div>
+              <% end %>
+            </div>
+
+            <% if @listing.images.count > 1 %>
+              <button type="button"
+                      class="carousel-arrow prev"
+                      data-prev
+                      aria-label="Previous image">
+                &#8249;
+              </button>
+
+              <button type="button"
+                      class="carousel-arrow next"
+                      data-next
+                      aria-label="Next image">
+                &#8250;
+              </button>
+
+              <div class="carousel-counter" data-counter>
+                1 / <%= @listing.images.count %>
+              </div>
+            <% end %>
+
+          </div>
+        <% else %>
+          <div class="listing-placeholder">
+            <span class="placeholder-icon">✳</span>
+            <span>No product photo available</span>
+          </div>
+        <% end %>
+
+      </div>
+
+      <% if @listing.images.attached? && @listing.images.count > 1 %>
+        <div class="carousel-thumbnails">
+          <% @listing.images.each_with_index do |image, index| %>
+            <button type="button"
+                    class="carousel-thumb <%= 'active' if index.zero? %>"
+                    data-slide="<%= index %>"
+                    aria-label="View image <%= index + 1 %>">
+              <%= image_tag image, alt: "Product thumbnail #{index + 1}" %>
+            </button>
+          <% end %>
         </div>
       <% end %>
-    </div>
 
-    <div class="listing-details">
+      <p class="gallery-caption">
+        Good clothes deserve another round. ♻
+      </p>
+
+    </section>
+
+    <!-- PRODUCT DETAILS -->
+
+    <section class="listing-details">
+
       <p class="listing-category">
         <%= @listing.category&.name || "Pre-loved item" %>
       </p>
@@ -209,54 +780,190 @@
         <%= number_to_currency(@listing.price, unit: "₦", precision: 0) %>
       </p>
 
+      <p class="price-caption">The price of this little gem ✨</p>
+        <div style="margin-top:18px;">
+          <% if @listing.available_for_purchase? %>
+            <p style="color:#244e3b; font-size:13px; font-weight:700;">
+              <%= @listing.available_quantity %>
+              <%= @listing.available_quantity == 1 ? "unit" : "units" %> available
+            </p>
+          <% else %>
+            <p style="color:#b95c50; font-size:13px; font-weight:800;">
+              Currently unavailable
+            </p>
+          <% end %>
+        </div>
+      <hr class="listing-divider">
+
+      <h2 class="listing-section-heading">
+        <span>✳</span> The details
+      </h2>
+
       <div class="listing-info">
-        <div>
+
+        <div class="listing-info-item">
           <span>Condition</span>
           <strong><%= @listing.condition.presence || "Not specified" %></strong>
         </div>
 
-        <div>
+        <div class="listing-info-item">
           <span>Brand</span>
           <strong><%= @listing.brand.presence || "Not specified" %></strong>
         </div>
 
-        <div>
+        <div class="listing-info-item">
           <span>Size</span>
           <strong><%= @listing.size.presence || "Not specified" %></strong>
         </div>
 
-        <div>
+        <div class="listing-info-item">
           <span>Colour</span>
           <strong><%= @listing.colour.presence || "Not specified" %></strong>
         </div>
+
       </div>
 
       <hr class="listing-divider">
 
       <div class="listing-description">
-        <h3>About this item</h3>
-        <p><%= @listing.description %></p>
+        <h2 class="listing-section-heading">
+          <span>💬</span> A little about this find
+        </h2>
+
+        <p><%= description_with_hashtags(@listing.description) %></p>
       </div>
 
       <hr class="listing-divider">
 
-      <p class="listing-seller">
-        Listed by
+      <h2 class="listing-section-heading">
+        <span>👋</span> Meet the seller
+      </h2>
 
-        <%= link_to @listing.user.username,
-            seller_profile_path(@listing.user),
-            class: "seller-profile-link" %>
-      </p>
+      <div class="seller-card">
+        <div>
+          <p class="seller-card-label">This find was listed by</p>
+
+          <%= link_to @listing.user.username,
+              seller_profile_path(@listing.user),
+              class: "seller-profile-link" %>
+        </div>
+
+        <span class="seller-arrow">↗</span>
+      </div>
 
       <div class="listing-actions">
-        <%= link_to "Back to marketplace", listings_path,
-            class: "listing-button" %>
+        <% unless session[:user_id].present? && @listing.user_id == session[:user_id] %>
+          <% if @listing.available_for_purchase? %>
+            <%= button_to "Add to cart",
+                cart_items_path(listing_id: @listing.id),
+                method: :post,
+                class: "listing-button" %>
+          <% else %>
+            <button type="button" class="listing-button" disabled
+                    style="opacity:.55; cursor:not-allowed;">
+              Sold out
+            </button>
+          <% end %>
+        <% end %>
+
+        <%= link_to listings_path, class: "listing-button" do %>
+          <span>←</span> Keep thrifting
+        <% end %>
 
         <% if session[:user_id].present? && @listing.user_id == session[:user_id] %>
-          <%= link_to "Seller dashboard", seller_dashboard_path,
-              class: "listing-button secondary" %>
+          <%= link_to seller_dashboard_path,
+              class: "listing-button secondary" do %>
+            My seller dashboard →
+          <% end %>
         <% end %>
+
       </div>
-    </div>
+
+      <p class="listing-footnote">
+        <span>✳</span> One person's old favourite, someone's new favourite.
+      </p>
+
+    </section>
+
   </div>
 </div>
+
+<script>
+  (() => {
+    function initializeCarousels() {
+      document.querySelectorAll("[data-carousel]").forEach((carousel) => {
+        if (carousel.dataset.initialized === "true") return;
+        carousel.dataset.initialized = "true";
+
+        const slides = Array.from(
+          carousel.querySelectorAll(".carousel-slide")
+        );
+
+        const thumbnails = Array.from(
+          document.querySelectorAll(".carousel-thumb")
+        );
+
+        const counter = carousel.querySelector("[data-counter]");
+        const previous = carousel.querySelector("[data-prev]");
+        const next = carousel.querySelector("[data-next]");
+
+        if (slides.length <= 1) return;
+
+        let currentIndex = 0;
+        let touchStartX = 0;
+
+        function showSlide(index) {
+          currentIndex = (index + slides.length) % slides.length;
+
+          slides.forEach((slide, i) => {
+            slide.classList.toggle("active", i === currentIndex);
+          });
+
+          thumbnails.forEach((thumbnail, i) => {
+            thumbnail.classList.toggle("active", i === currentIndex);
+          });
+
+          if (counter) {
+            counter.textContent = `${currentIndex + 1} / ${slides.length}`;
+          }
+        }
+
+        previous?.addEventListener("click", () => {
+          showSlide(currentIndex - 1);
+        });
+
+        next?.addEventListener("click", () => {
+          showSlide(currentIndex + 1);
+        });
+
+        thumbnails.forEach((thumbnail) => {
+          thumbnail.addEventListener("click", () => {
+            showSlide(Number(thumbnail.dataset.slide));
+          });
+        });
+
+        carousel.addEventListener("touchstart", (event) => {
+          touchStartX = event.changedTouches[0].screenX;
+        }, { passive: true });
+
+        carousel.addEventListener("touchend", (event) => {
+          const touchEndX = event.changedTouches[0].screenX;
+          const difference = touchStartX - touchEndX;
+
+          if (Math.abs(difference) > 50) {
+            showSlide(
+              difference > 0 ? currentIndex + 1 : currentIndex - 1
+            );
+          }
+        }, { passive: true });
+
+        showSlide(0);
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", initializeCarousels);
+    document.addEventListener("turbo:load", initializeCarousels);
+
+    initializeCarousels();
+  })();
+</script>

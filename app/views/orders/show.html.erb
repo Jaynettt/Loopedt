@@ -1,0 +1,133 @@
+
+<% content_for :title, "Order ##{@order.id} | Loopedt" %>
+
+<style>
+  .order-page {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 24px;
+    color: #26372e;
+    font-family: Arial, sans-serif;
+  }
+
+  .order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .order-header h1 {
+    margin: 0;
+    font-size: 28px;
+  }
+
+  .order-panel {
+    background: #fff;
+    border: 1px solid #e7ebe7;
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+
+  .order-panel h2 {
+    font-size: 19px;
+    margin: 0 0 18px;
+  }
+
+  .order-panel p {
+    color: #69756d;
+    margin: 10px 0;
+  }
+
+  .order-panel strong {
+    color: #26372e;
+  }
+
+  .order-status {
+    display: inline-block;
+    padding: 7px 12px;
+    border-radius: 20px;
+    background: #f0f2ed;
+    color: #315d45;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: capitalize;
+  }
+
+  .order-image {
+    width: 130px;
+    height: 130px;
+    object-fit: cover;
+    border-radius: 10px;
+    background: #f1f3f0;
+  }
+
+  .back-link {
+    color: #315d45;
+    text-decoration: none;
+    font-weight: 600;
+  }
+</style>
+
+<div class="order-page">
+
+  <div class="order-header">
+    <h1>Order #<%= @order.id %></h1>
+    <%= link_to "← Back to orders", orders_path, class: "back-link" %>
+  </div>
+
+  <div class="order-panel">
+    <h2>Item details</h2>
+
+    <% if @order.listing&.images&.attached? %>
+      <%= image_tag @order.listing.images.first, class: "order-image" %>
+    <% end %>
+
+    <p>
+      <strong>Item:</strong>
+      <%= @order.listing&.brand.presence || "Listing ##{@order.listing_id}" %>
+    </p>
+
+    <p>
+      <strong>Order amount:</strong>
+      <%= number_to_currency(@order.amount, unit: "₦", precision: 2) %>
+    </p>
+
+    <p>
+      <strong>Order date:</strong>
+      <%= @order.created_at.strftime("%d %B %Y, %I:%M %p") %>
+    </p>
+  </div>
+
+  <div class="order-panel">
+    <h2>Order progress</h2>
+
+    <p>
+      <strong>Payment status:</strong>
+      <span class="order-status"><%= @order.status %></span>
+    </p>
+
+    <p>
+      <strong>Delivery status:</strong>
+      <span class="order-status"><%= @order.delivery_status&.humanize || "Pending" %></span>
+    </p>
+  </div>
+
+  <div class="order-panel">
+    <h2>People involved</h2>
+
+    <p>
+      <strong>Buyer:</strong>
+      <%= @order.buyer&.username || @order.buyer&.email || "Unavailable" %>
+    </p>
+
+    <p>
+      <strong>Seller:</strong>
+      <%= @order.seller&.username || @order.seller&.email || "Unavailable" %>
+    </p>
+  </div>
+
+</div>

@@ -1,0 +1,121 @@
+
+/* =================================
+   LOOPEDT GLOBAL BUTTON SYSTEM
+================================= */
+
+:root {
+  --loopedt-green: #244e3b;
+  --loopedt-green-hover: #193b2b;
+  --loopedt-light: #edf2ed;
+  --loopedt-text: #244e3b;
+  --loopedt-danger: #a33b35;
+  --loopedt-radius: 9px;
+}
+
+/* Base button */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 12px 20px;
+  border: 1px solid transparent;
+  border-radius: var(--loopedt-radius);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background .2s ease, color .2s ease,
+              border-color .2s ease, transform .2s ease,
+              box-shadow .2s ease;
+}
+
+/* Primary */
+
+.btn-primary {
+  background: var(--loopedt-green);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: var(--loopedt-green-hover);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(36, 78, 59, .18);
+}
+
+/* Secondary */
+
+.btn-secondary {
+  background: var(--loopedt-light);
+  color: var(--loopedt-text);
+}
+
+.btn-secondary:hover {
+  background: #dfe9df;
+  color: var(--loopedt-text);
+  transform: translateY(-2px);
+}
+
+/* Outline */
+
+.btn-outline {
+  background: transparent;
+  color: var(--loopedt-green);
+  border-color: var(--loopedt-green);
+}
+
+.btn-outline:hover {
+  background: var(--loopedt-green);
+  color: #fff;
+}
+
+/* Danger */
+
+.btn-danger {
+  background: var(--loopedt-danger);
+  color: #fff;
+}
+
+.btn-danger:hover {
+  background: #862d28;
+  color: #fff;
+}
+
+/* Disabled */
+
+.btn:disabled,
+.btn[aria-disabled="true"] {
+  opacity: .5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Small buttons */
+
+.btn-sm {
+  min-height: 36px;
+  padding: 9px 14px;
+  font-size: 13px;
+}
+
+/* Large buttons */
+
+.btn-lg {
+  min-height: 50px;
+  padding: 15px 25px;
+  font-size: 15px;
+}
+
+/* Full width */
+
+.btn-block {
+  display: flex;
+  width: 100%;
+}

@@ -11,67 +11,119 @@ class CartItemsController < ActionController::Base
     listing = Listing.find(params[:listing_id])
 
     if listing.user_id == current_user.id
-      respond_to do |format|
-        format.html do
-          redirect_to root_path, alert: "You cannot add your own listing to your cart."
-        end
-
-        format.json do
-          render json: { error: "You cannot add your own listing to your cart." },
-                status: :unprocessable_entity
-        end
-      end
+      redirect_to root_path,
+                  alert: "You cannot add your own listing to your cart."
       return
     end
 
-    cart_item = current_user.cart_items.find_or_initialize_by(listing: listing)
+    Listing.transaction do
+      listing.lock!
 
-    if cart_item.new_record?
-      cart_item.quantity = 1
-    else
-      cart_item.quantity += 1
+      cart_item = current_user.cart_items.find_or_initialize_by(
+        listing: listing
+      )
+
+      new_quantity = cart_item.quantity.to_i + 1
+
+      unless listing.available_for_purchase? &&
+             new_quantity <= listing.available_quantity
+        raise ActiveRecord::RecordInvalid.new(cart_item.tap do |item|
+          item.errors.add(
+            :quantity,
+            "cannot exceed the #{listing.available_quantity} units currently available"
+          )
+        end)
+      end
+
+      cart_item.quantity = new_quantity
+      cart_item.save!
     end
 
-    if cart_item.save
-      cart_count = current_user.cart_items.sum(:quantity)
-
-      respond_to do |format|
-        format.html do
-          redirect_to cart_items_path, notice: "Item added to your cart."
-        end
-
-        format.json do
-          render json: {
-            message: "Item added to your cart.",
-            cart_count: cart_count
-          }, status: :created
-        end
+    respond_to do |format|
+      format.html do
+        redirect_to cart_items_path, notice: "Item added to your cart."
       end
-    else
-      respond_to do |format|
-        format.html do
-          redirect_to root_path, alert: cart_item.errors.full_messages.to_sentence
-        end
 
-        format.json do
-          render json: { error: cart_item.errors.full_messages.to_sentence },
-                status: :unprocessable_entity
-        end
+      format.json do
+        render json: {
+          message: "Item added to your cart.",
+          cart_count: current_user.cart_items.sum(:quantity)
+        }, status: :created
       end
+    end
+
+  rescue ActiveRecord::RecordInvalid => e
+    message = e.record.errors.full_messages.to_sentence
+
+    respond_to do |format|
+      format.html { redirect_to root_path, alert: message }
+      format.json { render json: { error: message }, status: :unprocessable_entity }
     end
   end
 
   def update
-    if @cart_item.update(quantity: params[:quantity])
-      redirect_to cart_items_path, notice: "Cart updated."
-    else
-      redirect_to cart_items_path, alert: @cart_item.errors.full_messages.to_sentence
+    quantity = params[:quantity].to_i
+
+    if quantity < 1
+      render json: { error: "Quantity must be at least 1." },
+             status: :unprocessable_entity
+      return
     end
+
+    listing = @cart_item.listing
+
+    Listing.transaction do
+      listing.lock!
+
+      unless listing.available_for_purchase? &&
+             quantity <= listing.available_quantity
+        raise ActiveRecord::RecordInvalid.new(@cart_item.tap do |item|
+          item.errors.add(
+            :quantity,
+            "cannot exceed the #{listing.available_quantity} units currently available"
+          )
+        end)
+      end
+
+      @cart_item.update!(quantity: quantity)
+    end
+
+    cart_total = current_user.cart_items.includes(:listing).sum do |item|
+      item.effective_unit_price * item.quantity
+    end
+
+    render json: {
+      message: "Cart updated.",
+      quantity: @cart_item.quantity,
+      item_total: @cart_item.effective_unit_price * @cart_item.quantity,
+      cart_total: cart_total,
+      cart_count: current_user.cart_items.sum(:quantity)
+    }
+
+  rescue ActiveRecord::RecordInvalid => e
+    render json: {
+      error: e.record.errors.full_messages.to_sentence
+    }, status: :unprocessable_entity
   end
 
   def destroy
     @cart_item.destroy
-    redirect_to cart_items_path, notice: "Item removed from your cart."
+
+    respond_to do |format|
+      format.html do
+        redirect_to cart_items_path, notice: "Item removed from your cart."
+      end
+
+      format.json do
+        render json: {
+          message: "Item removed from your cart.",
+          cart_total: current_user.cart_items.includes(:listing).sum do |item|
+            item.effective_unit_price * item.quantity
+          end,
+          cart_count: current_user.cart_items.sum(:quantity)
+        }
+      end
+    end
   end
 
   private

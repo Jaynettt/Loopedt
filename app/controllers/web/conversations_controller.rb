@@ -1,4 +1,3 @@
-
 module Web
   class ConversationsController < BaseController
     before_action :set_conversation, only: [:show, :create_message]
@@ -24,12 +23,18 @@ module Web
         .where.not(sender_id: @current_user.id)
         .group(:conversation_id)
         .count
+
+      @selected_conversation = @conversations.find_by(
+        id: params[:conversation_id]
+      )
+
+      @keep_shopping_path =
+        safe_local_path(session[:keep_shopping_path]) || listings_path
     end
 
     def show
       @current_user = current_user
 
-      # Mark incoming approved messages as read.
       @conversation.messages
         .where(moderation_status: "approved", read_at: nil)
         .where.not(sender_id: @current_user.id)
@@ -41,6 +46,15 @@ module Web
         .order(:created_at)
 
       @message = @conversation.messages.build
+
+      @negotiation_offers = @conversation.negotiation_offers
+        .includes(:proposer)
+        .order(:created_at)
+
+      @latest_negotiation_offer = @negotiation_offers.last
+
+      @is_buyer = @current_user.id == @conversation.buyer_id
+      @is_seller = @current_user.id == @conversation.seller_id
     end
 
     def create_message
@@ -52,7 +66,6 @@ module Web
         moderation_status: "pending"
       )
 
-      # Check for phone numbers, emails, social handles and links.
       filter_result = MessageFilter.new(body).call
 
       if filter_result.blocked
@@ -61,19 +74,15 @@ module Web
         return
       end
 
-      # Run the existing content moderation system.
       moderation_status = MessageModerator.moderate(body).to_s
-
       @message.moderation_status = moderation_status
 
       if @message.save && moderation_status == "approved"
         redirect_to inbox_conversation_path(@conversation),
                     notice: "Message sent."
-
       elsif moderation_status == "blocked"
         redirect_to inbox_conversation_path(@conversation),
                     alert: "Your message was blocked by our moderation system."
-
       else
         redirect_to inbox_conversation_path(@conversation),
                     alert: @message.errors.full_messages.to_sentence.presence ||
@@ -89,6 +98,9 @@ module Web
         return
       end
 
+      return_path = safe_local_path(params[:return_to])
+      session[:keep_shopping_path] = return_path || listings_path
+
       conversation = Conversation.find_or_create_by!(
         listing: listing,
         buyer: current_user,
@@ -96,7 +108,7 @@ module Web
         status: "open"
       )
 
-      redirect_to inbox_conversation_path(conversation)
+      redirect_to inbox_path(conversation_id: conversation.id)
     end
 
     private
@@ -113,6 +125,16 @@ module Web
 
       redirect_to inbox_path,
                   alert: "You cannot access this conversation."
+    end
+
+    def safe_local_path(path)
+      return unless path.present?
+
+      return unless path.start_with?("/")
+      return if path.start_with?("//")
+      return if path.include?("\\")
+
+      path
     end
   end
 end

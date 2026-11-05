@@ -19,7 +19,12 @@ class CheckoutFeeCalculator
     BigDecimal(ENV.fetch("PAYSTACK_FIXED_FEE_THRESHOLD", "2500.00"))
 
   def initialize(cart_items)
-    @cart_items = cart_items.includes(:listing)
+    @cart_items =
+      if cart_items.respond_to?(:includes)
+        cart_items.includes(:listing)
+      else
+        cart_items
+      end
   end
 
   def calculate
@@ -45,15 +50,15 @@ class CheckoutFeeCalculator
 
   def calculate_subtotal
     @cart_items.sum do |item|
-      BigDecimal(item.listing.price.to_s) * item.quantity
+      BigDecimal(item.effective_unit_price.to_s) * item.quantity
     end.round(2)
   end
 
   def calculate_seller_commissions
     @cart_items.group_by { |item| item.listing.user_id }
-               .transform_values do |items|
+              .transform_values do |items|
       seller_subtotal = items.sum do |item|
-        BigDecimal(item.listing.price.to_s) * item.quantity
+        BigDecimal(item.effective_unit_price.to_s) * item.quantity
       end
 
       (seller_subtotal * SELLER_COMMISSION_RATE).round(2)

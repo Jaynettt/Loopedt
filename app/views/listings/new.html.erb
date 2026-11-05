@@ -112,8 +112,15 @@
     <label>Item title</label>
     <%= f.text_field :title, placeholder: "e.g. Vintage denim jacket", required: true %>
 
-    <label>Description</label>
-    <%= f.text_area :description, placeholder: "Describe your item, its features and condition...", required: true %>
+   <label>Description</label>
+      <%= f.text_area :description,
+          placeholder: "Describe your item... Add hashtags like #Vintage #Streetwear #Nike",
+          required: true %>
+
+      <small style="display:block; color:#727970; margin-top:8px; line-height:1.5;">
+        Add hashtags to help buyers discover your item.
+        Example: #Vintage #Denim #Streetwear
+      </small>
 
     <label>Category</label>
     <%= f.collection_select :category_id, Category.order(:name),
@@ -123,6 +130,26 @@
     <%= f.number_field :price, min: 0, step: 0.01,
         placeholder: "e.g. 25000", required: true %>
 
+      <label>Available quantity</label>
+      <%= f.number_field :stock_quantity,
+          min: 1,
+          step: 1,
+          value: @listing.stock_quantity || 1,
+          required: true %>
+
+      <small style="display:block; color:#727970; margin-top:8px;">
+        How many units of this item do you currently have available?
+      </small>
+
+    <label>Minimum Negotiable Price (NGN)</label>
+      <%= f.number_field :minimum_negotiable_price,
+          min: 0.01, step: 0.01,
+          placeholder: "e.g. 18000" %>
+
+        <small style="display:block; color:#727970; margin-top:8px; line-height:1.5;">
+          This is the lowest amount you are willing to accept during negotiation.
+          Buyers will never see this amount.
+        </small>
     <label>Condition</label>
     <%= f.select :condition,
         [["New", "New"], ["Like New", "Like New"], ["Good", "Good"], ["Fair", "Fair"]],

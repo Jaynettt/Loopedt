@@ -11,6 +11,17 @@ class Conversation < ApplicationRecord
   validate :buyer_and_seller_must_be_different
   validate :seller_must_own_listing
 
+  validates :negotiation_status,
+          inclusion: {
+            in: %w[not_requested requested active agreed declined]
+          }
+
+  has_many :negotiation_offers, dependent: :destroy
+
+  def latest_negotiation_offer
+    negotiation_offers.order(created_at: :desc).first
+  end
+
   private
 
   def buyer_and_seller_must_be_different

@@ -4,231 +4,1396 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Chat | Loopedt</title>
+  <title>Conversation | Loopedt</title>
 
   <style>
     * { box-sizing: border-box; }
 
+    :root {
+      --green: #244e3b;
+      --green-dark: #183b2a;
+      --green-soft: #edf3ed;
+      --green-pale: #f6f9f5;
+      --ink: #253128;
+      --muted: #879187;
+      --line: #e8ede7;
+      --white: #fff;
+    }
+
     body {
       margin: 0;
-      background: #f8f8f6;
-      color: #20231f;
+      background: #f4f7f3;
+      color: var(--ink);
       font-family: Arial, sans-serif;
     }
 
-    header {
-      background: white;
-      border-bottom: 1px solid #e5e8e2;
-      padding: 18px 7%;
+    a { -webkit-tap-highlight-color: transparent; }
+
+    /* NAVIGATION */
+
+    .topbar {
+      height: 70px;
+      padding: 0 6%;
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+      position: sticky;
+      top: 0;
+      z-index: 20;
     }
 
-    .logo {
-      color: #244e3b;
-      font-size: 26px;
-      font-weight: bold;
+    .brand {
+      color: var(--green);
+      text-decoration: none;
+      font-size: 27px;
+      font-weight: 800;
+      letter-spacing: -1.4px;
+    }
+
+    .top-navigation {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      gap: 30px;
+    }
+
+    .top-link {
+      height: 100%;
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      color: #718075;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: color .2s;
+    }
+
+    .top-link:hover,
+    .top-link.active {
+      color: var(--green);
+    }
+
+    .top-link.active::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 2px;
+      background: var(--green);
+      border-radius: 4px;
+    }
+
+    .logout-link {
+      color: #718075;
+      font-size: 12px;
+      font-weight: 600;
       text-decoration: none;
     }
 
-    header a:last-child {
-      color: #244e3b;
+    .logout-link:hover {
+      color: var(--green);
+    }
+
+    /* PAGE */
+
+    .page {
+      max-width: 1450px;
+      margin: 0 auto;
+      padding: 28px 4% 45px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+      color: #66806b;
+      font-size: 12px;
+      font-weight: 700;
       text-decoration: none;
+      transition: gap .2s, color .2s;
     }
 
-    main {
-      max-width: 800px;
-      margin: 35px auto;
-      padding: 0 16px;
+    .back-link:hover {
+      gap: 12px;
+      color: var(--green-dark);
     }
 
-    .back {
-      color: #244e3b;
-      text-decoration: none;
-    }
-
-    .chat-card {
-      margin-top: 20px;
-      background: white;
-      border: 1px solid #e5e8e2;
-      border-radius: 14px;
+    .workspace {
+      display: grid;
+      grid-template-columns: 320px minmax(0, 1fr);
+      min-height: 730px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 18px;
       overflow: hidden;
+      box-shadow: 0 12px 40px rgba(31, 58, 39, .045);
     }
 
-    .chat-header {
-      padding: 22px;
-      background: #e8eee7;
-      border-bottom: 1px solid #dce4db;
+    /* LEFT SIDEBAR */
+
+    .conversation-sidebar {
+      background: #fbfcfa;
+      border-right: 1px solid var(--line);
+      padding: 25px 20px;
+      min-width: 0;
     }
 
-    .chat-header h1 {
-      margin: 0 0 8px;
-      font-size: 22px;
+    .sidebar-eyebrow {
+      margin: 0 0 10px;
+      color: #8a978b;
+      font-size: 9px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
     }
 
-    .chat-header p {
-      margin: 0;
-      color: #60685f;
-    }
-
-    .messages {
-      min-height: 300px;
-      max-height: 480px;
-      overflow-y: auto;
-      padding: 24px;
-    }
-
-    .message {
-      max-width: 80%;
-      margin-bottom: 18px;
-      padding: 13px 16px;
-      border-radius: 12px;
-      background: #f0f1ed;
+    .sidebar-title {
+      margin: 0 0 23px;
+      color: var(--green);
+      font-size: 19px;
+      letter-spacing: -.5px;
+      line-height: 1.4;
       overflow-wrap: anywhere;
     }
 
-    .message.mine {
-      margin-left: auto;
-      background: #244e3b;
-      color: white;
+    .listing-card {
+      overflow: hidden;
+      border: 1px solid #e5ebe3;
+      border-radius: 13px;
+      background: #fff;
+    }
+
+    .listing-card-top {
+      padding: 17px;
+      background: #edf3ed;
+      border-bottom: 1px solid #e1e9df;
+    }
+
+    .listing-card-top span {
+      color: #708273;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 1.1px;
+      text-transform: uppercase;
+    }
+
+    .listing-card-top h2 {
+      margin: 8px 0 0;
+      color: var(--green);
+      font-size: 15px;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    .listing-card-body {
+      padding: 17px;
+    }
+
+    .listing-price-label {
+      color: #909b90;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .7px;
+    }
+
+    .listing-price {
+      display: block;
+      margin-top: 6px;
+      color: var(--green);
+      font-size: 23px;
+      font-weight: 800;
+      letter-spacing: -.6px;
+    }
+
+    .listing-note {
+      margin: 12px 0 0;
+      color: #849085;
+      font-size: 11px;
+      line-height: 1.6;
+    }
+
+    .sidebar-divider {
+      height: 1px;
+      margin: 24px 0;
+      background: var(--line);
+    }
+
+    .participant-heading {
+      margin: 0 0 14px;
+      color: #809081;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .participant {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+    }
+
+    .participant-avatar {
+      width: 43px;
+      height: 43px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      border-radius: 50%;
+      background: #e4eee4;
+      color: var(--green);
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .participant-info {
+      min-width: 0;
+    }
+
+    .participant-info strong {
+      display: block;
+      color: #344d3b;
+      font-size: 12px;
+      overflow-wrap: anywhere;
+    }
+
+    .participant-info span {
+      display: block;
+      margin-top: 5px;
+      color: #929c92;
+      font-size: 10px;
+    }
+
+    .protection-card {
+      margin-top: 25px;
+      padding: 15px;
+      border: 1px solid #e1eae0;
+      border-radius: 11px;
+      background: #f1f6f0;
+    }
+
+    .protection-card strong {
+      display: block;
+      color: #42634a;
+      font-size: 11px;
+      margin-bottom: 7px;
+    }
+
+    .protection-card p {
+      margin: 0;
+      color: #819083;
+      font-size: 10px;
+      line-height: 1.7;
+    }
+
+    /* NEGOTIATION */
+
+    .negotiation-panel {
+      margin-top: 23px;
+      border: 1px solid #e4ebe2;
+      border-radius: 12px;
+      background: #fff;
+      overflow: hidden;
+    }
+
+    .negotiation-summary {
+      list-style: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 15px;
+    }
+
+    .negotiation-summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .negotiation-summary-title {
+      color: #36543e;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .negotiation-summary-icon {
+      color: #78907b;
+      font-size: 15px;
+      transition: transform .2s;
+    }
+
+    .negotiation-panel[open] .negotiation-summary-icon {
+      transform: rotate(180deg);
+    }
+
+    .negotiation-content {
+      padding: 0 15px 17px;
+      border-top: 1px solid #edf0eb;
+    }
+
+    .negotiation-content > p {
+      color: #7d897e;
+      font-size: 11px;
+      line-height: 1.7;
+    }
+
+    .negotiation h3 {
+      color: var(--green);
+      font-size: 13px;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 20px;
+      background: #edf3ed;
+      color: #315b3e;
+      font-size: 9px;
+      font-weight: 800;
+      text-transform: capitalize;
+    }
+
+    .offer {
+      margin-top: 13px;
+      padding: 13px;
+      border: 1px solid #e6ece4;
+      border-radius: 10px;
+      background: #fafcf9;
+    }
+
+    .offer h3 {
+      margin: 0 0 8px;
+      font-size: 12px;
+    }
+
+    .offer-amount {
+      margin: 8px 0;
+      color: var(--green);
+      font-size: 19px;
+      font-weight: 800;
+    }
+
+    .offer-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 11px;
+    }
+
+    .offer-actions form {
+      margin: 0;
+    }
+
+    .counter-form {
+      margin-top: 15px;
+      padding-top: 14px;
+      border-top: 1px solid #e7ece5;
+    }
+
+    .counter-form h3 {
+      margin: 0 0 11px;
+    }
+
+    .agreed {
+      margin-top: 12px;
+      padding: 13px;
+      border: 1px solid #d5e7d4;
+      border-radius: 10px;
+      background: #edf6ed;
+      color: #315b3e;
+    }
+
+    .agreed h3 {
+      margin: 0 0 8px;
+    }
+
+    .cart-confirmation {
+      margin-top: 13px;
+      padding: 13px;
+      background: #fff;
+      border: 1px solid #d5e7d4;
+      border-radius: 10px;
+    }
+
+    .cart-confirmation h3 {
+      margin: 0 0 8px;
+    }
+
+    .cart-confirmation p {
+      color: #607363;
+      font-size: 11px;
+      line-height: 1.6;
+    }
+
+    /* CHAT PANEL */
+
+    .chat-panel {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      background: #fff;
+    }
+
+    .chat-header {
+      min-height: 82px;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .chat-person {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .chat-avatar {
+      width: 43px;
+      height: 43px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: var(--green);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .chat-person-info {
+      min-width: 0;
+    }
+
+    .chat-person-info h1 {
+      margin: 0;
+      color: #2c4232;
+      font-size: 14px;
+      line-height: 1.4;
+      overflow-wrap: anywhere;
+    }
+
+    .chat-person-info p {
+      margin: 5px 0 0;
+      color: #89958a;
+      font-size: 10px;
+    }
+
+    .chat-header-tag {
+      flex-shrink: 0;
+      padding: 7px 10px;
+      border-radius: 20px;
+      background: #edf4ed;
+      color: #527057;
+      font-size: 9px;
+      font-weight: 800;
+    }
+
+    .flash-area {
+      padding: 0 23px;
+    }
+
+    .notice,
+    .alert {
+      margin: 13px 0 0;
+      padding: 11px 13px;
+      border-radius: 9px;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .notice {
+      color: #285b38;
+      background: #edf6ed;
+      border: 1px solid #d7e8d7;
+    }
+
+    .alert {
+      color: #a33b35;
+      background: #fff1ef;
+      border: 1px solid #f0d7d3;
+    }
+
+    /* MESSAGE AREA */
+
+    .messages-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 17px 24px 0;
+    }
+
+    .messages-heading h2 {
+      margin: 0;
+      color: #607363;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .messages-heading span {
+      color: #9aa49a;
+      font-size: 10px;
+    }
+
+    .messages {
+      flex: 1;
+      min-height: 350px;
+      max-height: 570px;
+      overflow-y: auto;
+      padding: 22px 25px 25px;
+      background:
+        radial-gradient(circle at 1px 1px, rgba(36,78,59,.035) 1px, transparent 0);
+      background-size: 22px 22px;
+      scroll-behavior: smooth;
+    }
+
+    .message-date {
+      display: flex;
+      justify-content: center;
+      margin: 4px 0 23px;
+    }
+
+    .message-date span {
+      padding: 6px 11px;
+      border: 1px solid #e9eee7;
+      border-radius: 20px;
+      background: #fff;
+      color: #929c92;
+      font-size: 9px;
+      font-weight: 700;
+    }
+
+    .message-row {
+      display: flex;
+      margin-bottom: 17px;
+    }
+
+    .message-row.mine {
+      justify-content: flex-end;
+    }
+
+    .message {
+      max-width: 76%;
+      padding: 13px 15px;
+      border: 1px solid #e5ebe3;
+      border-radius: 15px 15px 15px 4px;
+      background: #fff;
+      box-shadow: 0 3px 10px rgba(30,55,37,.035);
+      overflow-wrap: anywhere;
+    }
+
+    .message-row.mine .message {
+      border-color: var(--green);
+      border-radius: 15px 15px 4px 15px;
+      background: var(--green);
+      color: #fff;
     }
 
     .sender {
       display: block;
-      font-size: 12px;
-      font-weight: bold;
       margin-bottom: 7px;
-      opacity: 0.8;
+      color: #53715a;
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    .message-row.mine .sender {
+      color: #d7e6d9;
     }
 
     .message p {
       margin: 0;
+      font-size: 13px;
+      line-height: 1.65;
       white-space: pre-wrap;
     }
 
     .timestamp {
       display: block;
       margin-top: 8px;
+      color: #929b92;
+      font-size: 9px;
+    }
+
+    .message-row.mine .timestamp {
+      color: #cbdccc;
+    }
+
+    .system-message {
+      max-width: 85%;
+      margin: 19px auto;
+      padding: 13px 16px;
+      border: 1px solid #dce7da;
+      border-radius: 12px;
+      background: #f0f5ee;
+      color: #49614e;
+      text-align: center;
+    }
+
+    .system-message .sender {
+      color: #315b3e;
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: .8px;
+    }
+
+    .system-message p {
+      margin: 0;
       font-size: 11px;
-      opacity: 0.75;
+      line-height: 1.7;
+    }
+
+    .system-message .timestamp {
+      color: #879286;
     }
 
     .empty {
+      min-height: 300px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       text-align: center;
-      color: #70756f;
-      padding: 70px 10px;
+      padding: 30px 15px;
+      color: #829084;
     }
 
-    .message-form {
-      padding: 20px;
-      border-top: 1px solid #e5e8e2;
+    .empty-icon {
+      width: 58px;
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 15px;
+      border-radius: 19px;
+      background: #edf3ed;
+      color: var(--green);
+      font-size: 24px;
     }
 
-    .message-form label {
+    .empty h3 {
+      margin: 0 0 8px;
+      color: var(--green);
+      font-size: 15px;
+    }
+
+    .empty p {
+      margin: 0;
+      font-size: 11px;
+      line-height: 1.7;
+    }
+
+    /* COMPOSER */
+
+    .composer {
+      padding: 16px 22px 19px;
+      border-top: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .composer-label {
       display: block;
-      font-weight: bold;
       margin-bottom: 10px;
+      color: #617463;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .7px;
+      text-transform: uppercase;
     }
 
-    textarea {
+    .composer-box {
+      padding: 9px;
+      border: 1px solid #dce5da;
+      border-radius: 13px;
+      background: #fafcf9;
+      transition: border-color .2s, box-shadow .2s;
+    }
+
+    .composer-box:focus-within {
+      border-color: #79a17f;
+      box-shadow: 0 0 0 3px rgba(80,130,88,.09);
+    }
+
+    .composer textarea {
+      display: block;
       width: 100%;
-      min-height: 90px;
+      min-height: 68px;
+      max-height: 160px;
+      padding: 9px 10px;
+      border: 0;
+      outline: none;
       resize: vertical;
-      border: 1px solid #d7ddd5;
-      border-radius: 8px;
-      padding: 13px;
+      background: transparent;
+      color: #263329;
       font: inherit;
+      font-size: 13px;
+      line-height: 1.6;
     }
 
-    button {
-      margin-top: 12px;
-      background: #244e3b;
-      color: white;
-      border: none;
+    .composer textarea::placeholder {
+      color: #a0aaa1;
+    }
+
+    .composer-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 5px 4px 2px;
+    }
+
+    .composer-note {
+      color: #909b91;
+      font-size: 9px;
+      line-height: 1.5;
+    }
+
+    /* BUTTONS AND INPUTS */
+
+    .workspace button,
+    .workspace input[type="submit"],
+    .workspace .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 9px 13px;
+      border: 1px solid transparent;
       border-radius: 8px;
-      padding: 13px 20px;
+      background: var(--green);
+      color: #fff;
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: 800;
+      text-decoration: none;
       cursor: pointer;
-      font-weight: bold;
+      transition: background .2s, transform .2s, box-shadow .2s;
     }
 
-    .notice {
-      padding: 12px;
-      background: #e8eee7;
-      color: #244e3b;
+    .workspace button:hover,
+    .workspace input[type="submit"]:hover,
+    .workspace .button:hover {
+      background: var(--green-dark);
+      color: #fff;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(36,78,59,.13);
+    }
+
+    .workspace button.secondary {
+      background: #edf3ed;
+      color: #315b3e;
+    }
+
+    .workspace button.secondary:hover {
+      background: #dfe9df;
+      color: var(--green);
+    }
+
+    .workspace button.danger {
+      background: #fff0ee;
+      color: #a33b35;
+      border-color: #f0d7d3;
+    }
+
+    .workspace button.danger:hover {
+      background: #fce3df;
+      color: #912f29;
+    }
+
+    .workspace input[type="number"] {
+      display: block;
+      width: 100%;
+      min-height: 40px;
+      padding: 10px 11px;
+      border: 1px solid #dce4da;
       border-radius: 8px;
+      background: #fff;
+      color: #263329;
+      font: inherit;
+      font-size: 12px;
+      outline: none;
     }
 
-    .alert { color: #b42318; }
+    .workspace input[type="number"]:focus {
+      border-color: #79a17f;
+      box-shadow: 0 0 0 3px rgba(80,130,88,.09);
+    }
+
+    .negotiation-content label {
+      display: block;
+      margin-bottom: 8px;
+      color: #405b46;
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    .composer input[type="submit"] {
+      min-width: 112px;
+      min-height: 39px;
+      border-radius: 9px;
+      font-size: 11px;
+    }
+
+    /* RESPONSIVE */
+
+    @media (max-width: 950px) {
+      .workspace {
+        grid-template-columns: 270px minmax(0, 1fr);
+      }
+
+      .conversation-sidebar {
+        padding: 20px 15px;
+      }
+
+      .chat-header {
+        padding: 15px 18px;
+      }
+
+      .messages {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .topbar {
+        height: 64px;
+        padding: 0 5%;
+      }
+
+      .brand { font-size: 24px; }
+
+      .top-navigation { gap: 17px; }
+
+      .top-link { font-size: 11px; }
+
+      .logout-link { font-size: 10px; }
+
+      .page {
+        padding: 19px 10px 35px;
+      }
+
+      .workspace {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        border-radius: 13px;
+      }
+
+      .conversation-sidebar {
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+        padding: 16px;
+      }
+
+      .sidebar-title {
+        margin-bottom: 14px;
+        font-size: 16px;
+      }
+
+      .listing-card {
+        display: grid;
+        grid-template-columns: 1fr 125px;
+      }
+
+      .listing-card-top {
+        border-bottom: 0;
+        border-right: 1px solid #e1e9df;
+      }
+
+      .listing-card-body {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 12px;
+      }
+
+      .listing-price {
+        font-size: 17px;
+      }
+
+      .listing-note {
+        display: none;
+      }
+
+      .sidebar-divider {
+        margin: 15px 0;
+      }
+
+      .participant-heading {
+        margin-bottom: 10px;
+      }
+
+      .protection-card {
+        margin-top: 14px;
+      }
+
+      .negotiation-panel {
+        margin-top: 14px;
+      }
+
+      .chat-header {
+        min-height: 70px;
+        padding: 13px 15px;
+      }
+
+      .chat-header-tag {
+        font-size: 8px;
+      }
+
+      .messages {
+        min-height: 310px;
+        max-height: 460px;
+        padding: 18px 13px;
+      }
+
+      .message {
+        max-width: 88%;
+      }
+
+      .composer {
+        padding: 13px;
+      }
+    }
+
+    @media (max-width: 390px) {
+      .top-navigation { gap: 11px; }
+      .top-link { font-size: 10px; }
+      .logout-link { font-size: 9px; }
+
+      .chat-header-tag {
+        display: none;
+      }
+
+      .listing-card {
+        grid-template-columns: 1fr 105px;
+      }
+
+      .composer-footer {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .composer input[type="submit"] {
+        width: 100%;
+      }
+
+      .offer-actions {
+        flex-direction: column;
+      }
+
+      .offer-actions form,
+      .offer-actions button {
+        width: 100%;
+      }
+    }
   </style>
 </head>
 
 <body>
-  <header>
-    <a class="logo" href="/">loopedt.</a>
-    <a href="/logout" data-turbo-method="delete">Log out</a>
-  </header>
 
-  <main>
-    <%= link_to "← Back to inbox", inbox_path, class: "back" %>
+      <header class="topbar">
+        <%= link_to "loopedt.", listings_path, class: "brand" %>
 
-    <section class="chat-card">
-      <div class="chat-header">
-        <h1><%= @conversation.listing.title %></h1>
-        <p>
-          Chat about this item ·
-          <%= number_to_currency(@conversation.listing.price, unit: "₦") %>
-        </p>
-      </div>
+        <nav class="top-navigation">
+          <%= link_to "Discover items", listings_path, class: "top-link" %>
+          <%= link_to "Inbox", inbox_path, class: "top-link active" %>
+        </nav>
 
-      <% if flash[:notice] %>
-        <p class="notice"><%= flash[:notice] %></p>
-      <% end %>
+        <a class="logout-link" href="/logout" data-turbo-method="delete">Log out</a>
+      </header>
 
-      <% if flash[:alert] %>
-        <p class="alert"><%= flash[:alert] %></p>
-      <% end %>
+      <% other_person =
+        @conversation.buyer_id == @current_user.id ?
+        @conversation.seller : @conversation.buyer %>
 
-      <div class="messages">
-        <% if @messages.any? %>
-          <% @messages.each do |message| %>
-            <div class="message <%= 'mine' if message.sender_id == @current_user.id %>">
-              <span class="sender">
-                <%= message.sender.username %>
-              </span>
+      <main class="page">
 
-              <p><%= message.body %></p>
+        <%= link_to inbox_path, class: "back-link" do %>
+          <span>←</span> Back to inbox
+        <% end %>
 
-              <span class="timestamp">
-                <%= message.created_at.strftime("%d %b, %H:%M") %>
-              </span>
+        <section class="workspace">
+
+          <!-- LEFT SIDEBAR -->
+
+          <aside class="conversation-sidebar">
+
+            <p class="sidebar-eyebrow">Marketplace conversation</p>
+
+            <h2 class="sidebar-title">Conversation details</h2>
+
+            <div class="listing-card">
+              <div class="listing-card-top">
+                <span>You're discussing</span>
+                <h2><%= @conversation.listing.title %></h2>
+              </div>
+
+              <div class="listing-card-body">
+                <span class="listing-price-label">Listed price</span>
+                <strong class="listing-price">
+                  <%= number_to_currency(@conversation.listing.price, unit: "₦") %>
+                </strong>
+                <p class="listing-note">
+                  The original listing price. Any agreed negotiation price is shown below.
+                </p>
+              </div>
             </div>
-          <% end %>
-        <% else %>
-          <div class="empty">
-            <h3>Start the conversation</h3>
-            <p>Ask a question about the item or discuss the purchase.</p>
-          </div>
-        <% end %>
-      </div>
 
-      <div class="message-form">
-        <%= form_with url: send_inbox_message_path(@conversation), method: :post do |form| %>
-          <%= form.label :body, "Your message" %>
+            <div class="sidebar-divider"></div>
 
-          <%= form.text_area :body,
-              required: true,
-              maxlength: 2000,
-              placeholder: "Write a message about this item..." %>
+            <h3 class="participant-heading">Other participant</h3>
 
-          <p class="timestamp">
-            Keep communication on Loopedt. Messages containing contact details may be blocked.
-          </p>
+            <div class="participant">
+              <div class="participant-avatar">
+                <%= other_person.username.to_s.first.to_s.upcase %>
+              </div>
 
-          <%= form.submit "Send message" %>
-        <% end %>
-      </div>
-    </section>
-  </main>
-</body>
+              <div class="participant-info">
+                <strong><%= other_person.username %></strong>
+                <span>
+                  <%= @is_buyer ? "Item seller" : "Interested buyer" %>
+                </span>
+              </div>
+            </div>
+
+            <div class="protection-card">
+              <strong>✓ Protected communication</strong>
+              <p>
+                Keep your conversation on Loopedt. Messages containing contact details may be blocked.
+              </p>
+            </div>
+
+            <!-- NEGOTIATION -->
+
+            <details class="negotiation-panel">
+              <summary class="negotiation-summary">
+                <span class="negotiation-summary-title">Price negotiation</span>
+                <span class="negotiation-summary-icon">⌄</span>
+              </summary>
+
+              <div class="negotiation-content">
+
+                <p>
+                  Use structured offers and counteroffers to agree on a price.
+                </p>
+
+                <span class="status">
+                  <%= @conversation.negotiation_status.humanize %>
+                </span>
+
+                <% if @conversation.negotiation_status == "not_requested" %>
+
+                  <% if @is_buyer %>
+                    <%= button_to "Request to negotiate",
+                        request_negotiation_path(@conversation),
+                        method: :post %>
+                  <% else %>
+                    <p>The buyer has not requested a negotiation yet.</p>
+                  <% end %>
+
+                <% elsif @conversation.negotiation_status == "requested" %>
+
+                  <% if @is_seller %>
+                    <p>The buyer wants to negotiate the price.</p>
+
+                    <div class="offer-actions">
+                      <%= button_to "Accept negotiation",
+                          respond_to_negotiation_request_path(@conversation),
+                          method: :post,
+                          params: { decision: "accept" } %>
+
+                      <%= button_to "Decline",
+                          respond_to_negotiation_request_path(@conversation),
+                          method: :post,
+                          params: { decision: "decline" },
+                          class: "secondary" %>
+                    </div>
+                  <% else %>
+                    <p>Your negotiation request has been sent. Waiting for the seller.</p>
+                  <% end %>
+
+                <% elsif @conversation.negotiation_status == "active" %>
+
+                  <p>Negotiation is active. Offers and counteroffers appear below.</p>
+
+                  <% if @is_buyer &&
+                        (@latest_negotiation_offer.nil? ||
+                        @latest_negotiation_offer.status != "pending") %>
+
+                    <div class="counter-form">
+                      <h3>Make an offer</h3>
+
+                      <%= form_with url: create_negotiation_offer_path(@conversation),
+                          method: :post do |form| %>
+
+                        <%= form.label :amount, "Your offer (NGN)" %>
+
+                        <%= form.number_field :amount,
+                            min: 0.01,
+                            step: 0.01,
+                            required: true,
+                            placeholder: "Enter your offer" %>
+
+                        <%= form.submit "Submit offer" %>
+                      <% end %>
+                    </div>
+                  <% end %>
+
+                <% elsif @conversation.negotiation_status == "agreed" %>
+
+                  <div class="agreed">
+                    <h3>Agreement reached</h3>
+                    <p>Both parties have agreed on:</p>
+
+                    <strong>
+                      <%= number_to_currency(@conversation.agreed_price, unit: "₦") %>
+                    </strong>
+
+                    <% if @is_buyer %>
+                      <div class="cart-confirmation">
+                        <h3>✓ Your item is in your cart!</h3>
+
+                        <p>
+                          <strong><%= @conversation.listing.title %></strong>
+                          has been added to your cart at the agreed price.
+                        </p>
+
+                        <%= link_to "View your cart", cart_items_path, class: "button" %>
+                      </div>
+                    <% end %>
+                  </div>
+
+                <% elsif @conversation.negotiation_status == "declined" %>
+
+                  <p>The negotiation request was declined.</p>
+
+                <% end %>
+
+                <% if @negotiation_offers.any? %>
+                  <h3 style="margin-top: 20px;">Offer history</h3>
+
+                  <% @negotiation_offers.each do |offer| %>
+                    <div class="offer">
+
+                      <h3>
+                        <%= offer.proposer_id == @current_user.id ?
+                            "Your offer" : "Other party's offer" %>
+                      </h3>
+
+                      <div class="offer-amount">
+                        <%= number_to_currency(offer.amount, unit: "₦") %>
+                      </div>
+
+                      <span class="status">
+                        <%= offer.status.humanize %>
+                      </span>
+
+                      <% if offer.status == "pending" &&
+                            offer.proposer_id != @current_user.id %>
+
+                        <div class="offer-actions">
+
+                          <%= button_to "Accept offer",
+                              respond_to_negotiation_offer_path(
+                                @conversation,
+                                offer_id: offer.id
+                              ),
+                              method: :post,
+                              params: { decision: "accept" } %>
+
+                          <%= button_to "Reject offer",
+                              respond_to_negotiation_offer_path(
+                                @conversation,
+                                offer_id: offer.id
+                              ),
+                              method: :post,
+                              params: { decision: "reject" },
+                              class: "danger" %>
+
+                        </div>
+
+                        <div class="counter-form">
+                          <h3>Make a counteroffer</h3>
+
+                          <%= form_with url: respond_to_negotiation_offer_path(
+                              @conversation,
+                              offer_id: offer.id
+                            ),
+                            method: :post do |form| %>
+
+                            <%= form.hidden_field :decision, value: "counter" %>
+
+                            <%= form.label :amount, "Your counteroffer (NGN)" %>
+
+                            <%= form.number_field :amount,
+                                min: 0.01,
+                                step: 0.01,
+                                required: true,
+                                placeholder: "Enter your counteroffer" %>
+
+                            <%= form.submit "Submit counteroffer" %>
+                          <% end %>
+                        </div>
+
+                      <% elsif offer.status == "pending" %>
+
+                        <p>Waiting for the other party to respond.</p>
+
+                      <% end %>
+
+                    </div>
+                  <% end %>
+                <% end %>
+
+              </div>
+            </details>
+
+          </aside>
+
+          <!-- MAIN CHAT -->
+
+          <section class="chat-panel">
+
+            <div class="chat-header">
+              <div class="chat-person">
+                <div class="chat-avatar">
+                  <%= other_person.username.to_s.first.to_s.upcase %>
+                </div>
+
+                <div class="chat-person-info">
+                  <h1><%= other_person.username %></h1>
+                  <p>Conversation about <%= @conversation.listing.title %></p>
+                </div>
+              </div>
+
+              <span class="chat-header-tag">Loopedt chat</span>
+            </div>
+
+            <div class="flash-area">
+              <% if flash[:notice] %>
+                <p class="notice"><%= flash[:notice] %></p>
+              <% end %>
+
+              <% if flash[:alert] %>
+                <p class="alert"><%= flash[:alert] %></p>
+              <% end %>
+            </div>
+
+            <div class="messages-heading">
+              <h2>Messages</h2>
+              <span><%= @messages.count %> messages</span>
+            </div>
+
+            <div class="messages" id="conversation-messages">
+
+              <% if @messages.any? %>
+
+                <% @messages.each do |message| %>
+
+                  <% if message.message_type == "system" %>
+
+                    <div class="system-message">
+                      <span class="sender">Loopedt notification</span>
+                      <p><%= message.body %></p>
+                      <span class="timestamp">
+                        <%= message.created_at.strftime("%d %b, %H:%M") %>
+                      </span>
+                    </div>
+
+                  <% else %>
+
+                    <div class="message-row <%= 'mine' if message.sender_id == @current_user.id %>">
+                      <div class="message">
+
+                        <span class="sender">
+                          <%= message.sender.username %>
+                        </span>
+
+                        <p><%= message.body %></p>
+
+                        <span class="timestamp">
+                          <%= message.created_at.strftime("%d %b, %H:%M") %>
+                        </span>
+
+                      </div>
+                    </div>
+
+                  <% end %>
+
+                <% end %>
+
+              <% else %>
+
+                <div class="empty">
+                  <div class="empty-icon">✉</div>
+                  <h3>Start the conversation</h3>
+                  <p>Ask a question about this item or discuss the purchase.</p>
+                </div>
+
+              <% end %>
+
+            </div>
+
+            <!-- MESSAGE COMPOSER -->
+
+            <div class="composer">
+              <%= form_with url: send_inbox_message_path(@conversation),
+                  method: :post do |form| %>
+
+                <%= form.label :body, "Your message", class: "composer-label" %>
+
+                <div class="composer-box">
+
+                  <%= form.text_area :body,
+                      required: true,
+                      maxlength: 2000,
+                      placeholder: "Write a message about this item..." %>
+
+                  <div class="composer-footer">
+                    <span class="composer-note">
+                      Keep communication on Loopedt. Contact details may be blocked.
+                    </span>
+
+                    <%= form.submit "Send message →" %>
+                  </div>
+
+                </div>
+              <% end %>
+            </div>
+
+          </section>
+
+        </section>
+
+      </main>
+
+      <script>
+        document.addEventListener("DOMContentLoaded", function () {
+          const messages = document.getElementById("conversation-messages");
+
+          if (messages) {
+            messages.scrollTop = messages.scrollHeight;
+          }
+        });
+      </script>
+
+    
+  </body>
 </html>

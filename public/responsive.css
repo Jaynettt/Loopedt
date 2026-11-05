@@ -1,0 +1,158 @@
+/* LOOPEDT RESPONSIVE DESIGN */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+img,
+video,
+iframe {
+  max-width: 100%;
+  height: auto;
+}
+
+input,
+select,
+textarea,
+button {
+  max-width: 100%;
+  font: inherit;
+}
+
+@media (max-width: 900px) {
+  .container,
+  .page-container,
+  .content-container {
+    width: 100%;
+    max-width: 100%;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  body {
+    font-size: 14px;
+  }
+
+  main {
+    width: 100%;
+    min-width: 0;
+  }
+
+  h1 {
+    font-size: clamp(25px, 7vw, 34px);
+  }
+
+  h2 {
+    font-size: clamp(21px, 6vw, 28px);
+  }
+
+  input,
+  select,
+  textarea {
+    width: 100%;
+    min-width: 0;
+  }
+
+  button,
+  input[type="submit"] {
+    min-height: 44px;
+  }
+
+  table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+  }
+}
+
+
+/* =================================
+   MOBILE NAVIGATION
+================================= */
+
+.mobile-menu-toggle {
+  display: none;
+  background: transparent;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 42px;
+  min-height: 42px;
+}
+
+.mobile-menu-toggle span {
+  display: block;
+  width: 25px;
+  height: 2px;
+  background: #222;
+  border-radius: 3px;
+  transition: 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .mobile-menu-toggle {
+    display: flex;
+  }
+
+  #mobile-nav-links {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    width: 100%;
+    background: #fff;
+    padding: 20px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08);
+    z-index: 1000;
+  }
+
+  #mobile-nav-links.mobile-menu-open {
+    display: flex;
+  }
+
+  .mobile-menu-toggle.menu-open span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+
+  .mobile-menu-toggle.menu-open span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .mobile-menu-toggle.menu-open span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+}
+
+/* SHOW ALL NAVIGATION LINKS IN MOBILE MENU */
+
+@media (max-width: 680px) {
+  #mobile-nav-links.mobile-menu-open > a {
+    display: flex !important;
+    width: 100%;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 12px 10px;
+    font-size: 14px !important;
+  }
+
+  #mobile-nav-links.mobile-menu-open .sell-button {
+    justify-content: center;
+  }
+}

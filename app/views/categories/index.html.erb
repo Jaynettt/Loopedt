@@ -1,0 +1,539 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Style Finder | Loopedt</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    :root {
+      --green: #244e3b;
+      --dark: #193a2b;
+      --lime: #d9f36a;
+      --yellow: #ffe58a;
+      --orange: #ff9866;
+      --pink: #ffb9c9;
+      --cream: #fffdf5;
+      --ink: #25372c;
+      --muted: #778277;
+      --line: #e8ecdf;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--cream);
+      color: var(--ink);
+      font-family: Arial, sans-serif;
+    }
+
+    header {
+      background: var(--dark);
+      padding: 20px 6%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      color: var(--lime);
+      font-size: 28px;
+      font-weight: 900;
+      text-decoration: none;
+      letter-spacing: -1.5px;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 25px;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    nav a.active {
+      color: var(--lime);
+      font-weight: 700;
+    }
+
+    .hero {
+      background: var(--dark);
+      color: white;
+      padding: 75px 7% 95px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 390px;
+      height: 390px;
+      border-radius: 50%;
+      background: var(--lime);
+      opacity: .12;
+      right: -100px;
+      top: -170px;
+    }
+
+    .hero-content {
+      max-width: 850px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .eyebrow {
+      color: var(--lime);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font-size: clamp(45px, 7vw, 82px);
+      letter-spacing: -5px;
+      line-height: .98;
+      margin: 20px 0;
+    }
+
+    .hero p {
+      max-width: 520px;
+      color: #dce6db;
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    .hero-note {
+      display: inline-block;
+      background: var(--lime);
+      color: var(--dark);
+      padding: 12px 17px;
+      border-radius: 30px;
+      font-size: 12px;
+      font-weight: 800;
+      margin-top: 20px;
+    }
+
+    main {
+      max-width: 1200px;
+      margin: -35px auto 80px;
+      padding: 0 25px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .finder-panel {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 25px;
+      padding: 35px;
+      box-shadow: 0 20px 60px rgba(25, 58, 43, .08);
+    }
+
+    .section-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .section-heading h2 {
+      font-size: 28px;
+      letter-spacing: -1px;
+      margin: 7px 0;
+      color: var(--dark);
+    }
+
+    .section-heading p {
+      color: var(--muted);
+      font-size: 14px;
+      margin: 0;
+    }
+
+    .step-label {
+      color: var(--green);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    .style-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 17px;
+    }
+
+    .style-card {
+      position: relative;
+      border: 2px solid var(--line);
+      background: var(--cream);
+      border-radius: 19px;
+      padding: 22px;
+      text-align: left;
+      cursor: pointer;
+      min-height: 175px;
+      transition: .2s ease;
+      color: var(--ink);
+    }
+
+    .style-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--green);
+    }
+
+    .style-card.selected {
+      background: #f3f8df;
+      border-color: var(--green);
+      box-shadow: inset 0 0 0 1px var(--green);
+    }
+
+    .style-card .symbol {
+      width: 43px;
+      height: 43px;
+      border-radius: 13px;
+      display: grid;
+      place-items: center;
+      font-size: 22px;
+      margin-bottom: 18px;
+      background: var(--lime);
+    }
+
+    .style-card:nth-child(2) .symbol { background: var(--pink); }
+    .style-card:nth-child(3) .symbol { background: var(--yellow); }
+    .style-card:nth-child(4) .symbol { background: #dce8d6; }
+    .style-card:nth-child(5) .symbol { background: #e8e2d7; }
+    .style-card:nth-child(6) .symbol { background: var(--orange); }
+
+    .style-card h3 {
+      margin: 0 0 7px;
+      font-size: 19px;
+      color: var(--dark);
+    }
+
+    .style-card p {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    .selected-mark {
+      display: none;
+      position: absolute;
+      right: 15px;
+      top: 15px;
+      background: var(--green);
+      color: white;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      text-align: center;
+      line-height: 24px;
+      font-size: 13px;
+    }
+
+    .style-card.selected .selected-mark { display: block; }
+
+    .divider {
+      height: 1px;
+      background: var(--line);
+      margin: 35px 0;
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .filter-field label {
+      display: block;
+      font-size: 12px;
+      font-weight: 800;
+      margin-bottom: 9px;
+      color: var(--dark);
+    }
+
+    .filter-field select,
+    .filter-field input {
+      width: 100%;
+      padding: 15px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--cream);
+      color: var(--ink);
+      font-size: 14px;
+      outline: none;
+    }
+
+    .filter-field select:focus,
+    .filter-field input:focus {
+      border-color: var(--green);
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      margin-top: 30px;
+    }
+
+    .reset-link {
+      color: var(--muted);
+      font-size: 13px;
+      text-decoration: none;
+    }
+
+    .submit-button {
+      border: 0;
+      border-radius: 30px;
+      padding: 16px 28px;
+      background: var(--lime);
+      color: var(--dark);
+      font-size: 14px;
+      font-weight: 900;
+      cursor: pointer;
+      transition: .2s ease;
+    }
+
+    .submit-button:hover {
+      background: var(--green);
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    .bottom-banner {
+      margin-top: 30px;
+      border-radius: 22px;
+      padding: 30px;
+      background: var(--yellow);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .bottom-banner h3 {
+      font-size: 23px;
+      color: var(--dark);
+      margin: 0 0 7px;
+    }
+
+    .bottom-banner p {
+      color: #5f674c;
+      font-size: 13px;
+      margin: 0;
+    }
+
+    .bottom-banner a {
+      background: var(--dark);
+      color: white;
+      text-decoration: none;
+      padding: 13px 20px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 750px) {
+      .style-grid { grid-template-columns: repeat(2, 1fr); }
+      .filters { grid-template-columns: 1fr; }
+      .finder-panel { padding: 22px; }
+      .hero { padding: 60px 25px 80px; }
+      h1 { letter-spacing: -3px; }
+    }
+
+    @media (max-width: 480px) {
+      header { padding: 17px 20px; }
+      nav { gap: 12px; }
+      nav a { font-size: 12px; }
+      .style-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+      .style-card { padding: 15px; min-height: 165px; }
+      .style-card h3 { font-size: 16px; }
+      .section-heading { display: block; }
+      .bottom-banner { display: block; }
+      .bottom-banner a { display: inline-block; margin-top: 18px; }
+      .actions { align-items: stretch; flex-direction: column-reverse; }
+      .submit-button { width: 100%; }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <%= link_to "loopedt.", listings_path, class: "logo" %>
+
+    <nav>
+      <%= link_to "Discover", listings_path %>
+      <%= link_to "Style Finder", categories_path, class: "active" %>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="hero-content">
+      <div class="eyebrow">The Loopedt Style Finder</div>
+      <h1>Your style.<br> Your finds.</h1>
+      <p>
+        Everyone has a style. Some are still figuring it out, others know
+        exactly what they love. Tell us your vibe and discover pieces
+        waiting for their next chapter.
+      </p>
+      <div class="hero-note">A little inspiration goes a long way ✳</div>
+    </div>
+  </section>
+
+  <main>
+    <%= form_with url: style_results_path, method: :get, local: true, id: "style-finder-form" do %>
+
+      <div class="finder-panel">
+        <div class="section-heading">
+          <div>
+            <div class="step-label">Step 01 / Find your vibe</div>
+            <h2>Which one feels like you?</h2>
+            <p>Choose the aesthetic that speaks to you.</p>
+          </div>
+        </div>
+
+        <div class="style-grid">
+          <button type="button" class="style-card" data-search="minimalist">
+            <span class="selected-mark">✓</span>
+            <div class="symbol">◌</div>
+            <h3>The Minimalist</h3>
+            <p>Clean lines, neutral tones and timeless basics.</p>
+          </button>
+
+          <button type="button" class="style-card" data-search="streetwear">
+            <span class="selected-mark">✓</span>
+            <div class="symbol">✳</div>
+            <h3>Streetwear</h3>
+            <p>Oversized fits, sneakers and bold everyday looks.</p>
+          </button>
+
+          <button type="button" class="style-card" data-search="feminine">
+            <span class="selected-mark">✓</span>
+            <div class="symbol">♡</div>
+            <h3>Soft & Feminine</h3>
+            <p>Romantic details, pretty pieces and soft colours.</p>
+          </button>
+
+          <button type="button" class="style-card" data-search="vintage">
+            <span class="selected-mark">✓</span>
+            <div class="symbol">✿</div>
+            <h3>Vintage Soul</h3>
+            <p>Retro finds, unique details and pieces with character.</p>
+          </button>
+
+          <button type="button" class="style-card" data-search="classic">
+            <span class="selected-mark">✓</span>
+            <div class="symbol">◇</div>
+            <h3>Quiet Luxury</h3>
+            <p>Polished, understated and effortlessly put together.</p>
+          </button>
+
+          <button type="button" class="style-card" data-search="statement">
+            <span class="selected-mark">✓</span>
+            <div class="symbol">✦</div>
+            <h3>The Trendsetter</h3>
+            <p>Statement pieces, unexpected finds and bold choices.</p>
+          </button>
+        </div>
+
+        <input type="hidden" name="style" id="style-search" value="vintage">
+
+        <div class="divider"></div>
+
+        <div class="section-heading">
+          <div>
+            <div class="step-label">Step 02 / Make it yours</div>
+            <h2>Fine-tune your search.</h2>
+            <p>Add a few preferences to narrow down your finds.</p>
+          </div>
+        </div>
+
+        <div class="filters">
+          <div class="filter-field">
+            <label for="category_id">WHAT ARE YOU LOOKING FOR?</label>
+            <select name="category_id" id="category_id">
+              <option value="">All categories</option>
+              <% @categories.each do |category| %>
+                <option value="<%= category.id %>"><%= category.name %></option>
+              <% end %>
+            </select>
+          </div>
+
+          <div class="filter-field">
+            <label for="colour">YOUR COLOUR PALETTE</label>
+            <select name="colour" id="colour">
+              <option value="">Surprise me</option>
+              <option value="Black">Black</option>
+              <option value="White">White</option>
+              <option value="Brown">Brown</option>
+              <option value="Beige">Beige</option>
+              <option value="Green">Green</option>
+              <option value="Blue">Blue</option>
+              <option value="Pink">Pink</option>
+              <option value="Red">Red</option>
+              <option value="Multicolour">Multicolour</option>
+            </select>
+          </div>
+
+          <div class="filter-field">
+            <label for="max_price">YOUR MAXIMUM BUDGET</label>
+            <select name="max_price" id="max_price">
+              <option value="">Any budget</option>
+              <option value="5000">Under ₦5,000</option>
+              <option value="10000">Under ₦10,000</option>
+              <option value="20000">Under ₦20,000</option>
+              <option value="50000">Under ₦50,000</option>
+              <option value="100000">Under ₦100,000</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="actions">
+          <a href="<%= categories_path %>" class="reset-link">Start over</a>
+          <button type="submit" class="submit-button">
+            Find my style →
+          </button>
+        </div>
+      </div>
+    <% end %>
+
+    <div class="bottom-banner">
+      <div>
+        <h3>Have something worth passing on?</h3>
+        <p>Your next favourite find could start with someone else's wardrobe.</p>
+      </div>
+      <%= link_to "Explore the marketplace", listings_path %>
+    </div>
+  </main>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const cards = document.querySelectorAll(".style-card");
+      const searchInput = document.getElementById("style-search");
+
+      cards.forEach(function (card) {
+        card.addEventListener("click", function () {
+          cards.forEach(function (item) {
+            item.classList.remove("selected");
+          });
+
+          card.classList.add("selected");
+          searchInput.value = card.dataset.search;
+        });
+      });
+    });
+  </script>
+</body>
+</html>

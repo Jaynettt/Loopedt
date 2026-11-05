@@ -1,4 +1,3 @@
-
 class Message < ApplicationRecord
   belongs_to :conversation
   belongs_to :sender, class_name: "User"
@@ -8,6 +7,11 @@ class Message < ApplicationRecord
   validates :moderation_status,
             inclusion: {
               in: %w[pending approved blocked flagged]
+            }
+
+  validates :message_type,
+            inclusion: {
+              in: %w[chat system]
             }
 
   validate :sender_must_belong_to_conversation

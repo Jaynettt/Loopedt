@@ -1,0 +1,11 @@
+one:
+  conversation: one
+  proposer: one
+  amount: 9.99
+  status: pending
+
+two:
+  conversation: two
+  proposer: two
+  amount: 19.99
+  status: pending

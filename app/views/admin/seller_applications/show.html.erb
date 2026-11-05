@@ -412,6 +412,144 @@
 
       </div>
 
+
+        <!-- SELLER KYC INFORMATION -->
+        <section class="panel">
+          <h2>Seller Verification</h2>
+
+          <div class="detail-row">
+            <span class="detail-label">KYC Submission</span>
+            <div class="detail-value">
+              <% if @application.kyc_submitted_at.present? %>
+                Submitted on
+                <%= @application.kyc_submitted_at.strftime("%d %B %Y at %I:%M %p") %>
+              <% else %>
+                Not yet submitted
+              <% end %>
+            </div>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label">Legal Full Name</span>
+            <div class="detail-value">
+              <%= @application.legal_full_name.presence || "Not provided" %>
+            </div>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label">Date of Birth</span>
+            <div class="detail-value">
+              <%= @application.date_of_birth&.strftime("%d %B %Y") || "Not provided" %>
+            </div>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label">Phone Number</span>
+            <div class="detail-value">
+              <%= @application.phone_number.presence || "Not provided" %>
+            </div>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label">Residential Address</span>
+            <div class="detail-value">
+              <%= @application.residential_address.presence || "Not provided" %>
+            </div>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label">City</span>
+            <div class="detail-value">
+              <%= @application.city.presence || "Not provided" %>
+            </div>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label">State</span>
+            <div class="detail-value">
+              <%= @application.state.presence || "Not provided" %>
+            </div>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label">Local Government Area</span>
+            <div class="detail-value">
+              <%= @application.lga.presence || "Not provided" %>
+            </div>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label">Postal Code</span>
+            <div class="detail-value">
+              <%= @application.postal_code.presence || "Not provided" %>
+            </div>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label">Identification Type</span>
+            <div class="detail-value">
+              <%= @application.id_type.presence || "Not provided" %>
+            </div>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label">Identification Number</span>
+            <div class="detail-value">
+              <% if @application.id_number.present? %>
+                ••••••<%= @application.id_number.last(4) %>
+              <% else %>
+                Not provided
+              <% end %>
+            </div>
+          </div>
+        </section>
+
+        <!-- VERIFICATION DOCUMENTS -->
+        <section class="panel">
+          <h2>Verification Documents</h2>
+
+          <div class="detail-row">
+            <span class="detail-label">Identity Document</span>
+            <div class="detail-value">
+              <% if @application.identity_document.attached? %>
+                <p>✓ Identity document uploaded</p>
+                <%= link_to "Download identity document",
+                    identity_document_admin_seller_application_path(@application),
+                    class: "back-link" %>
+                    <% if @application.identity_document.attached? &&
+                            @application.identity_document.content_type.in?(%w[image/jpeg image/png image/webp]) %>
+
+                        <div class="identity-preview">
+                          <h3>Uploaded Identity Document</h3>
+
+                          <%= image_tag identity_document_preview_admin_seller_application_path(@application),
+                                        alt: "Applicant identity document",
+                                        style: "width: 100%; max-width: 420px; height: auto; border-radius: 12px; border: 1px solid #e9e9df;" %>
+                        </div>
+
+                      <% end %>
+              <% else %>
+                Not uploaded
+              <% end %>
+            </div>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label">Proof of Address</span>
+            <div class="detail-value">
+              <% if @application.proof_of_address.attached? %>
+                <p>✓ Proof of address uploaded</p>
+                <%= link_to "Download proof of address",
+                    proof_of_address_admin_seller_application_path(@application),
+                    class: "back-link" %>
+              <% else %>
+                Not uploaded
+              <% end %>
+            </div>
+          </div>
+        </section>
+
+
       <!-- DECISION PANEL -->
       <aside class="decision-panel">
 
