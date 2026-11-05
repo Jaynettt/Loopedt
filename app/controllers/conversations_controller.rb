@@ -1,5 +1,5 @@
 
-module Web
+
   class ConversationsController < BaseController
     before_action :set_conversation, only: [:show]
 
@@ -31,4 +31,4 @@ module Web
       @conversation = Conversation.find(params[:id])
     end
   end
-end
+
