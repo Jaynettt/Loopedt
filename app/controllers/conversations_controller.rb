@@ -1,6 +1,6 @@
 
 
-  class ConversationsController < BaseController
+  class ConversationsController < ActionController::Base
     before_action :set_conversation, only: [:show]
 
     def index
